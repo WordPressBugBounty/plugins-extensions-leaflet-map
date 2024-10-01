@@ -1,0 +1,61 @@
+/* No tooltip on mobiles */
+@media (hover: none) {
+	.leaflet-tooltip-pane { display: none; }
+}
+
+/* obiges klappt bei elevation (und Samsung Smartphone) nicht, deshalb
+https://github.com/Artuar/css-test-device-or-desktop */
+@media not all and (pointer: fine) {
+	.leaflet-tooltip-pane { display: none; }
+}
+
+/* multielevation tracks list top right */
+/*.leaflet-right .leaflet-control-layers-list {
+	max-width: 250px;
+	max-height: 25vh;
+	overflow: auto;
+} */
+
+/*multielevation chart */
+#elevation-div {
+	height: auto;
+	width: 100%;
+	font: 12px/1.5 "Helvetica Neue", Arial, Helvetica, sans-serif;
+}
+
+.chart-placeholder {
+	height: auto;
+	width: 100%;
+	padding: 60px 0px 60px 0;
+	margin: 0 0px;
+	font-family: "Lucida Grande", "Lucida Sans Unicode", Verdana, Arial, Helvetica, sans-serif;
+	font-style: italic;
+	opacity: 0.5;
+	font-size: 0.9rem;
+	text-align: center;
+}
+
+/* .elevation-control .background {
+	height: min-content;
+} */
+/* .elevation-expanded {
+	width: 70%;
+} */
+
+/* + and - should have not underline */
+.leaflet-control-zoomhome-out {
+	text-decoration: none !important;
+}
+.leaflet-control-zoomhome-in {
+	text-decoration: none !important;
+}
+.leaflet-control-zoom-out {
+	text-decoration: none !important;
+}
+.leaflet-control-zoom-in {
+	text-decoration: none !important;
+}
+
+.targetlink {
+	display:inline;
+}
