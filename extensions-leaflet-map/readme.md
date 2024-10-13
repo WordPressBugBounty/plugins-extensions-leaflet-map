@@ -3,7 +3,7 @@
 Contributors: hupe13    
 Tags: leaflet, gpx, geojson, hover, marker   
 Tested up to: 6.6  
-Stable tag: 4.3.4     
+Stable tag: 4.3.5     
 Requires at least: 5.5.3     
 Requires PHP: 7.4     
 License: GPLv2 or later
@@ -108,15 +108,17 @@ RewriteRule .*\\.gpx$ - [L,T=application/gpx+xml]</code></pre>
 **It doesn't work!**
 
 * Are you using any caching plugin? Try to exclude at least these js files from caching:
+
  - /wp-content/plugins/extensions-leaflet-map/leaflet-plugins/leaflet-elevation-*
  - /wp-content/plugins/extensions-leaflet-map/leaflet-plugins/leaflet-gesture-handling-*
+
 * Are you using any plugin to comply with the GDPR/DSGVO? There might be a problem with that.
 * If you use a caching plugin and a GDPR/DSGVO plugin you need to distinguish whether the user has accepted the cookie or not.
 * Please ask in the [forum](https://wordpress.org/support/plugin/extensions-leaflet-map/)!
 
 **Apropos GDPR/DSGVO**
 
-* If you need a plugin for this try [DSGVO/GDPR Snippet for Extensions for Leaflet Map](https://github.com/hupe13/extensions-leaflet-map-dsgvo).
+* If you need a plugin for this try [DSGVO snippet for Leaflet Map and its Extensions](https://wordpress.org/plugins/dsgvo-leaflet-map/).
 * If you use [Complianz | GDPR/CCPA Cookie Consent](https://wordpress.org/plugins/complianz-gdpr/) see [here](https://complianz.io/leaflet-maps/).
 
 ## Installation
@@ -127,9 +129,13 @@ RewriteRule .*\\.gpx$ - [L,T=application/gpx+xml]</code></pre>
 
 ## Changelog
 
-### 4.3.4 / 240828
+### 4.3.5 / 241012
 
-* overviewmap: custom field for popup
+* more WordPress Coding Standards
+* Bugs in Backend: filemgr, parentgroup
+* remove < br/> if using Classic editor
+* new version leaflet-providers
+* Tests on WordPress 6.7 (beta)
 
 ### Previous
 

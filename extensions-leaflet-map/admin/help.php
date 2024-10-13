@@ -410,7 +410,7 @@ function leafext_help_table( $leafext_plugin_name = '' ) {
 		$header .= '<p>' . sprintf(
 			/* translators: %s is a link. */
 			__( 'You may be interested in %1$s.', 'extensions-leaflet-map' ),
-			'<a href="https://github.com/hupe13/leafext-dsgvo">DSGVO/GDPR Snippet for Extensions for Leaflet Map</a>'
+			'<a href="https://wordpress.org/plugins/dsgvo-leaflet-map/">DDSGVO snippet for Leaflet Map and its Extensions</a>'
 		) . '</p>';
 	} elseif ( file_exists( LEAFEXT_DSGVO_PLUGIN_DIR . '/leafext-dsgvo.php' ) ) {
 			$header .= '<p>' . sprintf(
@@ -433,7 +433,7 @@ function leafext_help_table( $leafext_plugin_name = '' ) {
 		if ( $local['Version'] !== $remote['Version'] ) {
 			$header .= '<a href="https://github.com/hupe13/extensions-leaflet-map-dsgvo">' .
 			'<span class="update-message notice inline notice-warning notice-alt">' .
-			esc_html__( 'New version available.' ) .
+			esc_html__( 'New version available.', 'extensions-leaflet-map' ) .
 			'</span>' .
 			'</a>';
 		}
@@ -453,12 +453,6 @@ function leafext_help_table( $leafext_plugin_name = '' ) {
 		'</a>'
 	);
 	$header = $header . '.</p>';
-
-	if ( is_singular() || is_archive() ) {
-		$style = '<style>td,th { border:1px solid #195b7a !important; }</style>';
-	} else {
-		$style = '<style>tr:nth-child(even) { background-color: #fcfcfc; }</style>';
-	}
 
 	$text = '<p><figure class="wp-block-table aligncenter is-style-stripes">
 	<table class="form-table" border="1">';
@@ -524,11 +518,10 @@ function leafext_help_table( $leafext_plugin_name = '' ) {
 		}
 		$pluginstext .= '</ul>';
 
-		return $style . $text . $pluginstext;
+		return '<style>td,th { border:1px solid #195b7a !important; }</style>' . $text . $pluginstext;
 	} else {
 		echo wp_kses_post( $header );
-		//phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-		echo $style;
+		echo '<style>tr:nth-child(even) { background-color: #fcfcfc; }</style>';
 		echo wp_kses_post( $text );
 	}
 }

@@ -3,7 +3,7 @@
  * Plugin Name:       Extensions for Leaflet Map
  * Plugin URI:        https://leafext.de/en/
  * Description:       Extensions for the WordPress plugin Leaflet Map
- * Version:           4.3.4
+ * Version:           4.3.5
  * Requires Plugins:  leaflet-map
  * Requires PHP:      7.4
  * Author:            hupe13
@@ -22,6 +22,13 @@ define( 'LEAFEXT_PLUGIN_DIR', plugin_dir_path( __FILE__ ) ); // /pfad/wp-content
 define( 'LEAFEXT_PLUGIN_URL', WP_PLUGIN_URL . '/' . basename( LEAFEXT_PLUGIN_DIR ) ); // https://url/wp-content/plugins/extensions-leaflet-map-github/ .
 define( 'LEAFEXT_PLUGIN_PICTS', LEAFEXT_PLUGIN_URL . '/pict/' ); // https://url/wp-content/plugins/extensions-leaflet-map-github/pict/ .
 define( 'LEAFEXT_PLUGIN_SETTINGS', dirname( plugin_basename( __FILE__ ) ) ); // extensions-leaflet-map .
+
+if ( ! function_exists( 'get_plugin_data' ) ) {
+	require_once ABSPATH . 'wp-admin/includes/plugin.php';
+}
+// string $plugin_file, bool $markup = true, bool $translate = true
+$plugin_data = get_plugin_data( __FILE__, true, false );
+define( 'LEAFEXT_VERSION', $plugin_data['Version'] );
 
 if ( is_admin() ) {
 	require_once LEAFEXT_PLUGIN_DIR . 'admin.php';
@@ -69,7 +76,7 @@ require_once LEAFEXT_PLUGIN_DIR . '/php/targetmarker.php';
  * Add settings to plugin page.
  */
 function leafext_add_action_links( $actions ) {
-	$actions[] = '<a href="' . esc_url( get_admin_url( null, 'admin.php?page=' . LEAFEXT_PLUGIN_SETTINGS ) ) . '">' . esc_html__( 'Settings' ) . '</a>';
+	$actions[] = '<a href="' . esc_url( get_admin_url( null, 'admin.php?page=' . LEAFEXT_PLUGIN_SETTINGS ) ) . '">' . esc_html__( 'Settings', 'extensions-leaflet-map' ) . '</a>';
 	return $actions;
 }
 add_filter( 'plugin_action_links_' . plugin_basename( __FILE__ ), 'leafext_add_action_links' );
