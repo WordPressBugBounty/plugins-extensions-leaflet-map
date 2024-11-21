@@ -3,7 +3,7 @@
  * Plugin Name:       Extensions for Leaflet Map
  * Plugin URI:        https://leafext.de/en/
  * Description:       Extensions for the WordPress plugin Leaflet Map
- * Version:           4.3.5
+ * Version:           4.4
  * Requires Plugins:  leaflet-map
  * Requires PHP:      7.4
  * Author:            hupe13
@@ -71,6 +71,7 @@ require_once LEAFEXT_PLUGIN_DIR . '/php/managefiles.php';
 
 require_once LEAFEXT_PLUGIN_DIR . '/php/overview-map.php';
 require_once LEAFEXT_PLUGIN_DIR . '/php/targetmarker.php';
+require_once LEAFEXT_PLUGIN_DIR . '/php/listmarker.php';
 
 /**
  * Add settings to plugin page.
@@ -85,7 +86,7 @@ add_filter( 'plugin_action_links_' . plugin_basename( __FILE__ ), 'leafext_add_a
  * For translating a plugin.
  */
 function leafext_extra_textdomain() {
-	if ( file_exists( LEAFEXT_PLUGIN_SETTINGS . '/lang/extensions-leaflet-map-' . get_locale() . '.mo' ) ) {
+	if ( file_exists( LEAFEXT_PLUGIN_DIR . '/lang/extensions-leaflet-map-' . get_locale() . '.mo' ) ) {
 		load_plugin_textdomain( 'extensions-leaflet-map', false, LEAFEXT_PLUGIN_SETTINGS . '/lang/' );
 	}
 }

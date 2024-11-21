@@ -2,8 +2,8 @@
 
 Contributors: hupe13    
 Tags: leaflet, gpx, geojson, hover, marker   
-Tested up to: 6.6  
-Stable tag: 4.3.5     
+Tested up to: 6.7  
+Stable tag: 4.4     
 Requires at least: 5.5.3     
 Requires PHP: 7.4     
 License: GPLv2 or later
@@ -60,6 +60,7 @@ Extends the WordPress Plugin <a href="https://wordpress.org/plugins/leaflet-map/
 * [Leaflet.markercluster](https://github.com/Leaflet/Leaflet.markercluster): Provides Beautiful Animated Marker Clustering functionality.
 * [Leaflet.MarkerCluster.PlacementStrategies](https://github.com/adammertel/Leaflet.MarkerCluster.PlacementStrategies): Styling Markerclusters.
 * [Leaflet.ExtraMarkers](https://github.com/coryasilva/Leaflet.ExtraMarkers): Shameless copy of Awesome-Markers with more shapes and colors.
+* [Leaflet List Markers](https://github.com/hupe13/leaflet-list-markers): A Leaflet Control for listing visible markers in the map.
 * [Leaflet.FeatureGroup.SubGroup](https://github.com/ghybs/Leaflet.FeatureGroup.SubGroup): Grouping of Leaflet elements by options and features.
 * [Leaflet.Control.Layers.Tree](https://github.com/jjimenezshaw/Leaflet.Control.Layers.Tree): A Tree Layers Control for Leaflet.
 * [Leaflet Control Search](https://github.com/stefanocudini/leaflet-search): Search Markers/Features location by option or custom property.
@@ -129,13 +130,11 @@ RewriteRule .*\\.gpx$ - [L,T=application/gpx+xml]</code></pre>
 
 ## Changelog
 
-### 4.3.5 / 241012
+### 4.4 / 241121
 
-* more WordPress Coding Standards
-* Bugs in Backend: filemgr, parentgroup
-* remove < br/> if using Classic editor
-* new version leaflet-providers
-* Tests on WordPress 6.7 (beta)
+* new shortcode: listmarker
+* error handling multielevation
+* WordPress 6.7
 
 ### Previous
 
