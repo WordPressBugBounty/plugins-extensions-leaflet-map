@@ -3,7 +3,7 @@
 Contributors: hupe13    
 Tags: leaflet, gpx, geojson, hover, marker   
 Tested up to: 6.7  
-Stable tag: 4.4     
+Stable tag: 4.4.1     
 Requires at least: 5.5.3     
 Requires PHP: 7.4     
 License: GPLv2 or later
@@ -130,11 +130,14 @@ RewriteRule .*\\.gpx$ - [L,T=application/gpx+xml]</code></pre>
 
 ## Changelog
 
-### 4.4 / 241121
+### 4.4.1 / 241218
 
-* new shortcode: listmarker
-* error handling multielevation
-* WordPress 6.7
+* elevation setting bug
+* overview-map: new option newtab: Open page, post or category links in a new tab
+* listmarker: works with leaflet-extramarker and geojson markers now
+* listmarker: new option highlight: color to highlight the list entry
+* listmarker: new option background: define the background color of the list entry
+* tmcw/togeojson version 6.0.0
 
 ### Previous
 
