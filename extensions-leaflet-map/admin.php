@@ -18,10 +18,6 @@ require LEAFEXT_PLUGIN_DIR . '/admin/hover/main.php';
 require LEAFEXT_PLUGIN_DIR . '/admin/overview-map.php';
 require LEAFEXT_PLUGIN_DIR . '/admin/grouping/main.php';
 
-if ( file_exists( LEAFEXT_PLUGIN_DIR . '/admin/check-update.php' ) ) {
-	require_once LEAFEXT_PLUGIN_DIR . '/admin/check-update.php';
-}
-
 /**
  * Add menu page for admin
  */
@@ -36,7 +32,7 @@ function leafext_add_page() {
 		'leafext_do_page'
 	);
 }
-add_action( 'admin_menu', 'leafext_add_page', 99 );
+add_action( 'admin_menu', 'leafext_add_page', 80 );
 
 /**
  * Draw the menu page itself.
@@ -82,10 +78,6 @@ function leafext_do_page() {
 				submit_button();
 			}
 			echo '</form>';
-		}
-		// Github only
-		if ( function_exists( 'leafext_github_update_admin' ) ) {
-			leafext_github_update_admin();
 		}
 		if ( is_plugin_active( 'leaflet-map/leaflet-map.php' ) ) {
 			leafext_help_table( LEAFEXT_PLUGIN_SETTINGS );
@@ -206,17 +198,15 @@ function leafext_admin_tabs() {
 	echo '</h3>';
 }
 
-function leafext_admin_style() {
-	//phpcs:ignore WordPress.Security.NonceVerification.Recommended -- no form
-	$get  = map_deep( wp_unslash( $_GET ), 'sanitize_text_field' );
-	$page = isset( $get['page'] ) ? $get['page'] : '';
-	if ( $page === LEAFEXT_PLUGIN_SETTINGS ) {
-		wp_enqueue_style(
-			'leafext_admin_css',
-			plugins_url( 'css/leafext-admin' . LEAFEXT_MINI . '.css', LEAFEXT_PLUGIN_FILE ),
-			array(),
-			LEAFEXT_VERSION,
-		);
+function leafext_admin_style( $hook ) {
+	if ( strpos( $hook, LEAFEXT_PLUGIN_SETTINGS ) === false ) {
+		return;
 	}
+	wp_enqueue_style(
+		'leafext_admin_css',
+		plugins_url( 'css/leafext-admin' . LEAFEXT_MINI . '.css', LEAFEXT_PLUGIN_FILE ),
+		array(),
+		LEAFEXT_VERSION
+	);
 }
 add_action( 'admin_enqueue_scripts', 'leafext_admin_style' );

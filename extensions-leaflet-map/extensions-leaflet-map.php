@@ -1,11 +1,11 @@
 <?php
 /**
  * Plugin Name:       Extensions for Leaflet Map
+ * Description:       Extends the WordPress Plugin <a href="https://wordpress.org/plugins/leaflet-map/">Leaflet Map</a> with Leaflet Plugins and other functions.
  * Plugin URI:        https://leafext.de/en/
- * Description:       Extensions for the WordPress plugin Leaflet Map
- * Version:           4.4.3
- * Requires Plugins:  leaflet-map
+ * Version:           4.4.4
  * Requires PHP:      7.4
+ * Requires Plugins:  leaflet-map
  * Author:            hupe13
  * Author URI:        https://leafext.de/en/
  * License:           GPL v2 or later
@@ -29,6 +29,25 @@ if ( ! function_exists( 'get_plugin_data' ) ) {
 // string $plugin_file, bool $markup = true, bool $translate = true
 $plugin_data = get_plugin_data( __FILE__, true, false );
 define( 'LEAFEXT_VERSION', $plugin_data['Version'] );
+
+if ( ! function_exists( 'leafext_plugin_active' ) ) {
+	function leafext_plugin_active( $slug ) {
+		$plugins = glob( WP_PLUGIN_DIR . '/*/' . $slug . '.php' );
+		foreach ( $plugins as $plugin ) {
+			if ( is_plugin_active( plugin_basename( $plugin ) ) ) {
+				$dir = dirname( plugin_basename( $plugin ) );
+				if ( $dir === 'leafext-update-github' ) {
+					return true;
+				}
+				if ( $dir !== $slug ) {
+					return 'github';
+				}
+				return true;
+			}
+		}
+		return false;
+	}
+}
 
 if ( is_admin() ) {
 	require_once LEAFEXT_PLUGIN_DIR . 'admin.php';
@@ -83,7 +102,7 @@ function leafext_add_action_links( $actions ) {
 add_filter( 'plugin_action_links_' . plugin_basename( __FILE__ ), 'leafext_add_action_links' );
 
 /**
- * For translating a plugin.
+ * For translating elevation.
  */
 function leafext_extra_textdomain() {
 	if ( file_exists( LEAFEXT_PLUGIN_DIR . '/lang/extensions-leaflet-map-' . get_locale() . '.mo' ) ) {
@@ -92,28 +111,41 @@ function leafext_extra_textdomain() {
 }
 add_action( 'plugins_loaded', 'leafext_extra_textdomain' );
 
-// WP < 6.5 
-global $wp_version;
-if ( $wp_version < '6.5' ) {
-	function leafext_plugin_init() {
-		if ( is_admin() ) {
-			if ( ! defined( 'LEAFLET_MAP__PLUGIN_DIR' ) ) {
-				if ( ( is_multisite() && ! is_main_site() ) || ! is_multisite() ) {
-					function leafext_require_leaflet_map_plugin() {
-						echo '<div class="notice notice-error" ><p> ';
-						printf(
-							/* translators: %s are plugin names. */
-							esc_html__( 'Please install and activate %1$s before using %2$s.', 'extensions-leaflet-map' ),
-							'<a href="https://wordpress.org/plugins/leaflet-map/">Leaflet Map</a>',
-							'Extensions for Leaflet Map'
-						);
-						echo '</p></div>';
-					}
-					add_action( 'admin_notices', 'leafext_require_leaflet_map_plugin' );
-					// register_activation_hook( __FILE__, 'leafext_require_leaflet_map_plugin' ); //?
-				}
+// WP < 6.5, ClassicPress
+function leafext_leaflet_require() {
+	if ( ! is_plugin_active( 'leaflet-map/leaflet-map.php' ) ) {
+		deactivate_plugins( plugin_basename( __FILE__ ) );
+		$message = '<div><p>' . sprintf(
+			/* translators: %s are plugin names. */
+			esc_html__( 'Please install and activate %1$s before using %2$s.', 'extensions-leaflet-map' ),
+			'<a href="https://wordpress.org/plugins/leaflet-map/">Leaflet Map</a>',
+			'Extensions for Leaflet Map'
+		) . '</p><p><a href="' . esc_html( network_admin_url( 'plugins.php' ) ) . '">' .
+			__( 'Manage plugins', 'extensions-leaflet-map' ) . '</a>.</p></div>';
+		$error = new WP_Error(
+			'error',
+			$message,
+			array(
+				'title'    => __( 'Plugin Error', 'extensions-leaflet-map' ),
+				'response' => '406',
+			)
+		);
+		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- it is an WP Error
+		wp_die( $error, '', wp_kses_post( $error->get_error_data() ) );
+	}
+}
+register_activation_hook( __FILE__, 'leafext_leaflet_require' );
+
+// Disable activation the other of WP / Github Version
+if ( ! function_exists( 'leafext_disable_extensions_activation' ) ) {
+	function leafext_disable_extensions_activation( $actions, $plugin_file ) {
+		if ( array_key_exists( 'activate', $actions ) ) {
+			if ( basename( $plugin_file ) === basename( __FILE__ ) ) {
+				$actions['activate'] = wp_strip_all_tags( $actions['activate'] );
 			}
 		}
+		return $actions;
 	}
-	add_action( 'plugins_loaded', 'leafext_plugin_init' );
 }
+add_filter( 'plugin_action_links', 'leafext_disable_extensions_activation', 10, 4 );
+
