@@ -2,8 +2,8 @@
 
 Contributors: hupe13    
 Tags: leaflet, gpx, geojson, hover, marker   
-Tested up to: 6.7  
-Stable tag: 4.4.4     
+Tested up to: 6.8  
+Stable tag: 4.4.5     
 Requires at least: 5.5.3     
 Requires PHP: 7.4     
 License: GPLv2 or later
@@ -130,12 +130,11 @@ RewriteRule .*\\.gpx$ - [L,T=application/gpx+xml]</code></pre>
 
 ## Changelog
 
-### 4.4.4 / 250316
+### 4.4.5 / 250407
 
-* new version L.Control.Layers.Tree.js, leaflet-providers.js, Control.FullScreen, togeojson.umd.js
-* fontawesome-free-6.7.2
-* Plugin Check issues
-* targetmarker: different zoom, documentation
+* layerswitch - bug if min_zoom > 0 fixed
+* new translation: dutch nl_NL
+* WordPress 6.8
 
 ### Previous
 

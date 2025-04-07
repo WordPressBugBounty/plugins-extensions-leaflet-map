@@ -86,6 +86,8 @@ function leafext_layerswitch_begin_script() {
 		//console.log(String(attributions));
 		var defaultAttr = String(attributions);
 		map.attributionControl._attributions = {};
+		map.options._orig_maxZoom = map.options.maxZoom;
+		map.options._orig_minZoom = map.options.minZoom;
 		var baselayers = {};
 		var overlays = {};
 		var opacity = {};
@@ -109,15 +111,24 @@ function leafext_layerswitch_begin_script() {
 			if (!map.hasLayer(layer)) {
 				return;
 			}
-			if (layer.options.minZoom > 1 && map.getZoom() > layer.options.minZoom) {
-				map.setZoom(layer.options.minZoom);
-			}
 			// console.log("map min zoom "+map.options.minZoom);
 			// console.log("map max zoom "+map.options.maxZoom);
 			// console.log("layer min zoom "+layer.options.minZoom);
 			// console.log("layer max zoom "+layer.options.maxZoom);
-			map.options.minZoom=layer.options.minZoom;
-			map.options.maxZoom=layer.options.maxZoom;
+			map.options.minZoom = map.options._orig_minZoom;
+			if ( map.options.minZoom < layer.options.minZoom ) {
+				map.options.minZoom = layer.options.minZoom;
+			}
+			if ( map.getZoom() < layer.options.minZoom ) {
+				map.setZoom(layer.options.minZoom);
+			}
+			map.options.maxZoom = map.options._orig_maxZoom;
+			if ( map.options.maxZoom > layer.options.maxZoom ) {
+				map.options.maxZoom = layer.options.maxZoom;
+			}
+			if ( map.getZoom() > layer.options.maxZoom ) {
+				map.setZoom(layer.options.maxZoom);
+			}
 		});
 	<?php
 	$javascript = ob_get_clean();
@@ -154,7 +165,7 @@ function leafext_layerswitch_tiles_script( $tiles ) {
 }
 
 function leafext_providers_fkt_script() {
-	// https://github.com/leaflet-extras/leaflet-providers/blob/b7be4769ccb5cd66cf7c5bd2f6e1042ba7a10b5c/preview/preview.js#L60-L70
+	// https://github.com/leaflet-extras/leaflet-providers/blob/65df099ba50665242c954cf2be411d6babd96a75/preview/preview.js#L56C2-L74C4
 	$text = '<!--';
 	ob_start();
 	?>
@@ -166,7 +177,8 @@ function leafext_providers_fkt_script() {
 		var overlayPatterns = [
 			'^(OpenWeatherMap|OpenSeaMap|OpenSnowMap)',
 			'OpenMapSurfer.(Hybrid|AdminBounds|ContourLines|Hillshade|ElementsAtRisk)',
-			'Stamen.Toner(Hybrid|Lines|Labels)',
+			'Stadia.StamenToner(Lines|Labels)',
+			'Stadia.StamenTerrain(Lines|Labels)',
 			'^JusticeMap',
 			'OpenAIP',
 			'OpenRailwayMap',
