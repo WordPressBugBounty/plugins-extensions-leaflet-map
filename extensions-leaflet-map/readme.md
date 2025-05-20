@@ -3,8 +3,8 @@
 Contributors: hupe13    
 Tags: leaflet, gpx, geojson, hover, marker   
 Tested up to: 6.8  
-Stable tag: 4.4.5     
-Requires at least: 5.5.3     
+Stable tag: 4.5     
+Requires at least: 6.0     
 Requires PHP: 7.4     
 License: GPLv2 or later
 
@@ -130,11 +130,10 @@ RewriteRule .*\\.gpx$ - [L,T=application/gpx+xml]</code></pre>
 
 ## Changelog
 
-### 4.4.5 / 250407
+### 4.5 / 250520
 
-* layerswitch - bug if min_zoom > 0 fixed
-* new translation: dutch nl_NL
-* WordPress 6.8
+* Bug zoomhomemap with elevation fixed
+* elevation: heart rate profile
 
 ### Previous
 

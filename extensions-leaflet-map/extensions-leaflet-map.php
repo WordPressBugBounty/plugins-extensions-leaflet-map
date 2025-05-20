@@ -3,13 +3,12 @@
  * Plugin Name:       Extensions for Leaflet Map
  * Description:       Extends the WordPress Plugin <a href="https://wordpress.org/plugins/leaflet-map/">Leaflet Map</a> with Leaflet Plugins and other functions.
  * Plugin URI:        https://leafext.de/en/
- * Version:           4.4.5
+ * Version:           4.5
  * Requires PHP:      7.4
  * Requires Plugins:  leaflet-map
  * Author:            hupe13
  * Author URI:        https://leafext.de/en/
  * License:           GPL v2 or later
- * Text Domain:       extensions-leaflet-map
  *
  * @package Extensions for Leaflet Map
  **/
@@ -32,18 +31,10 @@ define( 'LEAFEXT_VERSION', $plugin_data['Version'] );
 
 if ( ! function_exists( 'leafext_plugin_active' ) ) {
 	function leafext_plugin_active( $slug ) {
-		$plugins = glob( WP_PLUGIN_DIR . '/*/' . $slug . '.php' );
-		foreach ( $plugins as $plugin ) {
-			if ( is_plugin_active( plugin_basename( $plugin ) ) ) {
-				$dir = dirname( plugin_basename( $plugin ) );
-				if ( $dir === 'leafext-update-github' ) {
+		$plugins   = get_option( 'active_plugins' );
+		$is_active = preg_grep( '/^.*\/' . $slug . '\.php$/', $plugins );
+		if ( count( $is_active ) === 1 ) {
 					return true;
-				}
-				if ( $dir !== $slug ) {
-					return 'github';
-				}
-				return true;
-			}
 		}
 		return false;
 	}
@@ -113,7 +104,7 @@ add_action( 'plugins_loaded', 'leafext_extra_textdomain' );
 
 // WP < 6.5, ClassicPress
 function leafext_leaflet_require() {
-	if ( ! is_plugin_active( 'leaflet-map/leaflet-map.php' ) ) {
+	if ( ! leafext_plugin_active( 'leaflet-map' ) ) {
 		deactivate_plugins( plugin_basename( __FILE__ ) );
 		$message = '<div><p>' . sprintf(
 			/* translators: %s are plugin names. */
@@ -122,14 +113,7 @@ function leafext_leaflet_require() {
 			'Extensions for Leaflet Map'
 		) . '</p><p><a href="' . esc_html( network_admin_url( 'plugins.php' ) ) . '">' .
 			__( 'Manage plugins', 'extensions-leaflet-map' ) . '</a>.</p></div>';
-		$error = new WP_Error(
-			'error',
-			$message,
-			array(
-				'title'    => __( 'Plugin Error', 'extensions-leaflet-map' ),
-				'response' => '406',
-			)
-		);
+		$error = new WP_Error( 'error', $message );
 		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- it is an WP Error
 		wp_die( $error, '', wp_kses_post( $error->get_error_data() ) );
 	}

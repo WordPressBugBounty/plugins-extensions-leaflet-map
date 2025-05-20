@@ -61,16 +61,6 @@ function leafext_enqueue_elevation() {
 		LEAFEXT_VERSION,
 		true
 	);
-	wp_enqueue_script(
-		'tmcw_geojson',
-		plugins_url(
-			'leaflet-plugins/tmcw/togeojson.umd.js',
-			LEAFEXT_PLUGIN_FILE
-		),
-		array( 'elevation_js' ),
-		LEAFEXT_VERSION,
-		true
-	);
 	wp_enqueue_style(
 		'elevation_css',
 		plugins_url(
@@ -84,6 +74,20 @@ function leafext_enqueue_elevation() {
 	if ( file_exists( LEAFEXT_PLUGIN_DIR . '/lang/extensions-leaflet-map-' . get_locale() . '-elevation_js.json' ) ) {
 		wp_set_script_translations( 'elevation_js', 'extensions-leaflet-map', LEAFEXT_PLUGIN_DIR . '/lang/' );
 	}
+}
+
+function leafext_enqueue_tmcw_togeojson() {
+	wp_enqueue_script(
+		'togeojson',
+		plugins_url(
+			// https://unpkg.com/@tmcw/togeojson@latest/dist/togeojson.umd.js
+			'leaflet-plugins/tmcw/togeojson.umd.js',
+			LEAFEXT_PLUGIN_FILE
+		),
+		array( 'elevation_js' ),
+		LEAFEXT_VERSION,
+		true
+	);
 }
 
 function leafext_enqueue_rotate() {
