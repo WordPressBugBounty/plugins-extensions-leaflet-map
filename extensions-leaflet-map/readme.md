@@ -3,7 +3,7 @@
 Contributors: hupe13    
 Tags: leaflet, gpx, geojson, hover, marker   
 Tested up to: 6.8  
-Stable tag: 4.5.1     
+Stable tag: 4.6    
 Requires at least: 6.0     
 Requires PHP: 7.4     
 License: GPLv2 or later
@@ -130,9 +130,12 @@ RewriteRule .*\\.gpx$ - [L,T=application/gpx+xml]</code></pre>
 
 ## Changelog
 
-### 4.5.1 / 2506xx
+### 4.6 / 250816
 
-* new togeojson.js library fixes heart rate profile of track segments (elevation).
+* zoomhomemap has some options now
+* fixed: leafext_plugin_active did not work with network activated plugins
+* new Jshrink
+* new leaflet.fullscreen
 
 ### Previous
 
