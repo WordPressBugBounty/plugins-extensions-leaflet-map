@@ -3,8 +3,8 @@
  * Plugin Name:       Extensions for Leaflet Map
  * Description:       Extends the WordPress Plugin <a href="https://wordpress.org/plugins/leaflet-map/">Leaflet Map</a> with Leaflet Plugins and other functions.
  * Plugin URI:        https://leafext.de/en/
- * Version:           4.6
- * Requires PHP:      7.4
+ * Version:           4.11
+ * Requires PHP:      8.1
  * Requires Plugins:  leaflet-map
  * Author:            hupe13
  * Author URI:        https://leafext.de/en/
@@ -26,8 +26,8 @@ if ( ! function_exists( 'get_plugin_data' ) ) {
 	require_once ABSPATH . 'wp-admin/includes/plugin.php';
 }
 // string $plugin_file, bool $markup = true, bool $translate = true
-$plugin_data = get_plugin_data( __FILE__, true, false );
-define( 'LEAFEXT_VERSION', $plugin_data['Version'] );
+$leafext_plugin_data = get_plugin_data( __FILE__, true, false );
+define( 'LEAFEXT_VERSION', $leafext_plugin_data['Version'] );
 
 if ( ! function_exists( 'leafext_plugin_active' ) ) {
 	function leafext_plugin_active( $slug ) {
@@ -87,6 +87,7 @@ require_once LEAFEXT_PLUGIN_DIR . '/php/leaflet-directory.php';
 require_once LEAFEXT_PLUGIN_DIR . '/php/managefiles.php';
 
 require_once LEAFEXT_PLUGIN_DIR . '/php/overview-map.php';
+require_once LEAFEXT_PLUGIN_DIR . '/php/featured-map.php';
 require_once LEAFEXT_PLUGIN_DIR . '/php/targetmarker.php';
 require_once LEAFEXT_PLUGIN_DIR . '/php/listmarker.php';
 
@@ -102,12 +103,15 @@ add_filter( 'plugin_action_links_' . plugin_basename( __FILE__ ), 'leafext_add_a
 /**
  * For translating elevation.
  */
-function leafext_extra_textdomain() {
-	if ( file_exists( LEAFEXT_PLUGIN_DIR . '/lang/extensions-leaflet-map-' . get_locale() . '.mo' ) ) {
-		load_plugin_textdomain( 'extensions-leaflet-map', false, LEAFEXT_PLUGIN_SETTINGS . '/lang/' );
+function leafext_extra_textdomain( $mofile, $domain ) {
+	if ( 'extensions-leaflet-map' === $domain ) {
+		if ( file_exists( LEAFEXT_PLUGIN_DIR . '/lang/extensions-leaflet-map-' . get_locale() . '.mo' ) ) {
+			$mofile = LEAFEXT_PLUGIN_DIR . '/lang/extensions-leaflet-map-' . get_locale() . '.mo';
+		}
 	}
+	return $mofile;
 }
-add_action( 'plugins_loaded', 'leafext_extra_textdomain' );
+add_filter( 'load_textdomain_mofile', 'leafext_extra_textdomain', 10, 2 );
 
 // WP < 6.5, ClassicPress
 if ( function_exists( 'classicpress_version' ) ||
@@ -115,7 +119,7 @@ if ( function_exists( 'classicpress_version' ) ||
 	function leafext_leaflet_require() {
 		if ( ! leafext_plugin_active( 'leaflet-map' ) ) {
 			deactivate_plugins( plugin_basename( __FILE__ ) );
-			$message = '<div><p>' . sprintf(
+			$message = '<div><p>' . wp_sprintf(
 			/* translators: %s are plugin names. */
 				esc_html__( 'Please install and activate %1$s before using %2$s.', 'extensions-leaflet-map' ),
 				'<a href="https://wordpress.org/plugins/leaflet-map/">Leaflet Map</a>',

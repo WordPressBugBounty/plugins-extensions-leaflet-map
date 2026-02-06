@@ -114,8 +114,8 @@ function leafext_elevation_prep_js() {
 }
 
 function leafext_elevation_locale_js() {
-	const { __, _x, _n, sprintf } = wp.i18n;
-	var mylocale                  = {
+	const { __, _x, _n, wp_sprintf } = wp.i18n;
+	var mylocale                     = {
 		"Acceleration"		: _x( "Acceleration", "In Frontend", "extensions-leaflet-map" ),
 		"Altitude"		: _x( "Altitude", "In Frontend", "extensions-leaflet-map" ),
 		"Slope"			: _x( "Slope", "In Frontend", "extensions-leaflet-map" ),

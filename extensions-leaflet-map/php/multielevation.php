@@ -12,10 +12,10 @@ add_filter(
 	'pre_do_shortcode_tag',
 	function ( $output, $shortcode ) {
 		if ( 'leaflet-map' === $shortcode ) {
-			global $all_files;
-			$all_files = array();
-			global $all_points;
-			$all_points = array();
+			global $leafext_all_files;
+			$leafext_all_files = array();
+			global $leafext_all_points;
+			$leafext_all_points = array();
 		}
 		return $output;
 	},
@@ -35,9 +35,21 @@ function leafext_multielevation_params( $typ = array( 'changeable' ) ) {
 			'typ'       => array( 'changeable', 'point', 'multielevation', 'tracks' ),
 		),
 		array(
+			'param'     => 'sort',
+			'shortdesc' => __( 'Sorting', 'extensions-leaflet-map' ),
+			'desc'      => wp_sprintf(
+				/* translators: %s is an option. */
+				__( 'Valid for %s: Sort tracks in legend by name or by date.', 'extensions-leaflet-map' ),
+				'<code>[multielevation]</code>'
+			),
+			'default'   => 'false',
+			'values'    => array( 'false', 'name', 'date' ),
+			'typ'       => array( 'changeable', 'multielevation' ),
+		),
+		array(
 			'param'     => 'summary',
 			'shortdesc' => __( 'Summary', 'extensions-leaflet-map' ),
-			'desc'      => sprintf(
+			'desc'      => wp_sprintf(
 				/* translators: %s is an option. */
 				__( 'Valid for %s: Only elevation profile with or without summary line will be displayed.', 'extensions-leaflet-map' ),
 				'<code>[elevation-<span style="color: #d63638">tracks</span>]</code>'
@@ -187,11 +199,11 @@ function leafext_elevation_track( $atts, $content, $shortcode ) {
 				$text = $text . "$key=$item ";
 			}
 			$text = $text . ']';
-			return $text;
+			return esc_attr( $text );
 		}
 
-		global $all_files;
-		global $all_points;
+		global $leafext_all_files;
+		global $leafext_all_points;
 
 		$defaults = array(
 			'lat'  => '',
@@ -274,8 +286,8 @@ function leafext_elevation_track( $atts, $content, $shortcode ) {
 			'name'   => $params['name'],
 		);
 
-		$all_points[] = $point;
-		$all_files[]  = $atts['file'];
+		$leafext_all_points[] = $point;
+		$leafext_all_files[]  = $atts['file'];
 	}
 }
 add_shortcode( 'elevation-track', 'leafext_elevation_track' );
@@ -320,8 +332,8 @@ function leafext_multielevation( $atts, $content, $shortcode ) {
 		leafext_enqueue_multielevation();
 		leafext_enqueue_zoomhome();
 
-		global $all_files;
-		global $all_points;
+		global $leafext_all_files;
+		global $leafext_all_points;
 
 		$ele_options = array(
 			'detachedView' => true,
@@ -353,6 +365,7 @@ function leafext_multielevation( $atts, $content, $shortcode ) {
 			}
 			$multioptions['distanceMarkers']         = false;
 			$multioptions['distanceMarkers_options'] = 'false';
+			$multioptions['sort']                    = false;
 		}
 
 		if ( $shortcode === 'multielevation' ) {
@@ -409,22 +422,22 @@ function leafext_multielevation( $atts, $content, $shortcode ) {
 
 		list($options, $style) = leafext_elevation_color( $options );
 
-		// var_dump($all_files, $all_points, $options, $multioptions); wp_die();
+		// var_dump($leafext_all_files, $leafext_all_points, $options, $multioptions); wp_die();
 		// var_dump($options,$multioptions);
 		$rand = wp_rand( 1, 20 );
-		$text = $style . leafext_multielevation_script( $all_files, $all_points, $options, $multioptions, $rand );
+		$text = $style . leafext_multielevation_script( $leafext_all_files, $leafext_all_points, $options, $multioptions, $rand );
 
-		$text       = $text . '<p class="chart-placeholder chart-placeholder-' . $rand . '">';
-		$text       = $text . __( 'move mouse over a track or select one in control panel ...', 'extensions-leaflet-map' ) . '</p>';
-		$all_files  = array();
-		$all_points = array();
+		$text               = $text . '<p class="chart-placeholder chart-placeholder-' . $rand . '">';
+		$text               = $text . __( 'move mouse over a track or select one in control panel ...', 'extensions-leaflet-map' ) . '</p>';
+		$leafext_all_files  = array();
+		$leafext_all_points = array();
 		return $text;
 	}
 }
 add_shortcode( 'elevation-tracks', 'leafext_multielevation' );
 add_shortcode( 'multielevation', 'leafext_multielevation' );
 
-function leafext_multielevation_script( $all_files, $all_points, $settings, $multioptions, $rand ) {
+function leafext_multielevation_script( $leafext_all_files, $leafext_all_points, $settings, $multioptions, $rand ) {
 	// var_dump($settings,$multioptions); wp_die();
 	list($elevation_settings, $settings) = leafext_ele_java_params( $settings );
 	$text                                = '<script><!--';
@@ -433,8 +446,8 @@ function leafext_multielevation_script( $all_files, $all_points, $settings, $mul
 	window.WPLeafletMapPlugin = window.WPLeafletMapPlugin || [];
 	window.WPLeafletMapPlugin.push(function () {
 		var map = window.WPLeafletMapPlugin.getCurrentMap();
-		var points = <?php echo wp_json_encode( $all_points ); ?>;
-		var tracks = <?php echo wp_json_encode( $all_files ); ?>;
+		var points = <?php echo wp_json_encode( $leafext_all_points ); ?>;
+		var tracks = <?php echo wp_json_encode( $leafext_all_files ); ?>;
 		//console.log(points);
 		//console.log(tracks);
 
@@ -497,13 +510,24 @@ function leafext_multielevation_script( $all_files, $all_points, $settings, $mul
 			legend_options: {
 				position: "topright",
 				collapsed: true,
+				<?php
+				// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- destroys javascript
+				if ( $multioptions['sort'] !== false ) {
+					echo 'sortLayers: true,';
+					if ( $multioptions['sort'] === 'name' ) {
+						echo 'sortFunction: (a, b) => a.options.name.toLocaleLowerCase() < b.options.name.toLocaleLowerCase() ? -1 : 1,';
+					} elseif ( $multioptions['sort'] === 'date' ) {
+						echo 'sortFunction: (a, b) => a.getLayers()[0].feature.properties.time < b.getLayers()[0].feature.properties.time ? -1 : 1,';
+					}
+				}
+				?>
 			},
 			<?php
 			// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- destroys javascript
 			echo leafext_java_params( $multioptions );
 			?>
 		});
-		//console.log(routes);
+		// console.log(routes);
 		routes.addTo(map);
 
 		L.Control.Elevation.prototype.__btnIcon = "<?php echo esc_url( LEAFEXT_ELEVATION_URL ); ?>/images/elevation.svg";

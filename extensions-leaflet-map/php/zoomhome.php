@@ -13,7 +13,7 @@ function leafext_zoomhome_params() {
 	$params = array(
 		array(
 			'param'   => 'zoomInTitle',
-			'desc'    => sprintf(
+			'desc'    => wp_sprintf(
 				/* translators: %s is "zoom in". */
 				__( 'Tooltip text of the %s button', 'extensions-leaflet-map' ),
 				"'zoom in'"
@@ -22,7 +22,7 @@ function leafext_zoomhome_params() {
 		),
 		array(
 			'param'   => 'zoomOutTitle',
-			'desc'    => sprintf(
+			'desc'    => wp_sprintf(
 				/* translators: %s is "zoom out". */
 				__( 'Tooltip text of the %s button', 'extensions-leaflet-map' ),
 				"'zoom out'"
@@ -108,7 +108,7 @@ function leafext_zoomhome_function( $atts, $content, $shortcode ) {
 	} else {
 		leafext_enqueue_zoomhome();
 		leafext_enqueue_leafext( 'zoomhome', 'zoomhome' );
-		$params = leafext_zoomhome_options( $atts );
+		$params        = leafext_zoomhome_options( $atts );
 		$params['fit'] = (bool) $params['fit'];
 		return leafext_zoomhome_script( $params );
 	}

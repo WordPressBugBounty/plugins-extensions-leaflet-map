@@ -45,7 +45,7 @@ function leafext_help_entries() {
 			'plugins'   => '',
 			'doku'      => '/doku/sgpxelevation/',
 			'kategorie' => '',
-			'examples'  => '/extra/category/sgpx/',
+			'examples'  => '/extra/categories/sgpx/',
 		),
 	);
 
@@ -116,13 +116,23 @@ function leafext_help_entries() {
 	$table[ __( 'More Functions for Markers', 'extensions-leaflet-map' ) ] = array(
 		'menu' => __( 'More for Markers', 'extensions-leaflet-map' ),
 		array(
+			'function'  => __( 'Featured Map', 'extensions-leaflet-map' ),
+			'shortcode' => 'featured-map',
+			'tab'       => 'featuredmap',
+			'plugins'   => '',
+			'doku'      => '/doku/featuredmap/',
+			'kategorie' => '',
+			'examples'  => '/extra/categories/featuredmap/',
+			'strpos'    => 'marker',
+		),
+		array(
 			'function'  => __( 'Overview Map', 'extensions-leaflet-map' ),
 			'shortcode' => 'overviewmap',
 			'tab'       => 'overviewmap',
 			'plugins'   => '',
 			'doku'      => '/doku/overviewmap/',
 			'kategorie' => '',
-			'examples'  => '/extra/category/overviewmap/',
+			'examples'  => '/extra/categories/overviewmap/',
 			'strpos'    => 'marker',
 		),
 		array(
@@ -386,7 +396,7 @@ function leafext_plugins() {
 	$plugins[] = array(
 		'name'      => 'leaflet.zoomhome',
 		/* translators: %s is an href. */
-		'desc'      => sprintf( __( 'Provides a zoom control with a %1$sHome%2$s button to reset the view.', 'extensions-leaflet-map' ), '&quot;', '&quot;' ),
+		'desc'      => wp_sprintf( __( 'Provides a zoom control with a %1$sHome%2$s button to reset the view.', 'extensions-leaflet-map' ), '&quot;', '&quot;' ),
 		'link'      => 'https://github.com/torfsen/leaflet.zoomhome',
 		'shortcode' => 'zoomhomemap',
 	);
@@ -423,7 +433,7 @@ function leafext_help_table( $leafext_plugin_name = '' ) {
 
 	// LEAFEXT_DSGVO_PLUGIN_DIR is known since initial release, and URL, others not
 	if ( ! leafext_plugin_active( 'dsgvo-leaflet-map' ) ) {
-		$header .= '<p>' . sprintf(
+		$header .= '<p>' . wp_sprintf(
 			/* translators: %s is a link. */
 			__( 'You may be interested in %1$sDSGVO snippet for Leaflet Map and its Extensions%2$s.', 'extensions-leaflet-map' ),
 			'<a href="https://wordpress.org/plugins/dsgvo-leaflet-map/">',
@@ -433,7 +443,7 @@ function leafext_help_table( $leafext_plugin_name = '' ) {
 	$header .= '</p>';
 
 	$header = $header .
-	sprintf(
+	wp_sprintf(
 		/* translators: %s are hrefs. */
 		__(
 			'Detailed documentation and examples in %1$sGerman%2$s and %3$sEnglish%4$s',
