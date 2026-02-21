@@ -73,14 +73,14 @@ function leafext_multielevation_params( $typ = array( 'changeable' ) ) {
 		),
 
 		// flyToBounds: true,
-		// array(
-		// 'param' => 'flyToBounds',
-		// 'shortdesc' => __('flyToBounds',"extensions-leaflet-map"),
-		// 'desc' =>   '',
-		// 'default' => true,
-		// 'values' => 1,
-		// 'typ' => array('changeable','multielevation'),
-		// ),
+		array(
+			'param'     => 'flyToBounds',
+			'shortdesc' => __( 'fit map to all tracks', 'extensions-leaflet-map' ),
+			'desc'      => '',
+			'default'   => true,
+			'values'    => 1,
+			'typ'       => array( 'changeable', 'multielevation' ),
+		),
 
 		// distanceMarkers: true,
 		// distanceMarkers_options: {
@@ -538,25 +538,29 @@ function leafext_multielevation_script( $leafext_all_files, $leafext_all_points,
 			}
 		});
 
+		if(typeof map.zoomControl !== "undefined") {
+			map.zoomControl._zoomOutButton.remove();
+			map.zoomControl._zoomInButton.remove();
+		}
+
 		var bounds = [];
 		bounds = new L.latLngBounds();
 		var zoomHome = [];
 		zoomHome = L.Control.zoomHome();
-		var zoomhomemap=false;
-		map.on("zoomend", function(e) {
-			//console.log("zoomend");
-			//console.log( zoomhomemap );
-			if ( ! zoomhomemap ) {
-				//console.log(map.getBounds());
-				zoomhomemap=true;
-				if(typeof map.zoomControl !== "undefined") {
-				map.zoomControl._zoomOutButton.remove();
-				map.zoomControl._zoomInButton.remove();
+		zoomHome.addTo(map);
+		zoomHome.setHomeBounds(map.getBounds());
+		if (routes.options.flyToBounds ) {
+			var zoomhomemap=false;
+			map.on("zoomend", function(e) {
+				//console.log("zoomend");
+				//console.log( zoomhomemap );
+				if ( ! zoomhomemap ) {
+					//console.log(map.getBounds());
+					zoomhomemap=true;
+					zoomHome.setHomeBounds(map.getBounds());
 				}
-				zoomHome.addTo(map);
-				zoomHome.setHomeBounds(map.getBounds());
-			}
-		});
+			});
+		}
 	});
 	<?php
 	$javascript = ob_get_clean();

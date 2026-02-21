@@ -3,8 +3,8 @@
 Contributors: hupe13    
 Tags: leaflet, gpx, geojson, hover, marker   
 Tested up to: 6.9  
-Stable tag: 4.11    
-Requires at least: 6.3     
+Stable tag: 4.12    
+Requires at least: 6.2     
 Requires PHP: 8.1     
 License: GPLv2 or later
 
@@ -132,11 +132,12 @@ RewriteRule .*\\.gpx$ - [L,T=application/gpx+xml]</code></pre>
 
 ## Changelog
 
-### 4.11 / 260202
+### 4.12 / 260221
 
-* new shortcode - featured-map: Generates a map from geo information in pages and posts.
-* fixed small things in overviewmap
-* new Version Fullscreen
+* new option in Search Control: collapsed
+* new option multielevation: flyToBounds - fit map to all tracks
+* new function cluster: if showCoverageOnHover, zoomToBoundsOnClick, spiderfyOnMaxZoom are false, spiderfy on each click on cluster
+* filter render_block for core/shortcode is no longer needed
 
 ### Previous
 
