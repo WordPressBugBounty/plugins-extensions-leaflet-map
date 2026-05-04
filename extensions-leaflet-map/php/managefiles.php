@@ -8,11 +8,23 @@
 // Direktzugriff auf diese Datei verhindern.
 defined( 'ABSPATH' ) || die();
 
+function leafext_display_attachment_page( $file ) {
+	if ( is_singular() ) {
+		$type = pathinfo( $file, PATHINFO_EXTENSION );
+		$type = ( $type === 'json' ) ? 'geojson' : $type;
+		if ( in_array( $type, array( 'kml', 'gpx', 'geojson' ), true ) ) {
+			// var_dump($type);
+			return '[leaflet-map fitbounds !scrollwheel !dragging][leaflet-' . $type . ' src="' . $file . '"]';
+		}
+		return '';
+	}
+}
+
 // Display content from Media Library in Permalink (Attachmentseite)
 function leafext_media_library_content( $content ) {
 	global $post;
-	if ( is_attachment() && 'application/gpx+xml' == get_post_mime_type( $post->ID ) ) {
-		$content  = '[leaflet-map fitbounds !scrollwheel !dragging][leaflet-gpx src="' . $post->guid . '"]';
+	if ( is_attachment() && 'application/gpx+xml' === get_post_mime_type( $post->ID ) ) {
+		$content  = leafext_display_attachment_page( $post->guid );
 		$gpx_data = leafext_get_gpx_data( $post->guid );
 		$fields   = array();
 		$fields[] = array(
@@ -31,8 +43,8 @@ function leafext_media_library_content( $content ) {
 		}
 		$content = $content . leafext_html_table( $fields );
 	}
-	if ( is_attachment() && 'application/vnd.google-earth.kml+xml' == get_post_mime_type( $post->ID ) ) {
-		$content  = '[leaflet-map fitbounds !scrollwheel !dragging][leaflet-kml src="' . $post->guid . '"]';
+	if ( is_attachment() && 'application/vnd.google-earth.kml+xml' === get_post_mime_type( $post->ID ) ) {
+		$content  = leafext_display_attachment_page( $post->guid );
 		$fields   = array();
 		$fields[] = array(
 			'key'   => 'url',
@@ -44,8 +56,8 @@ function leafext_media_library_content( $content ) {
 		);
 		$content  = $content . leafext_html_table( $fields );
 	}
-	if ( is_attachment() && 'application/geo+json' == get_post_mime_type( $post->ID ) ) {
-		$content  = '[leaflet-map fitbounds !scrollwheel !dragging][leaflet-geojson src="' . $post->guid . '"]';
+	if ( is_attachment() && 'application/geo+json' === get_post_mime_type( $post->ID ) ) {
+		$content  = leafext_display_attachment_page( $post->guid );
 		$fields   = array();
 		$fields[] = array(
 			'key'   => 'url',
@@ -61,8 +73,26 @@ function leafext_media_library_content( $content ) {
 }
 add_filter( 'the_content', 'leafext_media_library_content' );
 
+function leafext_media_library_help( $postid ) {
+	$current_screen = get_current_screen();
+	if ( $current_screen !== null ) {
+		if ( isset( $current_screen->base ) && $current_screen->base === 'post' &&
+			isset( $current_screen->post_type ) && $current_screen->post_type === 'attachment' ) {
+			$file = wp_get_attachment_url( $postid );
+			$type = pathinfo( $file, PATHINFO_EXTENSION );
+			$type = ( $type === 'json' ) ? 'geojson' : $type;
+			if ( in_array( $type, array( 'kml', 'gpx', 'geojson' ), true ) ) {
+				return do_shortcode(
+					'[leaflet-map height=300 width=300 !scrollwheel !dragging fitbounds]' .
+					'[leaflet-' . $type . ' src="' . $file . '"]'
+				);
+			}
+		}
+	}
+	return '';
+}
+
 // Display on edit page in Media Library
-// Klappt nicht im Grid Mode, da modal -> Ansatz: map.invalidateSize()?
 function leafext_attachment_fields_to_edit( $form_fields, $post ) {
 	libxml_use_internal_errors( true );
 	// get post mime type
@@ -70,7 +100,7 @@ function leafext_attachment_fields_to_edit( $form_fields, $post ) {
 	// get the attachment path
 	$attachment_path = get_attached_file( $post->ID );
 
-	if ( 'application/gpx+xml' == $type ) {
+	if ( 'application/gpx+xml' === $type ) {
 		$gpx_data = leafext_get_gpx_data( $attachment_path );
 		foreach ( $gpx_data as $key => $value ) {
 			$form_fields[ $key ] = array(
@@ -82,31 +112,31 @@ function leafext_attachment_fields_to_edit( $form_fields, $post ) {
 		}
 		$form_fields['overview'] = array(
 			'value' => 'Map',
-			'label' => __( 'Overview' ),
+			'label' => __( 'Overview', 'extensions-leaflet-map' ),
 			'input' => 'html',
 			'html'  => 'Map',
-			'helps' => do_shortcode( '[leaflet-map height=300 width=300 !scrollwheel !dragging fitbounds][leaflet-gpx src="' . wp_get_attachment_url( $post->ID ) . '"]' ),
+			'helps' => leafext_media_library_help( $post->ID ),
 		);
 	}
 
-	if ( 'application/vnd.google-earth.kml+xml' == $type ) {
+	if ( 'application/vnd.google-earth.kml+xml' === $type ) {
 		$name                    = leafext_get_kml_data( $attachment_path )['name'];
 		$form_fields['overview'] = array(
 			'value' => $name,
-			'label' => __( 'Overview' ),
+			'label' => __( 'Overview', 'extensions-leaflet-map' ),
 			'input' => 'html',
 			'html'  => $name,
-			'helps' => do_shortcode( '[leaflet-map height=300 width=300 !scrollwheel !dragging fitbounds][leaflet-kml src="' . wp_get_attachment_url( $post->ID ) . '"]' ),
+			'helps' => leafext_media_library_help( $post->ID ),
 		);
 	}
 
-	if ( 'application/geo+json' == $type ) {
+	if ( 'application/geo+json' === $type ) {
 		$form_fields['overview'] = array(
 			'value' => basename( $attachment_path ),
-			'label' => __( 'Overview' ),
+			'label' => __( 'Overview', 'extensions-leaflet-map' ),
 			'input' => 'html',
 			'html'  => 'Map',
-			'helps' => do_shortcode( '[leaflet-map height=300 width=300 !scrollwheel !dragging fitbounds][leaflet-geojson src="' . wp_get_attachment_url( $post->ID ) . '"]' ),
+			'helps' => leafext_media_library_help( $post->ID ),
 		);
 	}
 
@@ -137,10 +167,10 @@ function leafext_get_gpx_data( $file ) {
 function leafext_get_kml_data( $file ) {
 	$kmldata = array();
 	$kml     = simplexml_load_file( $file, 'SimpleXMLElement', LIBXML_NOCDATA );
-	// phpcs:disable
-	if (isset($kml->Document->name)) {
+	// phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase -- is gpx
+	if ( isset( $kml->Document->name ) ) {
+		// phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase -- is gpx
 		$kmldata['name'] = $kml->Document->name;
-		// phpcs:enable
 	} else {
 		$kmldata['name'] = ' ';
 	}

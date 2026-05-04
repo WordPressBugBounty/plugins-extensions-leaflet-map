@@ -11,7 +11,7 @@ defined( 'ABSPATH' ) || die();
 // init Wahl des theme, leafext_validate_ele_options und leafext_form_elevation ist in elevation.php
 function leafext_themes_init() {
 	// leafext_eleparams ist in der Datenbank!
-	add_settings_section( 'elethemes_settings', leafext_elevation_tab() . '<p><div style="border-top: 1px solid #646970"></div></p>', '', 'leafext_settings_elethemes' );
+	add_settings_section( 'elethemes_settings', leafext_elevation_tab() . '<p><div style="border-top: 1px solid #646970"></div></p>', '__return_empty_string', 'leafext_settings_elethemes' );
 	$fields = leafext_elevation_params( array( 'theme' ) );
 	foreach ( $fields as $field ) {
 		$trenn = '';
@@ -20,7 +20,15 @@ function leafext_themes_init() {
 		}
 		add_settings_field( 'leafext_eleparams[' . $field['param'] . ']', $trenn . $field['shortdesc'], 'leafext_form_elevation', 'leafext_settings_elethemes', 'elethemes_settings', $field['param'] );
 	}
-	register_setting( 'leafext_settings_elethemes', 'leafext_eleparams', 'leafext_validate_ele_options' );
+	register_setting(
+		'leafext_settings_elethemes',
+		'leafext_eleparams',
+		array(
+			'type'              => 'array',
+			'sanitize_callback' => 'leafext_validate_ele_options',
+			'default'           => array(),
+		)
+	);
 }
 add_action( 'admin_init', 'leafext_themes_init' );
 
@@ -39,7 +47,15 @@ function leafext_elevation_color_init() {
 	foreach ( $fields as $field ) {
 		add_settings_field( 'leafext_color_' . $theme . '[' . $field['param'] . ']', $field['shortdesc'], 'leafext_form_colors', 'leafext_settings_color', 'elecolors_settings', $field['param'] );
 	}
-	register_setting( 'leafext_settings_color', 'leafext_color_' . $theme, 'leafext_validate_owncolors' );
+	register_setting(
+		'leafext_settings_color',
+		'leafext_color_' . $theme,
+		array(
+			'type'              => 'array',
+			'sanitize_callback' => 'leafext_validate_owncolors',
+			'default'           => leafext_elevation_theme(),
+		)
+	);
 }
 add_action( 'admin_init', 'leafext_elevation_color_init' );
 
@@ -51,7 +67,7 @@ function leafext_form_colors( $field ) {
 		'leafext-picker',
 		plugins_url( 'js/colorpicker.min.js', LEAFEXT_PLUGIN_FILE ),
 		array( 'wp-color-picker' ),
-		null,
+		LEAFEXT_VERSION,
 		true
 	);
 
@@ -65,13 +81,13 @@ function leafext_form_colors( $field ) {
 	} else {
 		$setting = $option['default'];
 	}
-
 	if ( current_user_can( 'manage_options' ) ) {
-		echo '<input type="text" class="colorPicker" id="leafext_color_' . $theme . '[' . $option['param'] . ']" name="leafext_color_' . $theme . '[' . $option['param'] . ']"
-			data-default-color = "' . $option['default'] . '" value = "' . $setting . '"/>';
+		echo '<input type="text" class="colorPicker" id="' . esc_attr( 'leafext_color_' . $theme . '[' . $option['param'] . ']' ) . '"
+		  name="' . esc_attr( 'leafext_color_' . $theme . '[' . $option['param'] . ']' ) . '"
+			data-default-color = "' . esc_attr( $option['default'] ) . '" value = "' . esc_attr( $setting ) . '"/>';
 	} else {
 		echo '<svg width="25" height="25">
-		<rect width="25" height="25" style="fill:' . $option['default'] . ';stroke-width:1;stroke:rgb(0,0,0)" />
+		<rect width="25" height="25" style="fill:' . esc_attr( $option['default'] ) . ';stroke-width:1;stroke:rgb(0,0,0)" />
 		</svg>';
 	}
 }
@@ -85,7 +101,7 @@ function leafext_validate_owncolors( $options ) {
 			$defaults = leafext_elevation_colors();
 			foreach ( $options as $key => $value ) {
 				$param = leafext_array_find2( $key, $defaults );
-				if ( $options[ $key ] == $param['default'] ) {
+				if ( $options[ $key ] === $param['default'] ) {
 					unset( $options[ $key ] );
 				}
 			}
@@ -111,5 +127,5 @@ function leafext_color_help_text() {
 	}
 	$text = $text . '<div style="border-top: 1px solid #646970"></div>';
 	$text = $text . '<h2>' . __( 'Colors', 'extensions-leaflet-map' ) . '</h2>';
-	echo $text;
+	echo wp_kses_post( $text );
 }

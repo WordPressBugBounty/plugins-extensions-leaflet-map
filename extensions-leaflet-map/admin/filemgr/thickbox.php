@@ -20,35 +20,34 @@ function leafext_thickbox( $track ) {
 	$upload_url  = $upload_dir['baseurl'];
 	$path_parts  = pathinfo( $track );
 	$type        = strtolower( $path_parts['extension'] );
-	if ( 'kml' != $type && 'gpx' != $type && 'geojson' != $type && 'json' != $type ) {
+	if ( 'kml' !== $type && 'gpx' !== $type && 'geojson' !== $type && 'json' !== $type ) {
 		return;
 	}
-	if ( $type == 'json' ) {
+	if ( $type === 'json' ) {
 		$type = 'geojson';
 	}
 		echo '<div class="attachment-info"><div class="details"><h2>';
-	esc_html_e( 'Details' );
+	esc_html_e( 'Details', 'extensions-leaflet-map' );
 	echo '</h2><div><strong>';
-	esc_html_e( 'Uploaded on:' );
-	echo '</strong> ' . get_date_from_gmt( gmdate( 'Y-m-d G:i:s', filemtime( $upload_path . $track ) ) ) . '</div><div><strong>';
-	esc_html_e( 'File name:' );
-	echo '</strong> ' . basename( $track ) . '</div>';
+	esc_html_e( 'Uploaded on:', 'extensions-leaflet-map' );
+	echo '</strong> ' . esc_html( get_date_from_gmt( gmdate( 'Y-m-d G:i:s', filemtime( $upload_path . $track ) ) ) ) . '</div><div><strong>';
+	esc_html_e( 'File name:', 'extensions-leaflet-map' );
+	echo '</strong> ' . esc_html( basename( $track ) ) . '</div>';
 	// echo '<div ><strong>';
 	// esc_html_e( "File type:" );
 	// $type=mime_content_type($upload_path.$track); gibt nur text/xml zurueck
 	// echo '</strong> '.$type.'</div>';
 	echo '<div ><strong>';
-	esc_html_e( 'File size: ' );
-	echo '</strong> ' . size_format( filesize( $upload_path . $track ) ) . '</div></div><p>';
-	$content = do_shortcode( '[leaflet-map  height=300 width=300 !scrollwheel !dragging fitbounds][leaflet-' . $type . ' src="' . $upload_url . $track . '"]{name}[/leaflet-' . $type . ']' );
-	echo $content;
+	esc_html_e( 'File size: ', 'extensions-leaflet-map' );
+	echo '</strong> ' . esc_html( size_format( filesize( $upload_path . $track ) ) ) . '</div></div><p>';
+	echo do_shortcode( '[leaflet-map  height=300 width=300 !scrollwheel !dragging fitbounds][leaflet-' . $type . ' src="' . $upload_url . $track . '"]{name}[/leaflet-' . $type . ']' );
 	echo '</p></div>';
 
 	$data = '';
-	if ( 'gpx' == $type ) {
+	if ( 'gpx' === $type ) {
 		$data = leafext_get_gpx_data( $upload_path . $track );
 	}
-	if ( 'kml' == $type ) {
+	if ( 'kml' === $type ) {
 		$data = leafext_get_kml_data( $upload_path . $track );
 	}
 	if ( is_array( $data ) ) {
@@ -59,6 +58,6 @@ function leafext_thickbox( $track ) {
 				'value' => $value,
 			);
 		}
-		echo leafext_html_table( $form_fields );
+		echo wp_kses_post( leafext_html_table( $form_fields ) );
 	}
 }

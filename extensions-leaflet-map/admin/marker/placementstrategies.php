@@ -30,7 +30,15 @@ function leafext_placementparams_init() {
 	foreach ( $fields as $field ) {
 		add_settings_field( 'leafext_placementparams[' . $field[0] . ']', $field[1], 'leafext_form_placement', 'leafext_settings_placementparams', 'placementparams_settings', $field[0] );
 	}
-	register_setting( 'leafext_settings_placementparams', 'leafext_placementparams', 'leafext_validate_placement_options' );
+	register_setting(
+		'leafext_settings_placementparams',
+		'leafext_placementparams',
+		array(
+			'type'              => 'array',
+			'sanitize_callback' => 'leafext_validate_placement_options',
+			'default'           => array(),
+		)
+	);
 }
 add_action( 'admin_init', 'leafext_placementparams_init' );
 
@@ -49,39 +57,39 @@ function leafext_form_placement( $field ) {
 		$disabled = '';
 	}
 
-	if ( $option[0] == 'elementsPlacementStrategy' ) {
+	if ( $option[0] === 'elementsPlacementStrategy' ) {
 		echo '<p>' . esc_html__( '"default" means: one-circle strategy up to 8 elements, else spiral strategy', 'extensions-leaflet-map' ) . '</p>';
 	}
 
-	echo esc_html__( 'You can change it for each map with', 'extensions-leaflet-map' ) . ' <code>' . $option[0] . '</code><br>';
+	echo wp_kses_post( __( 'You can change it for each map with', 'extensions-leaflet-map' ) . ' <code>' . $option[0] . '</code><br>' . "\n" );
 	if ( ! is_array( $option[3] ) ) {
 
-		if ( $setting != $option[2] ) {
+		if ( $setting !== $option[2] ) {
 			// var_dump($setting,$option[2]);
 			echo esc_html__( 'Plugins Default', 'extensions-leaflet-map' ) . ': ';
 			echo $option[2] ? '1' : '0';
-			echo '<br>';
+			echo '<br>' . "\n";
 		}
 
-		echo '<input ' . $disabled . ' type="radio" name="leafext_placementparams[' . $option[0] . ']" value="1" ';
+		echo '<input ' . esc_attr( $disabled ) . ' type="radio" name="' . esc_attr( 'leafext_placementparams[' . $option[0] . ']' ) . '" value="1" ';
 		echo $setting ? 'checked' : '';
 		echo '> true &nbsp;&nbsp; ';
-		echo '<input ' . $disabled . ' type="radio" name="leafext_placementparams[' . $option[0] . ']" value="0" ';
+		echo '<input ' . esc_attr( $disabled ) . ' type="radio" name="' . esc_attr( 'leafext_placementparams[' . $option[0] . ']' ) . '" value="0" ';
 		echo ( ! $setting ) ? 'checked' : '';
 		echo '> false ';
 	} else {
 		$plugindefault = is_string( $option[2] ) ? $option[2] : ( $option[2] ? '1' : '0' );
 		$setting       = is_string( $setting ) ? $setting : ( $setting ? '1' : '0' );
-		if ( $setting != $plugindefault ) {
+		if ( $setting !== $plugindefault ) {
 			// var_dump("Option: ",$option[2],"Plugindefault: ",$plugindefault,"Setting: ",$setting);
-			echo esc_html__( 'Plugins Default:', 'extensions-leaflet-map' ) . ' ' . $plugindefault . '<br>';
+			echo esc_html( __( 'Plugins Default:', 'extensions-leaflet-map' ) . ' ' . $plugindefault ) . '<br>' . "\n";
 		}
 		if ( ! current_user_can( 'manage_options' ) ) {
 			$select_disabled = ' disabled multiple size=' . count( $option[3] ) . ' ';
 		} else {
 			$select_disabled = '';
 		}
-		echo '<select ' . $select_disabled . ' name="leafext_placementparams[' . $option[0] . ']">';
+		echo '<select ' . esc_attr( $select_disabled ) . ' name="' . esc_attr( 'leafext_placementparams[' . $option[0] . ']' ) . '">' . "\n";
 		foreach ( $option[3] as $para ) {
 			echo '<option ';
 			if ( is_bool( $para ) ) {
@@ -90,9 +98,9 @@ function leafext_form_placement( $field ) {
 			if ( $para === $setting ) {
 				echo ' selected="selected" ';
 			}
-			echo 'value="' . $para . '" >' . $para . '</option>';
+			echo 'value="' . esc_attr( $para ) . '">' . esc_attr( $para ) . '</option>' . "\n";
 		}
-		echo '</select>';
+		echo '</select>' . "\n";
 	}
 }
 
@@ -111,13 +119,19 @@ function leafext_validate_placement_options( $options ) {
 
 // Helptext
 function leafext_placement_help_text() {
+	if ( is_singular() || is_archive() ) {
+		$codestyle = '';
+	} else {
+		leafext_enqueue_admin();
+		$codestyle = ' class="language-coffeescript"';
+	}
 	$text = '<h2>Leaflet.MarkerCluster.PlacementStrategies</h2>';
 	$text = $text . '<p>';
 	$text = $text . '<a href="https://github.com/adammertel/Leaflet.MarkerCluster.PlacementStrategies">' . __( 'Demo and Documentation', 'extensions-leaflet-map' ) . '</a>';
 	$text = $text . ' - ' . __( 'Not all parameters are implemented in the plugin.', 'extensions-leaflet-map' ) . '';
 	$text = $text . '</p>';
 	$text = $text . '<h3>Shortcode</h3>
-	<pre><code>&#091;leaflet-map ....]
+	<pre' . $codestyle . '><code' . $codestyle . '>&#091;leaflet-map ....]
 // many markers
 &#091;leaflet-marker lat=... lng=... ...]poi1[/leaflet-marker]
 &#091;leaflet-marker lat=... lng=... ...]poi2[/leaflet-marker]
@@ -135,7 +149,8 @@ function leafext_placement_help_text() {
 		$text = $text . '<p>' . __( 'Please see the admin page for options.', 'extensions-leaflet-map' ) . '</p>';
 		return $text;
 	} else {
-		$text = $text . '<p>' . sprintf( __( 'The parameter maxZoom has been removed, please use %s instead.', 'extensions-leaflet-map' ), '<code>[leaflet-map max_zoom="xx" ...]</code>' ) . '</p>';
-		echo $text;
+		/* translators: %s is code. */
+		$text = $text . '<p>' . wp_sprintf( __( 'The parameter maxZoom has been removed, please use %s instead.', 'extensions-leaflet-map' ), '<code>[leaflet-map max_zoom="xx" ...]</code>' ) . '</p>';
+		echo wp_kses_post( $text );
 	}
 }

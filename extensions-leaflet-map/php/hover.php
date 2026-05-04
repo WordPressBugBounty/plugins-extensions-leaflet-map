@@ -13,9 +13,12 @@ function leafext_hover_params( $typ = '' ) {
 		array(
 			'param'      => 'marker',
 			'desc'       => '<ul style="list-style-type:disc;margin-left:1em;">' .
-			'<li><code>true</code> - ' . sprintf( __( 'show tooltip and hide %s if present', 'extensions-leaflet-map' ), '<em>title</em>' ) . '</li>' .
-			'<li><code>false</code> - ' . sprintf( __( 'do not show tooltip and hide %s', 'extensions-leaflet-map' ), '<em>title</em>' ) . '</li>' .
-			'<li><code>title</code> - ' . sprintf( __( 'do not show tooltip but show %s', 'extensions-leaflet-map' ), '<em>title</em>' ) . '</li>' .
+			/* translators: %s is an option. */
+			'<li><code>true</code> - ' . wp_sprintf( __( 'show tooltip and hide %s if present', 'extensions-leaflet-map' ), '<em>title</em>' ) . '</li>' .
+			/* translators: %s is an option. */
+			'<li><code>false</code> - ' . wp_sprintf( __( 'do not show tooltip and hide %s', 'extensions-leaflet-map' ), '<em>title</em>' ) . '</li>' .
+			/* translators: %s is an option. */
+			'<li><code>title</code> - ' . wp_sprintf( __( 'do not show tooltip but show %s', 'extensions-leaflet-map' ), '<em>title</em>' ) . '</li>' .
 			'</ul>',
 			'default'    => true,
 			'values'     => 'true, false, title',
@@ -79,7 +82,7 @@ function leafext_hover_params( $typ = '' ) {
 		),
 		array(
 			'param'      => 'markertooltip',
-			'desc'       => __( 'alias for', 'extensions-leaflet-map' ) . ' <code>[hover marker=true circle/polygon/line/geojson/gpx/kml=false]</code>',
+			'desc'       => __( 'alias for', 'extensions-leaflet-map' ) . ' <code>&#091;hover marker=true circle/polygon/line/geojson/gpx/kml=false]</code>',
 			'default'    => false,
 			'values'     => '',
 			'element'    => false,
@@ -88,7 +91,7 @@ function leafext_hover_params( $typ = '' ) {
 		),
 		array(
 			'param'      => 'geojsontooltip',
-			'desc'       => __( 'alias for', 'extensions-leaflet-map' ) . ' <code>[hover geojson/gpx/kml=tooltip marker/circle/polygon/line=false]</code>, ' .
+			'desc'       => __( 'alias for', 'extensions-leaflet-map' ) . ' <code>&#091;hover geojson/gpx/kml=tooltip marker/circle/polygon/line=false]</code>, ' .
 					__( 'specify a short string as parameter, if the popup is too big.', 'extensions-leaflet-map' ),
 			'default'    => false,
 			'values'     => __( 'nothing or a string like the popup content for geojsons', 'extensions-leaflet-map' ) . ': <code>Field A = {field_a}</code>.',
@@ -98,7 +101,7 @@ function leafext_hover_params( $typ = '' ) {
 		),
 		array(
 			'param'      => 'geojsonstyle',
-			'desc'       => __( 'alias for', 'extensions-leaflet-map' ) . ' <code>[hover geojson/gpx/kml=style marker/circle/polygon/line=false]</code>',
+			'desc'       => __( 'alias for', 'extensions-leaflet-map' ) . ' <code>&#091;hover geojson/gpx/kml=style marker/circle/polygon/line=false]</code>',
 			'default'    => false,
 			'values'     => '',
 			'element'    => false,
@@ -107,7 +110,7 @@ function leafext_hover_params( $typ = '' ) {
 		),
 		array(
 			'param'      => 'markergrouptooltip',
-			'desc'       => __( 'alias for', 'extensions-leaflet-map' ) . ' <code>[hover circle/polygon/line=tooltip marker/geojson/gpx/kml=false]</code>',
+			'desc'       => __( 'alias for', 'extensions-leaflet-map' ) . ' <code>&#091;hover circle/polygon/line=tooltip marker/geojson/gpx/kml=false]</code>',
 			'default'    => false,
 			'values'     => '',
 			'element'    => false,
@@ -116,7 +119,7 @@ function leafext_hover_params( $typ = '' ) {
 		),
 		array(
 			'param'      => 'markergroupstyle',
-			'desc'       => __( 'alias for', 'extensions-leaflet-map' ) . ' <code>[hover circle/polygon/line=style marker/geojson/gpx/kml=false]</code>',
+			'desc'       => __( 'alias for', 'extensions-leaflet-map' ) . ' <code>&#091;hover circle/polygon/line=style marker/geojson/gpx/kml=false]</code>',
 			'default'    => false,
 			'values'     => '',
 			'element'    => false,
@@ -133,6 +136,15 @@ function leafext_hover_params( $typ = '' ) {
 			'changeable' => false,
 		),
 		array(
+			'param'      => 'opacity',
+			'desc'       => __( 'If an element is hovered over, the other elements become transparent. If you specify any other option as the default, the effect may not be consistent.', 'extensions-leaflet-map' ),
+			'default'    => false,
+			'values'     => '0.1 ... 0.9',
+			'element'    => false,
+			'only'       => false,
+			'changeable' => false,
+		),
+		array(
 			'param'      => 'class',
 			'desc'       => __( 'className for the tooltip', 'extensions-leaflet-map' ),
 			'default'    => 'leafext-tooltip',
@@ -143,7 +155,8 @@ function leafext_hover_params( $typ = '' ) {
 		),
 		array(
 			'param'      => 'tolerance',
-			'desc'       => sprintf( __( 'How much to extend click tolerance round an object on the map, only valid for %s', 'extensions-leaflet-map' ), 'leaflet-geojson, gpx, kml' ),
+			/* translators: %s is an option. */
+			'desc'       => wp_sprintf( __( 'How much to extend click tolerance round an object on the map, only valid for %s', 'extensions-leaflet-map' ), 'leaflet-geojson, gpx, kml' ),
 			'default'    => 0,
 			'values'     => __( 'a number', 'extensions-leaflet-map' ),
 			'element'    => false,
@@ -153,7 +166,7 @@ function leafext_hover_params( $typ = '' ) {
 		array(
 			'param'      => 'popupclose',
 			'desc'       => __( 'At which distance of the mouse from a popup the popup closes. If it is 0, this is disabled, i.e. keep the popup open.', 'extensions-leaflet-map' ),
-			'default'    => 50,
+			'default'    => 0,
 			'values'     => __( 'a number', 'extensions-leaflet-map' ),
 			'element'    => false,
 			'only'       => false,
@@ -168,7 +181,7 @@ function leafext_hover_params( $typ = '' ) {
 		// ),
 	);
 
-	if ( $typ != '' ) {
+	if ( $typ !== '' ) {
 		foreach ( $params as $key => $value ) {
 			if ( ! $params[ $key ][ $typ ] ) {
 				unset( $params[ $key ] );
@@ -202,8 +215,12 @@ function leafext_canvas_script( $tolerance ) {
 	window.WPLeafletMapPlugin = window.WPLeafletMapPlugin || [];
 	window.WPLeafletMapPlugin.push(function () {
 		var map = window.WPLeafletMapPlugin.getCurrentMap();
-		map.options.renderer=L.canvas({ tolerance: <?php echo $tolerance; ?> });
-		console.log("tolerance "+<?php echo $tolerance; ?>);
+		map.options.renderer=L.canvas({ tolerance:
+		<?php
+		echo esc_attr( $tolerance );
+		?>
+		});
+		console.log("tolerance "+<?php echo esc_js( $tolerance ); ?>);
 		console.log(map.options.renderer);
 	});
 	<?php
@@ -215,7 +232,7 @@ function leafext_canvas_script( $tolerance ) {
 
 function leafext_hover_function( $atts, $content, $shortcode ) {
 	$text = leafext_should_interpret_shortcode( $shortcode, $atts );
-	if ( $text != '' ) {
+	if ( $text !== '' ) {
 		return $text;
 	} else {
 		leafext_enqueue_geometry();
@@ -231,9 +248,10 @@ function leafext_hover_function( $atts, $content, $shortcode ) {
 		// var_dump($atts);
 		$options = shortcode_atts( $settings, leafext_clear_params( $atts ) );
 		// var_dump($atts,$settings,$options); wp_die();
+
 		$text = '';
-		if ( $options['tolerance'] != 0 ) {
-			$text = $text . leafext_canvas_script( $options['tolerance'] );
+		if ( $options['tolerance'] !== 0 ) {
+			$text .= leafext_canvas_script( $options['tolerance'] );
 		}
 
 		$do_tooltip = array( true, 'tooltip' );
@@ -255,7 +273,7 @@ function leafext_hover_function( $atts, $content, $shortcode ) {
 			$options['geojsontooltip'] = filter_var( $options['geojsontooltip'], FILTER_SANITIZE_SPECIAL_CHARS );
 		}
 
-		$text = $text . '<script><!--';
+		$text .= '<script><!--';
 		ob_start();
 		?>
 		/*<script>*/
@@ -305,7 +323,7 @@ function leafext_hover_function( $atts, $content, $shortcode ) {
 				leafext_hover_geojsonstyle_js(all_options);
 				<?php
 			}
-			if ( $options['marker'] == false ) {
+			if ( $options['marker'] === false ) {
 				// $text = $text.leafext_markertitle_script($options);
 				?>
 				leafext_hover_markertitle_js();

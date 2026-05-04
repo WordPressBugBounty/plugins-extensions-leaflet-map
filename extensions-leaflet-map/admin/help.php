@@ -45,7 +45,7 @@ function leafext_help_entries() {
 			'plugins'   => '',
 			'doku'      => '/doku/sgpxelevation/',
 			'kategorie' => '',
-			'examples'  => '/extra/category/sgpx/',
+			'examples'  => '/extra/categories/sgpx/',
 		),
 	);
 
@@ -101,10 +101,30 @@ function leafext_help_entries() {
 			'examples'  => '/marker/geojsonmarker/',
 			'strpos'    => 'marker',
 		),
+		array(
+			'function'  => __( 'Listing markers in the map', 'extensions-leaflet-map' ),
+			'shortcode' => 'listmarker',
+			'tab'       => 'listmarker',
+			'plugins'   => '<a href="https://github.com/hupe13/leaflet-list-markers">Leaflet List Markers</a>',
+			'doku'      => '/doku/listmarker/',
+			'kategorie' => '',
+			'examples'  => '/listmarker/listmarker/',
+			'strpos'    => 'marker',
+		),
 	);
 
 	$table[ __( 'More Functions for Markers', 'extensions-leaflet-map' ) ] = array(
 		'menu' => __( 'More for Markers', 'extensions-leaflet-map' ),
+		array(
+			'function'  => __( 'Featured Map', 'extensions-leaflet-map' ),
+			'shortcode' => 'featured-map',
+			'tab'       => 'featuredmap',
+			'plugins'   => '',
+			'doku'      => '/doku/featuredmap/',
+			'kategorie' => '',
+			'examples'  => '/extra/categories/featuredmap/',
+			'strpos'    => 'marker',
+		),
 		array(
 			'function'  => __( 'Overview Map', 'extensions-leaflet-map' ),
 			'shortcode' => 'overviewmap',
@@ -112,17 +132,17 @@ function leafext_help_entries() {
 			'plugins'   => '',
 			'doku'      => '/doku/overviewmap/',
 			'kategorie' => '',
-			'examples'  => '/extra/category/overviewmap/',
+			'examples'  => '/extra/categories/overviewmap/',
 			'strpos'    => 'marker',
 		),
 		array(
 			'function'  => __( 'Target Marker', 'extensions-leaflet-map' ),
-			'shortcode' => 'targetmarker',
+			'shortcode' => 'targetmarker, targetlink',
 			'tab'       => 'targetmarker',
 			'plugins'   => '',
 			'doku'      => '/doku/targetmarker/',
-			'kategorie' => '',
-			'examples'  => '/examples/targetmarker/',
+			'kategorie' => 'targetmarker',
+			'examples'  => '',
 			'strpos'    => 'marker',
 		),
 		array(
@@ -141,11 +161,20 @@ function leafext_help_entries() {
 		'menu' => __( 'Leaflet Plugins', 'extensions-leaflet-map' ),
 		array(
 			'function'  => __( 'Grouping by options and features', 'extensions-leaflet-map' ),
-			'shortcode' => 'leaflet-optiongroup, leaflet-featuregroup, parentgroup',
+			'shortcode' => 'leaflet-optiongroup, leaflet-featuregroup',
 			'tab'       => 'featuregroup',
 			'plugins'   => '<a href="https://github.com/ghybs/Leaflet.FeatureGroup.SubGroup">Leaflet.FeatureGroup.SubGroup</a>',
 			'doku'      => '/doku/featuregroup/',
 			'kategorie' => 'grouping',
+			'examples'  => '',
+		),
+		array(
+			'function'  => __( 'Display groups in a tree view', 'extensions-leaflet-map' ),
+			'shortcode' => 'leaflet-parentgroup',
+			'tab'       => 'parentgroup',
+			'plugins'   => '<a href="https://github.com/jjimenezshaw/Leaflet.Control.Layers.Tree">Leaflet.Control.Layers.Tree</a>',
+			'doku'      => '/doku/parentgroup/',
+			'kategorie' => 'parentgroup',
 			'examples'  => '',
 		),
 		array(
@@ -175,7 +204,7 @@ function leafext_help_entries() {
 					'doku'     => '/doku/tileswitch/',
 				),
 			),
-			'kategorie' => '',
+			'kategorie' => 'tileswitch',
 			'examples'  => '',
 		),
 		array(
@@ -237,10 +266,10 @@ function leafext_help_entries() {
 		),
 	);
 
-	$table[ __( 'Files for Leaflet Map', 'extensions-leaflet-map' ) ] = array(
+	$table[ __( 'Manage Leaflet Map files', 'extensions-leaflet-map' ) ] = array(
 		array(
-			'function'  => __( 'Files for Leaflet Map', 'extensions-leaflet-map' ),
-			'shortcode' => __( 'Files for Leaflet Map', 'extensions-leaflet-map' ),
+			'function'  => __( 'Manage Leaflet Map files', 'extensions-leaflet-map' ),
+			'shortcode' => __( 'Manage Leaflet Map files', 'extensions-leaflet-map' ),
 			'tab'       => 'filemgr' . ( current_user_can( 'manage_options' ) ? '' : '-list' ),
 			'plugins'   => '',
 			'doku'      => '/doku/filemgr/',
@@ -335,10 +364,22 @@ function leafext_plugins() {
 		'shortcode' => 'leaflet-extramarker',
 	);
 	$plugins[] = array(
+		'name'      => 'Leaflet List Markers',
+		'desc'      => __( 'A Leaflet Control for listing visible markers in the map.', 'extensions-leaflet-map' ),
+		'link'      => 'https://github.com/hupe13/leaflet-list-markers',
+		'shortcode' => 'listmarker',
+	);
+	$plugins[] = array(
 		'name'      => 'Leaflet.FeatureGroup.SubGroup',
 		'desc'      => __( 'Grouping of Leaflet elements by options and features.', 'extensions-leaflet-map' ),
 		'link'      => 'https://github.com/ghybs/Leaflet.FeatureGroup.SubGroup',
-		'shortcode' => 'leaflet-optiongroup, leaflet-featuregroup, parentgroup',
+		'shortcode' => 'leaflet-optiongroup, leaflet-featuregroup',
+	);
+	$plugins[] = array(
+		'name'      => 'Leaflet.Control.Layers.Tree',
+		'desc'      => __( 'A Tree Layers Control for Leaflet.', 'extensions-leaflet-map' ),
+		'link'      => 'https://github.com/jjimenezshaw/Leaflet.Control.Layers.Tree',
+		'shortcode' => 'leaflet-parentgroup',
 	);
 	$plugins[] = array(
 		'name'      => 'Leaflet Control Search',
@@ -354,7 +395,8 @@ function leafext_plugins() {
 	);
 	$plugins[] = array(
 		'name'      => 'leaflet.zoomhome',
-		'desc'      => sprintf( __( 'Provides a zoom control with a %1$sHome%2$s button to reset the view.', 'extensions-leaflet-map' ), '&quot;', '&quot;' ),
+		/* translators: %s is an href. */
+		'desc'      => wp_sprintf( __( 'Provides a zoom control with a %1$sHome%2$s button to reset the view.', 'extensions-leaflet-map' ), '&quot;', '&quot;' ),
 		'link'      => 'https://github.com/torfsen/leaflet.zoomhome',
 		'shortcode' => 'zoomhomemap',
 	);
@@ -390,41 +432,19 @@ function leafext_help_table( $leafext_plugin_name = '' ) {
 	__( 'Documentation', 'extensions-leaflet-map' ) . '</h3><p>';
 
 	// LEAFEXT_DSGVO_PLUGIN_DIR is known since initial release, and URL, others not
-	if ( ! defined( 'LEAFEXT_DSGVO_PLUGIN_DIR' ) ) {
-		$header .= '<p>' . sprintf(
-			__( 'You may be interested in %1$s.', 'extensions-leaflet-map' ),
-			'<a href="https://github.com/hupe13/leafext-dsgvo">DSGVO/GDPR Snippet for Extensions for Leaflet Map</a>'
+	if ( ! leafext_plugin_active( 'dsgvo-leaflet-map' ) ) {
+		$header .= '<p>' . wp_sprintf(
+			/* translators: %s is a link. */
+			__( 'You may be interested in %1$sDSGVO snippet for Leaflet Map and its Extensions%2$s.', 'extensions-leaflet-map' ),
+			'<a href="https://wordpress.org/plugins/dsgvo-leaflet-map/">',
+			'</a>'
 		) . '</p>';
-	} else {
-		$header .= '<p>' . sprintf(
-			__( 'Thank you for using %1$s.', 'extensions-leaflet-map' ),
-			'<a href="https://github.com/hupe13/leafext-dsgvo">DSGVO/GDPR Snippet for Extensions for Leaflet Map</a>'
-		);
-
-		$local  = get_file_data(
-			LEAFEXT_DSGVO_PLUGIN_DIR . '/leafext-dsgvo.php',
-			array(
-				'Version' => 'Version',
-			)
-		);
-		$remote = get_file_data(
-			'https://raw.githubusercontent.com/hupe13/extensions-leaflet-map-dsgvo/main/leafext-dsgvo.php',
-			array( 'Version' => 'Version' )
-		);
-		// var_dump($local,$remote);
-
-		if ( $local['Version'] !== $remote['Version'] ) {
-			$header .= '<a href="https://github.com/hupe13/extensions-leaflet-map-dsgvo">' .
-			'<span class="update-message notice inline notice-warning notice-alt">' .
-			esc_html__( 'New version available.' ) .
-			'</span>' .
-			'</a>';
-		}
 	}
 	$header .= '</p>';
 
 	$header = $header .
-	sprintf(
+	wp_sprintf(
+		/* translators: %s are hrefs. */
 		__(
 			'Detailed documentation and examples in %1$sGerman%2$s and %3$sEnglish%4$s',
 			'extensions-leaflet-map'
@@ -435,12 +455,6 @@ function leafext_help_table( $leafext_plugin_name = '' ) {
 		'</a>'
 	);
 	$header = $header . '.</p>';
-
-	if ( is_singular() || is_archive() ) {
-		$style = '<style>td,th { border:1px solid #195b7a !important; }</style>';
-	} else {
-		$style = '<style>tr:nth-child(even) { background-color: #fcfcfc; }</style>';
-	}
 
 	$text = '<p><figure class="wp-block-table aligncenter is-style-stripes">
 	<table class="form-table" border="1">';
@@ -454,7 +468,7 @@ function leafext_help_table( $leafext_plugin_name = '' ) {
 
 	$table = leafext_help_entries();
 
-	if ( get_locale() != 'de_DE' ) {
+	if ( get_locale() !== 'de_DE' ) {
 		$en = '/en';
 	} else {
 		$en = '';
@@ -467,9 +481,9 @@ function leafext_help_table( $leafext_plugin_name = '' ) {
 				$text = $text . '<tr><td>' . $entry['function'] . '</td>';
 				if ( is_singular() || is_archive() ) {
 					$text = $text . '<td><a href="' . $entry['doku'] . '">' . $entry['shortcode'] . '</a></td>';
-					if ( $entry['kategorie'] != '' ) {
+					if ( $entry['kategorie'] !== '' ) {
 						$text = $text . '<td><a href="/examples/' . $entry['kategorie'] . '/">' . __( 'Examples', 'extensions-leaflet-map' ) . '</a></td>';
-					} elseif ( $entry['examples'] != '' ) {
+					} elseif ( $entry['examples'] !== '' ) {
 						$text = $text . '<td><a href="' . ( str_starts_with( $entry['examples'], '/extra' ) ? '' : $en ) . $entry['examples'] . '">' . __( 'Examples', 'extensions-leaflet-map' ) . '</a></td>';
 					} else {
 						$text = $text . '<td>&nbsp;</td>';
@@ -492,7 +506,7 @@ function leafext_help_table( $leafext_plugin_name = '' ) {
 		$pluginstext .= '<h3>Shortcodes</h3>';
 		$pluginstext .= '<ul>';
 		foreach ( $plugins as $plugin ) {
-			if ( $plugin['shortcode'] != '' ) {
+			if ( $plugin['shortcode'] !== '' ) {
 				$pluginstext .= '<li><a href="' . $plugin['link'] . '">' . $plugin['name'] . '</a> - ' . $plugin['desc'] . ' (' . $plugin['shortcode'] . ')</li>';
 			}
 		}
@@ -500,17 +514,16 @@ function leafext_help_table( $leafext_plugin_name = '' ) {
 		$pluginstext .= '<h3>' . __( 'Helper Plugins', 'extensions-leaflet-map' ) . '</h3>';
 		$pluginstext .= '<ul>';
 		foreach ( $plugins as $plugin ) {
-			if ( $plugin['shortcode'] == '' ) {
+			if ( $plugin['shortcode'] === '' ) {
 				$pluginstext .= '<li><a href="' . $plugin['link'] . '">' . $plugin['name'] . '</a> - ' . $plugin['desc'] . '</li>';
 			}
 		}
 		$pluginstext .= '</ul>';
 
-		return $style . $text . $pluginstext;
+		return '<style>td,th { border:1px solid #195b7a !important; }</style>' . $text . $pluginstext;
 	} else {
-		leafext_escape_output( $header );
-		// phpcs:ignore
-		echo $style;
-		leafext_escape_output( $text );
+		echo wp_kses_post( $header );
+		echo '<style>tr:nth-child(even) { background-color: #fcfcfc; }</style>';
+		echo wp_kses_post( $text );
 	}
 }

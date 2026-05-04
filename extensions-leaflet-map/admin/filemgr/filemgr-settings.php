@@ -14,22 +14,26 @@ function leafext_filemgr_params() {
 		array(
 			'param'     => 'types',
 			'shortdesc' => __( 'Types', 'extensions-leaflet-map' ),
-			'desc'      => __( 'Allow upload to media library', 'extensions-leaflet-map' ),
+			'desc'      => esc_html__( 'Allow upload to media library', 'extensions-leaflet-map' ),
 			'default'   => array(),
 			'values'    => array( 'gpx', 'kml', 'geojson', 'json', 'tcx' ),
 		),
 		array(
 			'param'     => 'gpxupload',
 			'shortdesc' => __( 'Upload gpx files into the directory', 'extensions-leaflet-map' ) . ' /upload_dir()/gpx/',
-			'desc'      => __( 'This may be of interest if you have used wp-gpx-maps.', 'extensions-leaflet-map' ),
+			'desc'      => esc_html__( 'This may be of interest if you have used wp-gpx-maps.', 'extensions-leaflet-map' ),
 			'default'   => '0',
 			'values'    => 1,
 		),
 		array(
 			'param'     => 'nonadmin',
 			'shortdesc' => __( 'Allow non admin', 'extensions-leaflet-map' ),
-			'desc'      => sprintf(
-				__( 'Allow all users who have access to the backend to see the files. A permission check %s only done if the files are registered in the media library.', 'extensions-leaflet-map' ),
+			'desc'      => wp_sprintf(
+				/* translators: %s is code */
+				esc_html__(
+					'Allow all users who have access to the backend to see the files. A permission check %s only done if the files are registered in the media library.',
+					'extensions-leaflet-map'
+				),
 				'(<code>current_user_can("edit_post / read", this_post)</code>)'
 			),
 			'default'   => '0',
@@ -41,7 +45,15 @@ function leafext_filemgr_params() {
 
 // init settings
 function leafext_filemgr_init() {
-	register_setting( 'leafext_settings_filemgr', 'leafext_filemgr', 'leafext_validate_filemgr_options' );
+	register_setting(
+		'leafext_settings_filemgr',
+		'leafext_filemgr',
+		array(
+			'type'              => 'array',
+			'sanitize_callback' => 'leafext_validate_filemgr_options',
+			'default'           => array(),
+		)
+	);
 	// register_setting( 'leafext_settings_filemgr', 'leafext_filemgr' );
 	add_settings_section( 'filemgr_settings', __( 'Settings', 'extensions-leaflet-map' ), 'leafext_managefiles_help', 'leafext_settings_filemgr' );
 	$fields = leafext_filemgr_params();
@@ -78,29 +90,30 @@ function leafext_form_filemgr( $field ) {
 	$option   = leafext_array_find2( $field, $options );
 	$settings = leafext_filemgr_settings();
 	$setting  = $settings[ $field ];
-	if ( $option['desc'] != '' ) {
+	if ( $option['desc'] !== '' ) {
+		//phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- esc_html__ used
 		echo '<p>' . $option['desc'] . '</p>';
 	}
 
-	if ( $field == 'types' ) {
+	if ( $field === 'types' ) {
 		foreach ( $option['values'] as $typ ) {
 			$checked = in_array( $typ, $setting, true ) ? ' checked ' : '';
-			echo ' <input type="checkbox" name="leafext_filemgr[' . $option['param'] . '][]" value="' . $typ . '" id="' . $typ . '" ' . $checked . '>';
-			echo ' <label for="' . $typ . '" >' . $typ . '</label> ';
+			echo ' <input type="checkbox" name="' . esc_attr( 'leafext_filemgr[' . $option['param'] . '][]' ) . '" value="' . esc_attr( $typ ) . '" id="' . esc_attr( $typ ) . '" ' . esc_attr( $checked ) . '>' . "\n";
+			echo ' <label for="' . esc_attr( $typ ) . '" >' . esc_attr( $typ ) . '</label> ' . "\n";
 		}
 	} else {
-		if ( $setting != $option['default'] ) {
+		if ( $setting !== $option['default'] ) {
 			// var_dump($setting,$option['default']);
 			echo esc_html__( 'Plugins Default', 'extensions-leaflet-map' ) . ': ';
 			echo $option['default'] ? 'true' : 'false';
-			echo '<br>';
+			echo '<br>' . "\n";
 		}
-		echo '<input type="radio" name="leafext_filemgr[' . $option['param'] . ']" value="1" ';
+		echo '<input type="radio" name="' . esc_attr( 'leafext_filemgr[' . $option['param'] . ']' ) . '" value="1" ';
 		echo $setting ? 'checked' : '';
-		echo '> true &nbsp;&nbsp; ';
-		echo '<input type="radio" name="leafext_filemgr[' . $option['param'] . ']" value="0" ';
+		echo '> true &nbsp;&nbsp; ' . "\n";
+		echo '<input type="radio" name="' . esc_attr( 'leafext_filemgr[' . $option['param'] . ']' ) . '" value="0" ';
 		echo ( ! $setting ) ? 'checked' : '';
-		echo '> false ';
+		echo '> false ' . "\n";
 	}
 }
 
@@ -126,26 +139,26 @@ function leafext_managefiles_help() {
 	} else {
 		$text = $text . __( 'You can manage these', 'extensions-leaflet-map' );
 	}
-	$text = $text . '<ul>';
+	$text = $text . '<ul>' . "\n";
 	$text = $text . '<li>';
 	$text = $text . __( 'direct in the Media Library.', 'extensions-leaflet-map' );
-	$text = $text . '</li>';
+	$text = $text . '</li>' . "\n";
 	$text = $text . '<li>';
 	$text = $text . __( 'with any (S)FTP-Client,', 'extensions-leaflet-map' );
-	$text = $text . '</li>';
+	$text = $text . '</li>' . "\n";
 	$text = $text . '<li>';
 	$text = $text . __( 'with any File Manager plugin,', 'extensions-leaflet-map' );
-	$text = $text . '</li>';
+	$text = $text . '</li>' . "\n";
 	$text = $text . '<li>';
 	$text = $text . __( 'with any plugin for importing uploaded files to the Media Library.', 'extensions-leaflet-map' );
-	$text = $text . '</li>';
+	$text = $text . '</li>' . "\n";
 	$text = $text . '<li>';
 	$text = $text . __( 'or in your own way.', 'extensions-leaflet-map' );
-	$text = $text . '</li>';
+	$text = $text . '</li>' . "\n";
 	$text = $text . '</ul>';
 	if ( is_singular() || is_archive() ) {
 		return $text;
 	} else {
-		echo $text;
+		echo wp_kses_post( $text );
 	}
 }

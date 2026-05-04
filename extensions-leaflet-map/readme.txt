@@ -3,7 +3,7 @@
 Contributors: hupe13
 Tags: leaflet, gpx, geojson, hover, marker
 Tested up to: 7.0
-Stable tag: 4.15
+Stable tag: 5.0
 Requires at least: 6.2
 Requires PHP: 8.2
 License: GPLv2 or later
@@ -134,11 +134,9 @@ RewriteRule .*\.gpx$ - [L,T=application/gpx+xml]
 
 == Changelog ==
 
-= 4.15 / 260407 =
+### 5.0 / 260504
 
-* Tested up to WordPress 7.0
-* PHPStan checks - a few issues have been fixed
-* Fixed XSS Vulnerability
+* removed breaks in shortcode block
 
 ### Previous
 

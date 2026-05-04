@@ -24,10 +24,10 @@ function leafext_color_name_to_hex( $color_name ) {
 	}
 }
 
-// Shortcode: [leaflet_dir dir=...]
+// Shortcode: [leaflet-directory dir=...]
 function leafext_directory_function( $atts, $content, $shortcode ) {
 	$text = leafext_should_interpret_shortcode( $shortcode, $atts );
-	if ( $text != '' ) {
+	if ( $text !== '' ) {
 		return $text;
 	} else {
 		$defaults = array(
@@ -44,14 +44,14 @@ function leafext_directory_function( $atts, $content, $shortcode ) {
 		}
 		// var_dump($options);
 
-		if ( $options['src'] == '' ) {
+		if ( $options['src'] === '' ) {
 			$options['src'] = '...missing...';
-			$text           = '[leaflet_dir ';
+			$text           = '[leaflet-directory ';
 			foreach ( $options as $key => $item ) {
-				$text = $text . $key . '="' . $item . '" ';
+				$text .= $key . '="' . $item . '" ';
 			}
-			$text = $text . ']';
-			return $text;
+			$text .= ']';
+			return esc_attr( $text );
 		}
 		$dir = $atts['src'];
 
@@ -66,17 +66,17 @@ function leafext_directory_function( $atts, $content, $shortcode ) {
 				$upload_url  = $upload_dir['url'];
 			}
 			if ( ! is_dir( $upload_path . '/' . $dir ) ) {
-				$text           = '[leaflet_dir ';
+				$text           = '[leaflet-directory ';
 				$options['src'] = '...not exists... ' . $options['src'];
 				foreach ( $options as $key => $item ) {
-					$text = $text . $key . '="' . $item . '" ';
+					$text .= $key . '="' . $item . '" ';
 				}
-				$text = $text . ']';
-				return $text;
+				$text .= ']';
+				return esc_attr( $text );
 			}
 		}
 
-		if ( $options['url'] == '' ) {
+		if ( $options['url'] === '' ) {
 			$url = trailingslashit( $upload_url );
 		} else {
 			$url = trailingslashit( $options['url'] );
@@ -94,26 +94,26 @@ function leafext_directory_function( $atts, $content, $shortcode ) {
 			$valid = array_diff( explode( ',', $options['type'] ), array( 'gpx', 'kml', 'geojson', 'json' ) );
 			if ( count( $valid ) > 0 ) {
 				$options['type'] = '...not valid... ' . $options['type'];
-				$text            = '[leaflet_dir ';
+				$text            = '[leaflet-directory ';
 				foreach ( $options as $key => $item ) {
-					$text = $text . $key . '="' . $item . '" ';
+					$text .= $key . '="' . $item . '" ';
 				}
-				$text = $text . ']';
-				return $text;
+				$text .= ']';
+				return esc_attr( $text );
 			} else {
 				$type = $options['type'];
 			}
 		}
 
 		$files = glob( $dirpath . $dir . '/*.{' . $type . '}', GLOB_BRACE );
-		if ( count( $files ) == 0 ) {
-			$text = '[leaflet_dir ';
+		if ( count( $files ) === 0 ) {
+			$text = '[leaflet-directory ';
 			foreach ( $options as $key => $item ) {
-				$text = $text . $key . '="' . $item . '" ';
+				$text .= $key . '="' . $item . '" ';
 			}
-			$text = $text . ']';
-			$text = $text . ' * no any ' . $options['type'] . ' files found in directory ' . $dirpath . $dir;
-			return $text;
+			$text .= ']';
+			$text .= ' * no any ' . $options['type'] . ' files found in directory ' . $dirpath . $dir;
+			return esc_attr( $text );
 		}
 
 		if ( $options['leaflet'] ) {
@@ -124,33 +124,33 @@ function leafext_directory_function( $atts, $content, $shortcode ) {
 			foreach ( $files as $file ) {
 				$farbe = leafext_color_name_to_hex( $farben[ $count % count( $farben ) ] );
 				++$count;
-				if ( $dirpath != '' ) {
+				if ( $dirpath !== '' ) {
 					$file = str_replace( $dirpath . '/', '', $file );
 				}
 				$ext = pathinfo( $file, PATHINFO_EXTENSION );
-				if ( $ext == 'json' ) {
+				if ( $ext === 'json' ) {
 					$ext = 'geojson';
 				}
 				if ( ! in_array( $ext, array( 'gpx', 'kml', 'geojson' ), true ) ) {
-					$text = '[leaflet_dir ... ';
-					$text = $text . $ext . ' not valid ... ';
+					$text = '[leaflet-directory ... ';
+					$text .= $ext . ' not valid ... ';
 					foreach ( $options as $key => $item ) {
-						$text = $text . $key . '="' . $item . '" ';
+						$text .= $key . '="' . $item . '" ';
 					}
-					$text = $text . ']';
-					return $text;
+					$text .= ']';
+					return esc_attr( $text );
 				}
 				$shortcode = $shortcode . '[leaflet-' . $ext . ' src="' . $url . $file . '" color="' . $farbe . '"]{name}[/leaflet-' . $ext . ']';
 			}
 			$shortcode = $shortcode . '[hidemarkers]';
 			if ( $options['start'] ) {
 				foreach ( $files as $file ) {
-					if ( pathinfo( $file, PATHINFO_EXTENSION ) == 'gpx' ) {
+					if ( pathinfo( $file, PATHINFO_EXTENSION ) === 'gpx' ) {
 						$gpx       = simplexml_load_file( $file );
 						$trackname = isset( $gpx->trk->name ) ? $gpx->trk->name : basename( $file );
 						$startlat  = isset( $gpx->trk->trkseg->trkpt[0]->attributes()->lat ) ? (float) $gpx->trk->trkseg->trkpt[0]->attributes()->lat : '';
 						$startlon  = isset( $gpx->trk->trkseg->trkpt[0]->attributes()->lon ) ? (float) $gpx->trk->trkseg->trkpt[0]->attributes()->lon : '';
-						if ( $startlat != '' && $startlon != '' ) {
+						if ( $startlat !== '' && $startlon !== '' ) {
 								$shortcode = $shortcode . '[leaflet-marker lat=' . $startlat . ' lng=' . $startlon . ']' . $trackname . '[/leaflet-marker]';
 						}
 					}
@@ -164,7 +164,7 @@ function leafext_directory_function( $atts, $content, $shortcode ) {
 			// [elevation-track file="..." ]
 			$shortcode = '';
 			foreach ( $files as $file ) {
-				if ( $dirpath != '' ) {
+				if ( $dirpath !== '' ) {
 					$file = str_replace( $dirpath . '/', '', $file );
 				}
 				$shortcode = $shortcode . '[elevation-track file="' . $url . $file . '"]';

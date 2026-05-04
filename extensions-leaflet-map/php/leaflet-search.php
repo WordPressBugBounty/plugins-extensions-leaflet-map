@@ -26,12 +26,14 @@ function leafext_search_params() {
 		// | propertyName     | 'title'  | property in marker.options(or feature.properties for vector layer) trough filter elements in layer, |
 		array(
 			'param'   => 'propertyName',
-			'desc'    => sprintf(
+			'desc'    => wp_sprintf(
+				/* translators: %s is an option. */
 				__( 'a option / property for marker, polygon, circle, line or a %s for geojson layer. Can also be a comma-separated list of options or properties.', 'extensions-leaflet-map' ),
 				'feature.property'
 			),
 			'default' => 'title',
-			'values'  => sprintf(
+			'values'  => wp_sprintf(
+				/* translators: %s are properties. */
 				__( 'for example %1$s for marker, additional for example %2$s for extramarkers; %3$s for polygon, circle, line; %4$s depending on geojson layer; %5$s for all', 'extensions-leaflet-map' ),
 				'title, iconclass',
 				'number',
@@ -68,6 +70,12 @@ function leafext_search_params() {
 		// | firstTipSubmit  | false     | auto select first result con enter click |
 		// | autoResize   | true     | autoresize on input change |
 		// | collapsed        | true     | collapse search control at startup |
+		array(
+			'param'   => 'collapsed',
+			'desc'    => __( 'collapse search control at startup', 'extensions-leaflet-map' ),
+			'default' => true,
+			'values'  => 'true, false',
+		),
 		// | autoCollapse     | false    | collapse search control after submit(on button or on tips if enabled tipAutoSubmit) |
 		// | autoCollapseTime| 1200  | delay for autoclosing alert and collapse after blur |
 		array(
@@ -111,7 +119,8 @@ function leafext_search_params() {
 			'param'   => 'marker',
 			'desc'    => __( 'show or hide marker at the position found', 'extensions-leaflet-map' ),
 			'default' => '{}',
-			'values'  => sprintf(
+			'values'  => wp_sprintf(
+				/* translators: %1$s is an option, %2$s and %3$s is a href */
 				__( 'not specified for default (red circle), %1$s for no marker, or a definition like on an %2$sexample page%3$s.', 'extensions-leaflet-map' ),
 				'false',
 				'<a href="https://leafext.de/leafletsearch/leafletsearchmarker/">',
@@ -130,12 +139,12 @@ function leafext_search_params() {
 		),
 
 	);
-		return $params;
+	return $params;
 }
 
 function leafext_leafletsearch_function( $atts, $content, $shortcode ) {
 	$text = leafext_should_interpret_shortcode( $shortcode, $atts );
-	if ( $text != '' ) {
+	if ( $text !== '' ) {
 		return $text;
 	} else {
 		$defaults = array();
@@ -146,15 +155,15 @@ function leafext_leafletsearch_function( $atts, $content, $shortcode ) {
 		$atts1   = leafext_case( array_keys( $defaults ), leafext_clear_params( $atts ) );
 		$options = shortcode_atts( $defaults, $atts1 );
 		// var_dump($options);wp_die();
-		if ( $options['marker'] == 'false' ) {
+		if ( $options['marker'] === 'false' ) {
 			$options['marker'] = '{icon:false, circle:{radius:0,weight:0}}';
 		}
-		if ( $options['marker'] != '{}' ) {
+		if ( $options['marker'] !== '{}' ) {
 			$pattern           = array( "/:\s*'\s*(-?\d+)\s*,\s*(-?\d+)\s*'/" );
 			$replacement       = array( ':[$1,$2]' );
 			$options['marker'] = preg_replace( $pattern, $replacement, $options['marker'] );
 		}
-		if ( $options['container'] == '' ) {
+		if ( $options['container'] === '' ) {
 			unset( $options['container'] );
 		} else {
 			$options['collapsed'] = false;
@@ -431,7 +440,10 @@ function leafext_leafletsearch_script( $options, $jsoptions, $allproperties ) {
 
 				var SearchControl = new L.Control.Search({
 					layer: searchLayer,
-				<?php echo $jsoptions; ?>
+					<?php
+					// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+					echo $jsoptions;
+					?>
 					initial: false,
 					moveToLocation: function(latlng, title, map) {
 						//console.log("moveToLocation");

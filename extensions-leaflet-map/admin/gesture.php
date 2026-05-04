@@ -16,7 +16,15 @@ function leafext_gesture_init() {
 	foreach ( $fields as $field ) {
 		add_settings_field( 'leafext_gesture[' . $field['param'] . ']', $field['shortdesc'], 'leafext_form_gesture', 'leafext_settings_gesture', 'gesture_settings', $field['param'] );
 	}
-	register_setting( 'leafext_settings_gesture', 'leafext_gesture', 'leafext_validate_gesture' );
+	register_setting(
+		'leafext_settings_gesture',
+		'leafext_gesture',
+		array(
+			'type'              => 'array',
+			'sanitize_callback' => 'leafext_validate_gesture',
+			'default'           => array(),
+		)
+	);
 }
 add_action( 'admin_init', 'leafext_gesture_init' );
 
@@ -26,9 +34,8 @@ function leafext_form_gesture( $field ) {
 	$option   = leafext_array_find2( $field, $options );
 	$settings = leafext_gesture_settings();
 	$setting  = $settings[ $field ];
-	if ( $option['desc'] != '' ) {
-		//phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped in php/gesture.php
-		echo '<p>' . $option['desc'] . '</p>';
+	if ( $option['desc'] !== '' ) {
+		echo '<p>' . wp_kses_post( $option['desc'] ) . '</p>';
 	}
 	// echo __("You can change it for each map with", "extensions-leaflet-map").' <code>'.$option['param']. '</code><br>';
 
@@ -39,30 +46,26 @@ function leafext_form_gesture( $field ) {
 	}
 
 	if ( ! is_array( $option['values'] ) ) {
-		if ( $setting != $option['default'] ) {
+		if ( $setting !== $option['default'] ) {
 			// var_dump($setting,$option['default']);
 			echo esc_html__( 'Plugins Default', 'extensions-leaflet-map' ) . ': ';
 			echo $option['default'] ? 'true' : 'false';
 			echo '<br>';
 		}
-		//phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- string not changeable
-		echo '<input ' . $disabled . ' type="radio" name="leafext_gesture[' . $option['param'] . ']" value="1" ';
+		echo '<input ' . esc_attr( $disabled ) . ' type="radio" name="leafext_gesture[' . esc_attr( $option['param'] ) . ']" value="1" ';
 		echo $setting ? 'checked' : '';
 		echo '> true &nbsp;&nbsp; ';
-		//phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- string not changeable
-		echo '<input ' . $disabled . ' type="radio" name="leafext_gesture[' . $option['param'] . ']" value="0" ';
+		echo '<input ' . esc_attr( $disabled ) . ' type="radio" name="leafext_gesture[' . esc_attr( $option['param'] ) . ']" value="0" ';
 		echo ( ! $setting ) ? 'checked' : '';
 		echo '> false ';
 	} else {
 		$plugindefault = is_string( $option['default'] ) ? $option['default'] : ( $option['default'] ? '1' : '0' );
 		$setting       = is_string( $setting ) ? $setting : ( $setting ? '1' : '0' );
-		if ( $setting != $plugindefault ) {
+		if ( $setting !== $plugindefault ) {
 			// var_dump("Option: ",$option['default'],"Plugindefault: ",$plugindefault,"Setting: ",$setting);
-			//phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- plugindefault not changeable
-			echo esc_html__( 'Plugins Default:', 'extensions-leaflet-map' ) . ' ' . $plugindefault . '<br>';
+			echo wp_kses_post( __( 'Plugins Default:', 'extensions-leaflet-map' ) . ' ' . $plugindefault . '<br>' );
 		}
-		//phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- string not changeable
-		echo '<select ' . $disabled . ' name="leafext_gesture[' . $option['param'] . ']">';
+		echo '<select ' . esc_attr( $disabled ) . ' name="leafext_gesture[' . esc_attr( $option['param'] ) . ']">';
 		foreach ( $option['values'] as $para ) {
 			echo '<option ';
 			if ( is_bool( $para ) ) {
@@ -71,8 +74,7 @@ function leafext_form_gesture( $field ) {
 			if ( $para === $setting ) {
 				echo ' selected="selected" ';
 			}
-			//phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- string not changeable
-			echo 'value="' . $para . '" >' . $para . '</option>';
+			echo 'value="' . esc_attr( $para ) . '" >' . esc_attr( $para ) . '</option>';
 		}
 		echo '</select>';
 	}
@@ -116,38 +118,42 @@ function leafext_gesture_help_text() {
 	'<li> ' . __( 'When Gesture Handling is enabled:', 'extensions-leaflet-map' );
 	$text = $text . '<ul><p>';
 	$text = $text . '<li> ' .
-	sprintf(
+	wp_sprintf(
+		/* translators: %s is an option. */
 		__( 'If Scroll Wheel Zoom (%s) is enabled, it becomes active on both desktop and touch devices.', 'extensions-leaflet-map' ),
 		'<code>scrollwheel</code>'
 	) . '</li>';
 	$text = $text . '<li> ' .
-	sprintf(
+	wp_sprintf(
+		/* translators: %s is an option. */
 		__( 'If %s is enabled, it becomes active on touch devices only.', 'extensions-leaflet-map' ),
 		'<code>dragging</code>'
 	) . '</li>';
 	if ( ! ( is_singular() || is_archive() ) ) {
 		$text = $text . '<li> ' .
-		sprintf(
+		wp_sprintf(
+		/* translators: %s is the link to Leaflet Map setting. */
 			__( 'Your %s setting for', 'extensions-leaflet-map' ),
 			'<a href="' . get_admin_url() . 'admin.php?page=leaflet-map">Leaflet Map</a>'
 		) .
-		' ' . __( 'Scroll Wheel Zoom', 'leaflet-map' ) . ' (<code>scrollwheel</code>) ' .
+		' ' . __( 'Scroll Wheel Zoom', 'extensions-leaflet-map' ) . ' (<code>scrollwheel</code>) ' .
 		' ' . __( 'is', 'extensions-leaflet-map' ) . ' ';
-		$text = $text . ( get_option( 'leaflet_scroll_wheel_zoom', '0' ) == '1' ? 'true' : 'false' );
+		$text = $text . ( get_option( 'leaflet_scroll_wheel_zoom', '0' ) === '1' ? 'true' : 'false' );
 		$text = $text . ', <code>dragging</code> ' . __( 'is true at default', 'extensions-leaflet-map' ) . '.</li>';
 		$text = $text . '<li>' .
 		__( 'This means for you:', 'extensions-leaflet-map' ) . ' ';
-		$text = $text . ( get_option( 'leaflet_scroll_wheel_zoom', '0' ) == '1' ? __( 'It is enabled on both desktop and touch device by default.', 'extensions-leaflet-map' ) : __( 'It is only enabled on touch devices by default.', 'extensions-leaflet-map' ) );
+		$text = $text . ( get_option( 'leaflet_scroll_wheel_zoom', '0' ) === '1' ? __( 'It is enabled on both desktop and touch device by default.', 'extensions-leaflet-map' ) : __( 'It is only enabled on touch devices by default.', 'extensions-leaflet-map' ) );
 		$text = $text . '</li>' .
 		'<li> ' .
 		__( 'You can change it with', 'extensions-leaflet-map' ) . ' <code>[leaflet-map ';
-		$text = $text . ( get_option( 'leaflet_scroll_wheel_zoom', '0' ) == '1' ? '!' : '' );
+		$text = $text . ( get_option( 'leaflet_scroll_wheel_zoom', '0' ) === '1' ? '!' : '' );
 		$text = $text . 'scrollwheel !dragging]</code>' .
 		'</li>';
 	}
 	$text = $text . '</p></ul></li></ul>';
 	if ( ! ( is_singular() || is_archive() ) ) {
-		$text = $text . '<p>' . sprintf(
+		$text = $text . '<p>' . wp_sprintf(
+			/* translators: %s is a href. */
 			__( 'You can test it yourself on a %1$sseparate page%2$s.', 'extensions-leaflet-map' ),
 			'<a href="https://leafext.de/extra/gesture/">',
 			'</a>'
@@ -156,7 +162,6 @@ function leafext_gesture_help_text() {
 	if ( is_singular() || is_archive() ) {
 		return $text;
 	} else {
-		//phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped 
-		echo $text;
+		echo wp_kses_post( $text );
 	}
 }

@@ -11,7 +11,7 @@ defined( 'ABSPATH' ) || die();
 // Shortcode: [hidemarkers]
 function leafext_hidemarkers_function() {
 	$text = leafext_should_interpret_shortcode( 'hidemarkers', 0 );
-	if ( $text != '' ) {
+	if ( $text !== '' ) {
 		return $text;
 	} else {
 		$text = '<script><!--';
@@ -21,7 +21,7 @@ function leafext_hidemarkers_function() {
 		window.WPLeafletMapPlugin.push(function () {
 			var map = window.WPLeafletMapPlugin.getCurrentMap();
 			map.eachLayer(function(layer) {
-				if (layer.options.type == "gpx" ) {
+				if ( layer.options.type == "gpx" || layer.options.type == "kml" ) {
 					//console.log("gpx");
 					layer.options.filter = function (geoJsonFeature) {
 						if (geoJsonFeature.geometry.type == "Point" ) {

@@ -11,8 +11,16 @@ defined( 'ABSPATH' ) || die();
 // init settings fuer tile switching
 function leafext_maps_init() {
 	add_settings_section( 'maps_settings', __( 'Extra Tile Server', 'extensions-leaflet-map' ), 'leafext_maps_help_text', 'leafext_settings_maps' );
-	add_settings_field( 'leafext_form_maps_id', 'mapid:', 'leafext_form_maps', 'leafext_settings_maps', 'maps_settings', 'mapid' );
-	register_setting( 'leafext_settings_maps', 'leafext_maps', 'leafext_validate_mapswitch' );
+	add_settings_field( 'leafext_form_maps_id', 'mapid:', 'leafext_form_maps', 'leafext_settings_maps', 'maps_settings' );
+	register_setting(
+		'leafext_settings_maps',
+		'leafext_maps',
+		array(
+			'type'              => 'array',
+			'sanitize_callback' => 'leafext_validate_mapswitch',
+			'default'           => array(),
+		)
+	);
 }
 add_action( 'admin_init', 'leafext_maps_init' );
 
@@ -42,15 +50,15 @@ function leafext_form_maps() {
 			// } else {
 			// echo '<td>';
 		}
-		echo '<input ' . $disabled . ' class="full-width" type="text" placeholder="name" name="leafext_maps[' . $i . '][mapid]" value="' . $option['mapid'] . '" /></td>';
+		echo '<input ' . esc_attr( $disabled ) . ' class="full-width" type="text" placeholder="name" name="' . esc_attr( 'leafext_maps[' . $i . '][mapid]' ) . '" value="' . esc_attr( $option['mapid'] ) . '" /></td>';
 		echo '</tr>';
 
 		echo '<tr><th scope="row-title">Attribution:</th>';
-		echo '<td><input ' . $disabled . ' type="text" size="80" placeholder="Copyright" name="leafext_maps[' . $i . '][attr]" value="' . esc_attr( $option['attr'] ) . '" /></td>';
+		echo '<td><input ' . esc_attr( $disabled ) . ' type="text" size="80" placeholder="Copyright" name="' . esc_attr( 'leafext_maps[' . $i . '][attr]' ) . '" value="' . esc_attr( $option['attr'] ) . '" /></td>';
 		echo '</tr>';
 
 		echo '<tr><th scope="row-title">Tile Server:</th>';
-		echo '<td><input ' . $disabled . ' type="url" size="80" placeholder="https://{s}.tile.server.tld/{z}/{x}/{y}.png" name="leafext_maps[' . $i . '][tile]" value="' . $option['tile'] . '" /></td>';
+		echo '<td><input ' . esc_attr( $disabled ) . ' type="url" size="80" placeholder="https://{s}.tile.server.tld/{z}/{x}/{y}.png" name="' . esc_attr( 'leafext_maps[' . $i . '][tile]' ) . '" value="' . esc_attr( $option['tile'] ) . '" /></td>';
 		echo '</tr>';
 
 		echo '<tr><th scope="row-title">Extra Options: (optional)</th>';
@@ -58,13 +66,13 @@ function leafext_form_maps() {
 			$option['options'] = '';
 		}
 		echo '<td>';
-		if ( $option['options'] == '' ) {
+		if ( $option['options'] === '' ) {
 			echo esc_html__( 'The syntax is not checked!', 'extensions-leaflet-map' ) . '<br>';
 		}
-		echo '<input ' . $disabled . ' type="text" size="80"
+		echo '<input ' . esc_attr( $disabled ) . ' type="text" size="80"
 			placeholder="' .
 			esc_attr( 'minZoom: 1, maxZoom: 16, subdomains: "abcd", opacity: 0.5, bounds: [[22, -132], [51, -56]]' ) . '"
-			name="leafext_maps[' . $i . '][options]"
+			name="leafext_maps[' . esc_html( (string) $i ) . '][options]"
 			pattern=' . "'" . '[a-zA-Z0-9_: ",\[\]\-.\{\}]*' . "'" . ' value="' . esc_attr( $option['options'] ) . '" /></td>';
 		echo '</tr>';
 
@@ -72,16 +80,16 @@ function leafext_form_maps() {
 		if ( ! isset( $option['overlay'] ) ) {
 			$option['overlay'] = '0';
 		}
-		$checked = $option['overlay'] == '1' ? 'checked' : '';
-		echo '<td><input ' . $disabled . ' type="checkbox" name="leafext_maps[' . $i . '][overlay]" value="1" ' . $checked . '/>';
+		$checked = $option['overlay'] === '1' ? 'checked' : '';
+		echo '<td><input ' . esc_attr( $disabled ) . ' type="checkbox" name="' . esc_attr( 'leafext_maps[' . $i . '][overlay]' ) . '" value="1" ' . esc_attr( $checked ) . '/>';
 		echo '</td></tr>';
 
 		echo '<tr><th scope="row-title">Leaflet.Control.Opacity:</th>';
 		if ( ! isset( $option['opacity'] ) ) {
 			$option['opacity'] = '0';
 		}
-		$checked = $option['opacity'] == '1' ? 'checked' : '';
-		echo '<td><input ' . $disabled . ' type="checkbox" name="leafext_maps[' . $i . '][opacity]" value="1" ' . $checked . '/>';
+		$checked = $option['opacity'] === '1' ? 'checked' : '';
+		echo '<td><input ' . esc_attr( $disabled ) . ' type="checkbox" name="' . esc_attr( 'leafext_maps[' . $i . '][opacity]' ) . '" value="1" ' . esc_attr( $checked ) . '/>';
 
 		++$i;
 		if ( $i < $count ) {
@@ -94,7 +102,7 @@ function leafext_form_maps() {
 function leafext_validate_mapswitch( $options ) {
 		$maps = array();
 	foreach ( $options as $option ) {
-		if ( $option['mapid'] != '' ) {
+		if ( $option['mapid'] !== '' ) {
 			$map            = array();
 			$map['mapid']   = sanitize_text_field( $option['mapid'] );
 			$map['attr']    = wp_kses_normalize_entities( $option['attr'] );
@@ -110,6 +118,25 @@ function leafext_validate_mapswitch( $options ) {
 
 // Erklaerung / Hilfe
 function leafext_maps_help_text() {
+	if ( is_singular() || is_archive() ) {
+		$codestyle = '';
+	} else {
+		leafext_enqueue_admin();
+		$codestyle = ' class="language-coffeescript"';
+	}
+	if ( ! ( is_singular() || is_archive() ) ) { // backend
+		$tilesproviders = '?page=' . LEAFEXT_PLUGIN_SETTINGS . '&tab=tilesproviders';
+		$tileswitch     = '?page=' . LEAFEXT_PLUGIN_SETTINGS . '&tab=tileswitch';
+	} else { // for my frontend leafext.de
+		$server = map_deep( wp_unslash( $_SERVER ), 'sanitize_text_field' );
+		if ( strpos( $server['REQUEST_URI'], '/en/' ) !== false ) {
+			$lang = '/en';
+		} else {
+			$lang = '';
+		}
+		$tilesproviders = $lang . '/doku/tilesproviders/';
+		$tileswitch     = $lang . '/doku/tileswitch/';
+	}
 	$text = '';
 	if ( ! ( is_singular() || is_archive() ) ) {
 		$text = $text . '<img src="' . LEAFEXT_PLUGIN_PICTS . 'layerswitch.png"><p>';
@@ -121,17 +148,25 @@ function leafext_maps_help_text() {
 		'extensions-leaflet-map'
 	);
 	$text = $text . '</p>
-	<pre><code>&#091;leaflet-map mapid="..." ...]
+	<pre' . $codestyle . '><code' . $codestyle . '>&#091;leaflet-map mapid="..." ...]
 &#091;layerswitch]
 </code></pre>';
-	$text = $text . '<p>' . __(
-		'You can select your defined Tile Server with parameter <code>tiles</code> as comma separated list in the shortcode:',
-		'extensions-leaflet-map'
+	$text = $text . '<p>' . wp_sprintf(
+		/* translators: %s is an option. */
+		__(
+			'You can select your defined Tile Server with parameter %s as comma separated list in the shortcode:',
+			'extensions-leaflet-map'
+		),
+		'<code>tiles</code>'
 	) . '</p>';
-	$text = $text . '<pre><code>&#091;leaflet-map mapid="..." ...]
+	$text = $text . '<pre' . $codestyle . '><code' . $codestyle . '>&#091;leaflet-map mapid="..." ...]
 &#091;layerswitch tiles="mapid1,mapid2,..."]
 </code></pre>';
-	$text = $text . '<p>' . __( 'You can use the parameter <code>providers</code> also.', 'extensions-leaflet-map' ) . '</p>';
+	$text = $text . '<p>' . wp_sprintf(
+		/* translators: %s is an option. */
+		__( 'You can use the parameter %s also.', 'extensions-leaflet-map' ),
+		'<a href="' . $tilesproviders . '"><code>providers</code></a>'
+	) . '</p>';
 	if ( ! ( is_singular() || is_archive() ) ) {
 		$text     = $text . '<h2>' . __( 'Settings', 'extensions-leaflet-map' ) . '</h2>';
 		$text     = $text . '<p>' .
@@ -143,6 +178,6 @@ function leafext_maps_help_text() {
 	if ( is_singular() || is_archive() ) {
 		return $text;
 	} else {
-		echo $text;
+		echo wp_kses_post( $text );
 	}
 }

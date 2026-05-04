@@ -8,12 +8,12 @@
 // Direktzugriff auf diese Datei verhindern.
 defined( 'ABSPATH' ) || die();
 
-require LEAFEXT_PLUGIN_DIR . '/admin/elevation/elevation.php';
-require LEAFEXT_PLUGIN_DIR . '/admin/elevation/owntheme.php';
-require LEAFEXT_PLUGIN_DIR . '/admin/elevation/waypoints.php';
-require LEAFEXT_PLUGIN_DIR . '/admin/elevation/owncolors.php';
-require LEAFEXT_PLUGIN_DIR . '/admin/elevation/sgpx.php';
-require LEAFEXT_PLUGIN_DIR . '/admin/elevation/multielevation.php';
+require __DIR__ . '/elevation.php';
+require __DIR__ . '/owntheme.php';
+require __DIR__ . '/waypoints.php';
+require __DIR__ . '/owncolors.php';
+require __DIR__ . '/sgpx.php';
+require __DIR__ . '/multielevation.php';
 
 function leafext_elevation_tab() {
 	$tabs = array(
@@ -44,24 +44,24 @@ function leafext_elevation_tab() {
 		}
 	}
 
-	//phpcs:disable WordPress.Security.NonceVerification.Recommended -- no form
+	//phpcs:ignore WordPress.Security.NonceVerification.Recommended -- no form
 	$get        = map_deep( wp_unslash( $_GET ), 'sanitize_text_field' );
 	$active_tab = isset( $get['tab'] ) ? $get['tab'] : '';
 	$textheader = '<div class="nav-tab-wrapper">';
 
 	foreach ( $tabs as $tab ) {
 		$textheader = $textheader . '<a href="?page=' . LEAFEXT_PLUGIN_SETTINGS . '&tab=' . $tab['tab'] . '" class="nav-tab';
-		$active     = ( $active_tab == $tab['tab'] ) ? ' nav-tab-active' : '';
+		$active     = ( $active_tab === $tab['tab'] ) ? ' nav-tab-active' : '';
 		$textheader = $textheader . $active;
 		$textheader = $textheader . '">' . $tab['title'] . '</a>' . "\n";
 	}
 
-		$textheader = $textheader . '</div>';
+	$textheader = $textheader . '</div>';
 	return $textheader;
 }
 
 function leafext_admin_elevation( $active_tab ) {
-	if ( $active_tab == 'multielevation' ) {
+	if ( $active_tab === 'multielevation' ) {
 		if ( current_user_can( 'manage_options' ) ) {
 			echo '<form method="post" action="options.php">';
 		} else {
@@ -75,7 +75,7 @@ function leafext_admin_elevation( $active_tab ) {
 			submit_button( __( 'Reset', 'extensions-leaflet-map' ), 'delete', 'delete', false );
 		}
 		echo '</form>';
-	} elseif ( $active_tab == 'elevationtheme' ) {
+	} elseif ( $active_tab === 'elevationtheme' ) {
 		$ownoptions = get_option( 'leafext_values' );
 		if ( ! is_array( $ownoptions ) ) {
 			if ( current_user_can( 'manage_options' ) ) {
@@ -117,7 +117,7 @@ function leafext_admin_elevation( $active_tab ) {
 			submit_button( __( 'Reset', 'extensions-leaflet-map' ), 'delete', 'delete', false );
 		}
 		echo '</form>';
-	} elseif ( $active_tab == 'sgpxelevation' ) {
+	} elseif ( $active_tab === 'sgpxelevation' ) {
 		if ( current_user_can( 'manage_options' ) ) {
 			echo '<form method="post" action="options.php">';
 		} else {
@@ -135,7 +135,7 @@ function leafext_admin_elevation( $active_tab ) {
 			do_settings_sections( 'leafext_settings_sgpx_unclean_db' );
 			if ( current_user_can( 'manage_options' ) ) {
 				wp_nonce_field( 'leafext_elevation', 'leafext_elevation_nonce' );
-				submit_button( __( 'Delete all settings from wp-gpx-maps!', 'extensions-leaflet-map' ), 'delete', 'delete', false );
+				submit_button( esc_html__( 'Delete all settings from WP GPX Maps!', 'extensions-leaflet-map' ), 'delete', 'delete', false );
 			}
 		} elseif ( LEAFEXT_SGPX_SGPX ) {
 			settings_fields( 'leafext_settings_sgpxparams' );
@@ -145,11 +145,11 @@ function leafext_admin_elevation( $active_tab ) {
 				submit_button( __( "I don't need this anymore. sgpx is always interpreted as elevation.", 'extensions-leaflet-map' ), 'delete', 'delete', false );
 			}
 		} else {
-			echo '<h2>' . leafext_elevation_tab() . '</h2>';
+			echo '<h2>' . wp_kses_post( leafext_elevation_tab() ) . '</h2>';
 			echo esc_html__( 'wp-gpx-maps is not installed and nothing is configured.', 'extensions-leaflet-map' );
 		}
 		echo '</form>';
-	} elseif ( $active_tab == 'elevationwaypoints' ) {
+	} elseif ( $active_tab === 'elevationwaypoints' ) {
 		if ( current_user_can( 'manage_options' ) ) {
 			echo '<form method="post" action="options.php">';
 		} else {
@@ -163,8 +163,8 @@ function leafext_admin_elevation( $active_tab ) {
 			submit_button( __( 'Reset', 'extensions-leaflet-map' ), 'delete', 'delete', false );
 		}
 		echo '</form>';
-	} elseif ( $active_tab == 'elevation' ) { // Last tab!!!
-		echo '<h2>' . leafext_elevation_tab() . '</h2>';
+	} elseif ( $active_tab === 'elevation' ) { // Last tab!!!
+		echo '<h2>' . wp_kses_post( leafext_elevation_tab() ) . '</h2>';
 		if ( current_user_can( 'manage_options' ) ) {
 			echo '<form method="post" action="options.php">';
 		} else {

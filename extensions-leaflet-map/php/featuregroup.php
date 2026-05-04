@@ -11,7 +11,7 @@ defined( 'ABSPATH' ) || die();
 add_filter(
 	'pre_do_shortcode_tag',
 	function ( $output, $shortcode ) {
-		if ( 'leaflet-map' == $shortcode ) {
+		if ( 'leaflet-map' === $shortcode ) {
 			global $leafext_group_menu;
 			$leafext_group_menu = array();
 		}
@@ -35,10 +35,10 @@ function leafext_featuregroup_script( $options, $params ) {
 		let visible = <?php echo wp_json_encode( $options['visible'] ); ?>;
 		let substr = <?php echo wp_json_encode( $options['substr'] ); ?>;
 		let	alle = new L.markerClusterGroup({
-			<?php echo leafext_java_params( $params ); ?>
+			<?php echo leafext_java_params( $params ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 		});
 		let position = <?php echo wp_json_encode( $options['position'] ); ?>;
-		let collapsed = <?php echo wp_json_encode( $options['collapsed'] ); ?>;
+		let collapsed = <?php echo $options['collapsed']; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>;
 		leafext_featuregroup_js(att_property,att_option,groups,grouptext,visible,substr,alle,position,collapsed);
 	});
 	<?php
@@ -51,7 +51,7 @@ function leafext_featuregroup_script( $options, $params ) {
 
 function leafext_featuregroup_function( $atts, $content, $shortcode ) {
 	$text = leafext_should_interpret_shortcode( $shortcode, $atts );
-	if ( $text != '' ) {
+	if ( $text !== '' ) {
 		return $text;
 	} else {
 		// var_dump($atts); wp_die();
@@ -64,47 +64,47 @@ function leafext_featuregroup_function( $atts, $content, $shortcode ) {
 				'option'   => '',
 				'values'   => '',
 				'groups'   => '',
-				'substr'   => $shortcode == 'leaflet-featuregroup' ? false : true,
+				'substr'   => $shortcode === 'leaflet-featuregroup' ? false : true,
 				'visible'  => false,
 			),
 			leafext_clear_params( $atts )
 		);
 
-		if ( ( $options['values'] == '' || $options['groups'] == '' ) ) {
-			$text = "['.$shortcode.' ";
+		if ( ( $options['values'] === '' || $options['groups'] === '' ) ) {
+			$text = '[' . $shortcode . ' ';
 			foreach ( $atts as $key => $item ) {
-				$text = $text . "$key=$item ";
+				$text .= esc_html( "$key=$item " );
 			}
-			$text = $text . ']';
-			$text = $text . ' - no values and/or groups. ';
-			return $text;
+			$text .= ']';
+			$text .= ' - no values and/or groups. ';
+			return esc_attr( $text );
 		}
 
-		if ( $options['property'] == '' && $options['option'] == '' ) {
+		if ( $options['property'] === '' && $options['option'] === '' ) {
 			$text = "['.$shortcode.' ";
 			foreach ( $atts as $key => $item ) {
-				$text = $text . "$key=$item ";
+				$text .= esc_html( "$key=$item " );
 			}
-			if ( $shortcode == 'leaflet-featuregroup' ) {
+			if ( $shortcode === 'leaflet-featuregroup' ) {
 				$missing = 'property';
 			} else {
 				$missing = 'option';
 			}
-			$text = $text . ' - ' . $missing . ' is missing. ';
-			$text = $text . ']';
-			return $text;
+			$text .= ' - ' . $missing . ' is missing. ';
+			$text .= ']';
+			return esc_attr( $text );
 		}
 
-		if ( substr_count( $options['values'], ',' ) != substr_count( $options['groups'], ',' ) ) {
+		if ( substr_count( $options['values'], ',' ) !== substr_count( $options['groups'], ',' ) ) {
 			$text = "['.$shortcode.' ";
 			if ( is_array( $atts ) ) {
 				foreach ( $atts as $key => $item ) {
-					$text = $text . "$key=$item ";
+					$text .= esc_html( "$key=$item " );
 				}
 			}
-			$text = $text . ' - values and groups do not match. ';
-			$text = $text . ']';
-			return $text;
+			$text .= ' - values and groups do not match. ';
+			$text .= ']';
+			return esc_attr( $text );
 		}
 
 		$cl_values    = array_map( 'trim', explode( ',', $options['values'] ) );
@@ -125,22 +125,22 @@ function leafext_featuregroup_function( $atts, $content, $shortcode ) {
 			$cl_on              = array_fill( 0, count( $cl_values ), '1' );
 		} else {
 			$cl_on = array_map( 'trim', explode( ',', $options['visible'] ) );
-			if ( count( $cl_on ) == 1 ) {
+			if ( count( $cl_on ) === 1 ) {
 				$cl_on = array_fill( 0, count( $cl_values ), '0' );
-			} elseif ( count( $cl_values ) != count( $cl_on ) ) {
+			} elseif ( count( $cl_values ) !== count( $cl_on ) ) {
 				$text = "['.$shortcode.' ";
 				foreach ( $atts as $key => $item ) {
-					$text = $text . "$key=$item ";
+					$text .= esc_html( "$key=$item " );
 				}
-				$text = $text . ' - groups and visible do not match. ';
-				$text = $text . ']';
-				return $text;
+				$text .= ' - groups and visible do not match. ';
+				$text .= ']';
+				return esc_attr( $text );
 			}
 		}
 
 		$control     = array(
 			'position'  => 'topright',
-			'collapsed' => false,
+			'collapsed' => 'false',
 		);
 		$atts1       = leafext_clear_params( $atts );
 		$ctl_options = shortcode_atts( $control, $atts1 );
