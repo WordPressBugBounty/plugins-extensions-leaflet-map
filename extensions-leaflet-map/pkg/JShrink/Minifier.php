@@ -509,7 +509,7 @@ class Minifier
         }
 
         if ($char === false) {
-            throw new \RuntimeException('Unclosed multiline comment at position: ' . (esc_attr($this->index - 2)));
+            throw new \RuntimeException('Unclosed multiline comment at position: ' . ($this->index - 2));
         }
 
         // if we're here c is part of the comment and therefore tossed
@@ -585,7 +585,7 @@ class Minifier
                     if ($stringType === '`') {
                         $this->echo($this->a);
                     } else {
-                        throw new \RuntimeException('Unclosed string at position: ' . esc_attr($startpos));
+                        throw new \RuntimeException('Unclosed string at position: ' . $startpos);
                     }
                     break;
 
@@ -628,24 +628,10 @@ class Minifier
         }
 
         $this->echo($this->b);
-        // Flag to make sure that we don't end the regex too early because of
-        // unescaped forward slashes inside a character class. e.g /[/]/
-        // In non-v-mode, The only characters that cannot appear literally are \, ], and -
-        // In v-mode more characters are reserved and forbidden from appearing literally
-        // including but not limited to [ ] \ /
-        $character_class = false;
-        $character_class_index = null;
 
         while (($this->a = $this->getChar()) !== false) {
-            if ($this->a === '/' && !$character_class) {
+            if ($this->a === '/') {
                 break;
-            }
-
-            if ($this->a === '[') {
-                $character_class = true;
-                $character_class_index = $this->index;
-            } elseif ($this->a === ']') {
-                $character_class = false;
             }
 
             if ($this->a === '\\') {
@@ -654,10 +640,7 @@ class Minifier
             }
 
             if ($this->a === "\n") {
-                if ($character_class) {
-                    throw new \RuntimeException('Unclosed character class at position: ' . esc_attr($character_class_index));
-                }
-                throw new \RuntimeException('Unclosed regex pattern at position: ' . esc_attr($this->index));
+                throw new \RuntimeException('Unclosed regex pattern at position: ' . $this->index);
             }
 
             $this->echo($this->a);

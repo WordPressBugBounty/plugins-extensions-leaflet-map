@@ -30,15 +30,7 @@ function leafext_cluster_init() {
 	foreach ( $fields as $field ) {
 		add_settings_field( 'leafext_cluster[' . $field['param'] . ']', $field['desc'], 'leafext_form_markercluster', 'leafext_settings_clusterparams', 'clusterparams_settings', $field['param'] );
 	}
-	register_setting(
-		'leafext_settings_clusterparams',
-		'leafext_cluster',
-		array(
-			'type'              => 'array',
-			'sanitize_callback' => 'leafext_validate_markercluster_options',
-			'default'           => array(),
-		)
-	);
+	register_setting( 'leafext_settings_clusterparams', 'leafext_cluster', 'leafext_validate_markercluster_options' );
 }
 add_action( 'admin_init', 'leafext_cluster_init' );
 
@@ -58,33 +50,34 @@ function leafext_form_markercluster( $field ) {
 		$disabled = '';
 	}
 
-	echo wp_kses_post( __( 'You can change it for each map with', 'extensions-leaflet-map' ) . ' <code>' . $option['param'] . '</code><br>' . "\n" );
+	echo esc_html__( 'You can change it for each map with', 'extensions-leaflet-map' ) . ' <code>' . $option['param'] . '</code><br>';
 	if ( ! is_array( $option['values'] ) ) {
 
-		if ( $setting !== $option['default'] ) {
+		if ( $setting != $option['default'] ) {
 			echo esc_html__( 'Plugins Default', 'extensions-leaflet-map' ) . ': ';
 			echo $option['default'] ? '1' : '0';
-			echo '<br>' . "\n";
+			echo '<br>';
 		}
-		echo '<input ' . esc_attr( $disabled ) . ' type="radio" name="' . esc_attr( 'leafext_cluster[' . $option['param'] . ']' ) . '" value="1" ';
+
+		echo '<input ' . $disabled . ' type="radio" name="leafext_cluster[' . $option['param'] . ']" value="1" ';
 		echo $setting ? 'checked' : '';
 		echo '> true &nbsp;&nbsp; ';
-		echo '<input ' . esc_attr( $disabled ) . ' type="radio" name="' . esc_attr( 'leafext_cluster[' . $option['param'] . ']' ) . '" value="0" ';
+		echo '<input ' . $disabled . ' type="radio" name="leafext_cluster[' . $option['param'] . ']" value="0" ';
 		echo ( ! $setting ) ? 'checked' : '';
 		echo '> false ';
 	} else {
 		$plugindefault = is_string( $option['default'] ) ? $option['default'] : ( $option['default'] ? '1' : '0' );
 		$setting       = is_string( $setting ) ? $setting : ( $setting ? '1' : '0' );
-		if ( $setting !== $plugindefault ) {
+		if ( $setting != $plugindefault ) {
 			// var_dump("Option: ",$option[2],"Plugindefault: ",$plugindefault,"Setting: ",$setting);
-			echo esc_html( __( 'Plugins Default:', 'extensions-leaflet-map' ) . ' ' . $plugindefault ) . '<br>' . "\n";
+			echo esc_html__( 'Plugins Default:', 'extensions-leaflet-map' ) . ' ' . $plugindefault . '<br>';
 		}
 		if ( ! current_user_can( 'manage_options' ) ) {
 			$select_disabled = ' disabled multiple size=' . count( $option['values'] ) . ' ';
 		} else {
 			$select_disabled = '';
 		}
-		echo '<select ' . esc_attr( $select_disabled ) . ' name="' . esc_attr( 'leafext_cluster[' . $option['param'] . ']' ) . '">' . "\n";
+		echo '<select ' . $select_disabled . ' name="leafext_cluster[' . $option['param'] . ']">';
 		foreach ( $option['values'] as $para ) {
 			echo '<option ';
 			if ( is_bool( $para ) ) {
@@ -93,9 +86,9 @@ function leafext_form_markercluster( $field ) {
 			if ( $para === $setting ) {
 				echo ' selected="selected" ';
 			}
-			echo 'value="' . esc_attr( $para ) . '" >' . esc_attr( $para ) . '</option>' . "\n";
+			echo 'value="' . $para . '" >' . $para . '</option>';
 		}
-		echo '</select>' . "\n";
+		echo '</select>';
 	}
 }
 
@@ -114,12 +107,6 @@ function leafext_validate_markercluster_options( $options ) {
 
 // Helptext
 function leafext_markercluster_help_text() {
-	if ( is_singular() || is_archive() ) {
-		$codestyle = '';
-	} else {
-		leafext_enqueue_admin();
-		$codestyle = ' class="language-coffeescript"';
-	}
 	$text = '
 	<h2>Leaflet.markercluster</h2>
 	<img src="' . LEAFEXT_PLUGIN_PICTS . 'cluster.png" alt="cluster">
@@ -127,24 +114,22 @@ function leafext_markercluster_help_text() {
 
 	<h3>Shortcode</h3>
 	<h4>' . __( 'Create Map', 'extensions-leaflet-map' ) . '</h4>
-	<pre' . $codestyle . '><code' . $codestyle . '>&#091;leaflet-map ....]
+	<pre><code>&#091;leaflet-map ....]
 </code></pre>
 <h4>' . __( 'and markers with leaflet-marker', 'extensions-leaflet-map' ) . '</h4>
-<pre' . $codestyle . '><code' . $codestyle . '>// many markers
+<pre><code>// many markers
 &#091;leaflet-marker lat=... lng=... ...]poi1&#091;/leaflet-marker]
 &#091;leaflet-marker lat=... lng=... ...]poi2&#091;/leaflet-marker]
 ...
 &#091;leaflet-marker lat=... lng=... ...]poixx&#091;/leaflet-marker]
 </code></pre>
-<h4>' . __( 'and/or with leaflet-gpx and/or leaflet-kml and/or leaflet-geojson', 'extensions-leaflet-map' ) . '</h4>
-<pre' . $codestyle . '><code' . $codestyle . '>&#091;leaflet-gpx src="url/to/....gpx" ...]{name}&#091;/leaflet-gpx]
+<h4>' . __( 'and/or with leaflet-gpx and/or leaflet-geojson', 'extensions-leaflet-map' ) . '</h4>
+<pre><code>&#091;leaflet-gpx src="url/to/....gpx" ...]{name}&#091;/leaflet-gpx]
 </code></pre>
-<pre' . $codestyle . '><code' . $codestyle . '>&#091;leaflet-kml src="url/to/....kml" ...]{name}&#091;/leaflet-kml]
-</code></pre>
-<pre' . $codestyle . '><code' . $codestyle . '>&#091;leaflet-geojson src="url/to/....geojson" ...]{popup-text}&#091;/leaflet-geojson]
+<pre><code>&#091;leaflet-geojson src="url/to/....geojson" ...]{popup-text}&#091;/leaflet-geojson]
 </code></pre>
 <h4>' . __( 'Create cluster', 'extensions-leaflet-map' ) . '</h4>
-<pre' . $codestyle . '><code' . $codestyle . '>&#091;cluster]
+<pre><code>&#091;cluster]
 // or
 &#091;cluster option1=value1 option2 !option3 ...]
 &#091;zoomhomemap]
@@ -153,59 +138,41 @@ function leafext_markercluster_help_text() {
 	$textoptions = '<h3>' . __( 'Options', 'extensions-leaflet-map' ) . '</h3>
 
 <p>' .
-	wp_sprintf(
-		/* translators: %s is a link. */
+	sprintf(
 		__(
 			'Please see the %s page for options. If you want to change other ones, please post it to the forum.',
 			'extensions-leaflet-map'
 		),
 		'<a href="https://github.com/Leaflet/Leaflet.markercluster#options">Leaflet.markercluster</a>'
 	) . ' ';
-	$textoptions .= __(
+	$textoptions = $textoptions . __(
 		'To reset all values to their defaults, simply click the Reset button',
 		'extensions-leaflet-map'
 	) . '.</p>';
 
-	$textoptions .= '<p>';
-	$textoptions .= __( 'For boolean values applies', 'extensions-leaflet-map' ) . ':<br>';
-	$textoptions .= '<code>false</code> = <code>!option</code> || <code>option="0"</code> || <code>option=0</code></br>';
-	$textoptions .= '<code>true</code> = <code>option</code> || <code>option="1"</code> || <code>option=1</code>';
-	$textoptions .= '</p>';
-
-	$textoptions .= '<p>' .
-	wp_sprintf(
-		/* translators: %s are options. */
-		__( 'If %1$s and %2$s are %3$s, spiderfy each time the cluster is clicked.', 'extensions-leaflet-map' ),
-		'<code>showCoverageOnHover</code>, <code>zoomToBoundsOnClick</code>',
-		'<code>spiderfyOnMaxZoom</code>',
-		'<code>false</code>'
-	) . '</p>';
+	$textoptions = $textoptions . '<p>';
+	$textoptions = $textoptions . __( 'For boolean values applies', 'extensions-leaflet-map' ) . ':<br>';
+	$textoptions = $textoptions . '<code>false</code> = <code>!option</code> || <code>option="0"</code> || <code>option=0</code></br>';
+	$textoptions = $textoptions . '<code>true</code> = <code>option</code> || <code>option="1"</code> || <code>option=1</code>';
+	$textoptions = $textoptions . '</p>';
 
 	$defaults = get_option( 'leafext_cluster' );
 	if ( is_array( $defaults ) ) {
 		if ( array_key_exists( 'zoom', $defaults ) ||
 		array_key_exists( 'radius', $defaults ) ||
 		array_key_exists( 'spiderfy', $defaults ) ) {
-			$textoptions .= '<p>';
-			$textoptions .= __( 'The options zoom, radius and spiderfy have been renamed to disableClusteringAtZoom, maxClusterRadius and spiderfyOnMaxZoom, but they are still valid. Your settings:', 'extensions-leaflet-map' );
-			// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_print_r
-			$textoptions .= '<pre>' . substr( substr( print_r( get_option( 'leafext_cluster' ), true ), 8 ), 0, -3 ) . '</pre>';
-			$textoptions .= __( 'Before you click the submit button, please compare your settings with the new ones and change them if they are different.', 'extensions-leaflet-map' );
-			$textoptions .= '</p>';
+			$textoptions = $textoptions . '<p>';
+			$textoptions = $textoptions . __( 'The options zoom, radius and spiderfy have been renamed to disableClusteringAtZoom, maxClusterRadius and spiderfyOnMaxZoom, but they are still valid. Your settings:', 'extensions-leaflet-map' );
+			 // phpcs:ignore
+			$textoptions = $textoptions . '<pre>' . substr( substr( print_r( get_option( 'leafext_cluster' ), true ), 8 ), 0, -3 ) . '</pre>';
+			$textoptions = $textoptions . __( 'Before you click the submit button, please compare your settings with the new ones and change them if they are different.', 'extensions-leaflet-map' );
+			$textoptions = $textoptions . '</p>';
 		}
 	}
-
 	if ( is_singular() || is_archive() ) {
-		$text .= '<h3>' . __( 'Options', 'extensions-leaflet-map' ) . '</h3>' .
-		wp_sprintf(
-			/* translators: %s are options. */
-			__( 'If %1$s and %2$s are %3$s, spiderfy each time the cluster is clicked.', 'extensions-leaflet-map' ),
-			'<code>showCoverageOnHover</code>, <code>zoomToBoundsOnClick</code>',
-			'<code>spiderfyOnMaxZoom</code>',
-			'<code>false</code>'
-		) . '</p>';
+		$text = $text . '<h3>' . __( 'Options', 'extensions-leaflet-map' ) . '</h3>';
 		return $text;
 	} else {
-		echo wp_kses_post( $text . $textoptions );
+		echo $text . $textoptions;
 	}
 }

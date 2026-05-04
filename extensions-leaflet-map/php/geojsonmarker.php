@@ -14,12 +14,7 @@ function leafext_geojsonmarker_script( $propertyoptions, $extramarkericon, $clus
 	ob_start();
 	?>/*<script>*/
 	function leafext_geojsonmarker_extramarker_js(markerColor) {
-		var markericon = L.ExtraMarkers.icon({
-		<?php
-		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-		echo $extramarkericon;
-		?>
-			,markerColor:markerColor});
+		var markericon = L.ExtraMarkers.icon({<?php echo $extramarkericon; ?>,markerColor:markerColor});
 		return markericon;
 	}
 	//
@@ -39,10 +34,7 @@ function leafext_geojsonmarker_script( $propertyoptions, $extramarkericon, $clus
 		let visible = <?php echo wp_json_encode( $featuregroupoptions['visible'] ); ?>;
 		//
 		let clmarkers = L.markerClusterGroup({
-			<?php
-			// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-			echo leafext_java_params( $clusteroptions );
-			?>
+			<?php echo leafext_java_params( $clusteroptions ); ?>
 		});
 		let extramarkericon = <?php echo wp_json_encode( $extramarkericon ); ?>;
 		//
@@ -68,7 +60,7 @@ function leafext_geojsonmarker_function( $atts, $content, $shortcode ) {
 	// auto: values werden gesammelt, farben erzeugt, alles wird gruppiert und angezeigt
 
 	$text = leafext_should_interpret_shortcode( $shortcode, $atts );
-	if ( $text !== '' ) {
+	if ( $text != '' ) {
 		return $text;
 	} else {
 		$propertyoptions = shortcode_atts(
@@ -83,29 +75,29 @@ function leafext_geojsonmarker_function( $atts, $content, $shortcode ) {
 		);
 
 		// property - required
-		if ( $propertyoptions['property'] === '' ) {
+		if ( $propertyoptions['property'] == '' ) {
 			$text = "['.$shortcode.' ";
 			if ( is_array( $atts ) ) {
 				foreach ( $atts as $key => $item ) {
-					$text .= esc_html( "$key=$item " );
+					$text = $text . "$key=$item ";
 				}
 			}
-			$text .= ' - NO PROPERTY ';
-			$text .= ']';
-			return wp_kses_post( $text );
+			$text = $text . ' - NO PROPERTY ';
+			$text = $text . ']';
+			return $text;
 		}
 
-		if ( $propertyoptions['values'] !== '' ) {
+		if ( $propertyoptions['values'] != '' ) {
 			$prop_values = array_map( 'trim', explode( ',', $propertyoptions['values'] ) );
 		} else {
 			$prop_values = array();
 		}
 
-		if ( $propertyoptions['iconprops'] === '' ) {
+		if ( $propertyoptions['iconprops'] == '' ) {
 			$propertyoptions['iconprops'] = array();
 		} else {
 			$iconprops = array_map( 'trim', explode( ',', $propertyoptions['iconprops'] ) );
-			if ( count( $prop_values ) === count( $iconprops ) ) {
+			if ( count( $prop_values ) == count( $iconprops ) ) {
 				$propertyoptions['iconprops'] = array_combine( $prop_values, $iconprops );
 				// } else if (($key = array_search('others', $prop_values)) !== false) {
 				// unset($prop_values[$key]);
@@ -114,13 +106,12 @@ function leafext_geojsonmarker_function( $atts, $content, $shortcode ) {
 				$text = "['.$shortcode.' ";
 				if ( is_array( $atts ) ) {
 					foreach ( $atts as $key => $item ) {
-						$text .= esc_html( "$key=$item " );
+						$text = $text . "$key=$item ";
 					}
 				}
-				$text .= ' - property values and iconprops do not match. ';
-				$text .= ']';
-				return wp_kses_post( $text );
-
+				$text = $text . ' - property values and iconprops do not match. ';
+				$text = $text . ']';
+				return $text;
 			}
 		}
 		leafext_enqueue_leafext( 'geojsonmarker', 'leaflet_subgroup' );
@@ -140,21 +131,20 @@ function leafext_geojsonmarker_function( $atts, $content, $shortcode ) {
 			leafext_clear_params( $atts )
 		);
 
-		if ( substr_count( $groupingoptions['values'], ',' ) !== substr_count( $groupingoptions['groups'], ',' )
-		&& substr_count( $groupingoptions['groups'], ',' ) !== 0 ) {
+		if ( substr_count( $groupingoptions['values'], ',' ) != substr_count( $groupingoptions['groups'], ',' )
+		&& substr_count( $groupingoptions['groups'], ',' ) != 0 ) {
 			$text = "['.$shortcode.' ";
 			if ( is_array( $atts ) ) {
 				foreach ( $atts as $key => $item ) {
-					$text .= esc_html( "$key=$item " );
+					$text = $text . "$key=$item ";
 				}
 			}
-			$text .= ' - values and groups do not match. ';
-			$text .= ']';
-			return wp_kses_post( $text );
-
+			$text = $text . ' - values and groups do not match. ';
+			$text = $text . ']';
+			return $text;
 		}
 
-		if ( $groupingoptions['groups'] !== '' ) {
+		if ( $groupingoptions['groups'] != '' ) {
 
 			$cl_values = array_map( 'trim', explode( ',', $groupingoptions['values'] ) );
 			$cl_groups = array_map( 'trim', explode( ',', $groupingoptions['groups'] ) );
@@ -164,17 +154,16 @@ function leafext_geojsonmarker_function( $atts, $content, $shortcode ) {
 				$cl_on                      = array_fill( 0, count( $cl_values ), '1' );
 			} else {
 				$cl_on = array_map( 'trim', explode( ',', $groupingoptions['visible'] ) );
-				if ( count( $cl_on ) === 1 ) {
+				if ( count( $cl_on ) == 1 ) {
 					$cl_on = array_fill( 0, count( $cl_values ), '0' );
-				} elseif ( count( $cl_values ) !== count( $cl_on ) ) {
+				} elseif ( count( $cl_values ) != count( $cl_on ) ) {
 					$text = "['.$shortcode.' ";
 					foreach ( $atts as $key => $item ) {
-						$text .= esc_html( "$key=$item " );
+						$text = $text . "$key=$item ";
 					}
-					$text .= ' - groups and visible do not match. ';
-					$text .= ']';
-					return wp_kses_post( $text );
-
+					$text = $text . ' - groups and visible do not match. ';
+					$text = $text . ']';
+					return $text;
 				}
 			}
 			if ( ! in_array( 'others', $cl_groups, true ) ) {

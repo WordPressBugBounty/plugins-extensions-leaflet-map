@@ -9,7 +9,7 @@
 defined( 'ABSPATH' ) || die();
 
 function leafext_hover_init() {
-	add_settings_section( 'hover_settings', '', '__return_empty_string', 'leafext_settings_hover' );
+	add_settings_section( 'hover_settings', '', '', 'leafext_settings_hover' );
 	$fields = leafext_hover_params();
 	foreach ( $fields as $field ) {
 		if ( $field['changeable'] ) {
@@ -23,15 +23,7 @@ function leafext_hover_init() {
 			);
 		}
 	}
-	register_setting(
-		'leafext_settings_hover',
-		'leafext_hover',
-		array(
-			'type'              => 'array',
-			'sanitize_callback' => 'leafext_validate_hover',
-			'default'           => array(),
-		)
-	);
+	register_setting( 'leafext_settings_hover', 'leafext_hover', 'leafext_validate_hover' );
 }
 add_action( 'admin_init', 'leafext_hover_init' );
 
@@ -53,15 +45,15 @@ function leafext_form_hover( $field ) {
 	}
 
 	foreach ( $options as $key => $value ) {
-		if ( $key === $field ) {
-			echo wp_kses_post( __( 'You can change it for each map with', 'extensions-leaflet-map' ) . ' <code>' . $key . '</code><br>' );
-			if ( $value !== $defaults[ $key ] ) {
-				echo wp_kses_post( __( 'Plugins Default', 'extensions-leaflet-map' ) . ': ' . $defaults[ $key ] . '<br>' );
+		if ( $key == $field ) {
+			echo esc_html__( 'You can change it for each map with', 'extensions-leaflet-map' ) . ' <code>' . $key . '</code><br>';
+			if ( $value != $defaults[ $key ] ) {
+				echo esc_html__( 'Plugins Default', 'extensions-leaflet-map' ) . ': ' . $defaults[ $key ] . '<br>';
 			}
-			if ( $key === 'class' ) {
-				echo '<input ' . esc_attr( $disabled ) . ' type="text" size=15 name="' . esc_attr( 'leafext_hover[' . $key . ']' ) . '" value="' . esc_attr( $value ) . '" />';
+			if ( $key == 'class' ) {
+				echo '<input ' . $disabled . ' type="text" size=15 name="leafext_hover[' . $key . ']" value="' . $value . '" />';
 			} else {
-				echo '<input ' . esc_attr( $disabled ) . ' type="number" min="0" size=3 name="' . esc_attr( 'leafext_hover[' . $key . ']' ) . '" value="' . esc_attr( $value ) . '" />';
+				echo '<input ' . $disabled . ' type="number" min="0" size=3 name="leafext_hover[' . $key . ']" value="' . $value . '" />';
 			}
 		}
 	}
@@ -72,9 +64,9 @@ function leafext_validate_hover( $options ) {
 	$post = map_deep( wp_unslash( $_POST ), 'sanitize_text_field' );
 	if ( ! empty( $post ) && check_admin_referer( 'leafext_hover', 'leafext_hover_nonce' ) ) {
 		if ( isset( $post['submit'] ) ) {
-			$options['class']      = sanitize_text_field( $options['class'] );
-			$options['tolerance']  = (int) $options['tolerance'];
-			$options['popupclose'] = (int) $options['popupclose'];
+			$options['class']     = sanitize_text_field( $options['class'] );
+			$options['tolerance'] = (int) $options['tolerance'];
+			$options['snap']      = (int) $options['snap'];
 			delete_option( 'leafext_canvas' ); // old option
 			return $options;
 		}

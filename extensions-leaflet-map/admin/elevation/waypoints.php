@@ -10,17 +10,13 @@ defined( 'ABSPATH' ) || die();
 
 // init settings fuer extra waypoint options
 function leafext_waypoints_init() {
-	add_settings_section( 'leafext_waypoints_main', leafext_elevation_tab(), 'leafext_waypoints_help_text', 'leafext_waypoints' );
-	add_settings_field( 'leafext_waypoints', '<span style="color: #4f94d4">' . __( 'Text of GPS symbol name', 'extensions-leaflet-map' ) . '</span>:', 'leafext_form_waypoints', 'leafext_waypoints', 'leafext_waypoints_main' );
-	register_setting(
-		'leafext_waypoints',
-		'leafext_waypoints',
-		array(
-			'type'              => 'array',
-			'sanitize_callback' => 'leafext_validate_waypoints',
-			'default'           => array(),
-		)
-	);
+	$section_group = 'leafext_waypoints';
+	$section_name  = 'leafext_waypoints';
+	$validate      = 'leafext_validate_waypoints';
+	register_setting( $section_group, $section_name, $validate );
+	$settings_section = 'leafext_waypoints_main';
+	add_settings_section( $settings_section, leafext_elevation_tab(), 'leafext_waypoints_help_text', $section_group );
+	add_settings_field( $section_name, '<span style="color: #4f94d4">' . __( 'Text of GPS symbol name', 'extensions-leaflet-map' ) . '</span>:', 'leafext_form_waypoints', $section_group, $settings_section );
 }
 add_action( 'admin_init', 'leafext_waypoints_init' );
 
@@ -48,24 +44,24 @@ function leafext_form_waypoints() {
 		}
 
 		echo '<input class="full-width" type="text" ';
-		if ( $option['js'] === '' ) {
+		if ( $option['js'] == '' ) {
 			echo 'placeholder="name" ';
 		}
-		echo 'name="' . esc_attr( 'leafext_waypoints[' . $i . '][sym]' ) . '" value="' . esc_attr( $option['sym'] ) . '" pattern="[a-zA-Z]+[a-zA-Z0-9\- ,]*" />';
-		if ( $option['sym'] === '' && $option['js'] !== '' ) {
+		echo 'name="leafext_waypoints[' . $i . '][sym]" value="' . $option['sym'] . '" pattern="[a-zA-Z]+[a-zA-Z0-9\- ,]*" />';
+		if ( $option['sym'] == '' && $option['js'] != '' ) {
 			echo ' (' . esc_html__( 'Default', 'extensions-leaflet-map' ) . ')';
 		}
-		if ( ( $option['sym'] === '' && $option['js'] === '' ) ) {
+		if ( ( $option['sym'] == '' && $option['js'] == '' ) ) {
 			echo '<p>' . esc_html__( 'Valid characters: lowercase, uppercase, numbers, -, comma, blank character.', 'extensions-leaflet-map' ) . '</p>';
 			$symkey = array_search( '', array_column( $options, 'sym' ), true );
-			if ( $options[ $symkey ]['js'] === '' ) {
+			if ( $options[ $symkey ]['js'] == '' ) {
 				echo '<p>' . esc_html__( 'It may be empty, then its javascript is the default for all waypoints.', 'extensions-leaflet-map' ) . '</p>';
 			}
 		}
 		echo '</td>';
 		echo '</tr>';
 
-		if ( $option['sym'] !== '' ) {
+		if ( $option['sym'] != '' ) {
 			echo '<tr><th scope="row-title"><span style="color: #d63638">waypoint-css</span>:</th>';
 			echo '<td>' . esc_attr( $option['css'] ) . '</td>';
 			echo '</tr>';
@@ -76,17 +72,17 @@ function leafext_form_waypoints() {
 			$option['js'] = '';
 		}
 		echo '<td>';
-		if ( $option['js'] === '' ) {
+		if ( $option['js'] == '' ) {
 			echo esc_html__( 'The syntax is not checked!', 'extensions-leaflet-map' ) . '<br>';
 		}
-		echo '<input type="text" name="' . esc_attr( 'leafext_waypoints[' . $i . '][js]' ) . '"
+		echo '<input type="text" name="leafext_waypoints[' . $i . '][js]"
 		placeholder=' . "'" . 'iconSize: [xx,xx], iconAnchor: [xx,xx], popupAnchor: [xx,xx],'
-		. "'" . ' value = "' . esc_attr( $option['js'] ) . '" size="80">';
+		. "'" . ' value = "' . $option['js'] . '" size="80">';
 
-		if ( $option['sym'] !== '' || $option['js'] !== '' ) {
+		if ( $option['sym'] != '' || $option['js'] != '' ) {
 			echo '</td></tr>';
 			echo '<tr><th scope="row-title">' . esc_html__( 'Delete', 'extensions-leaflet-map' ) . '</th>';
-			echo '<td><input type="checkbox" name="' . esc_attr( 'leafext_waypoints[' . $i . '][delete]' ) . '" value="1" />';
+			echo '<td><input type="checkbox" name="leafext_waypoints[' . $i . '][delete]" value="1" />';
 		}
 		++$i;
 		if ( $i < $count ) {
@@ -101,8 +97,8 @@ function leafext_validate_waypoints( $options ) {
 		if ( isset( $_POST['submit'] ) ) {
 			$wpts = array();
 			foreach ( $options as $option ) {
-				if ( $option['sym'] !== '' || $option['js'] !== '' ) {
-					if ( $option['delete'] === 1 ) {
+				if ( $option['sym'] != '' || $option['js'] != '' ) {
+					if ( $option['delete'] == 1 ) {
 						continue;
 					}
 					$wpt = array();
@@ -113,7 +109,7 @@ function leafext_validate_waypoints( $options ) {
 					$wpt['js']  = htmlspecialchars( $option['js'] );
 
 					if ( array_search( $wpt['sym'], array_column( $wpts, 'sym' ), true ) === false ) {
-						if ( $wpt['sym'] === '' ) {
+						if ( $wpt['sym'] == '' ) {
 							array_unshift( $wpts, $wpt );
 						} else {
 							$wpts[] = $wpt;
@@ -132,25 +128,18 @@ function leafext_validate_waypoints( $options ) {
 
 // Erklaerung / Hilfe
 function leafext_waypoints_help_text() {
-	if ( is_singular() || is_archive() ) {
-		$codestyle = '';
-	} else {
-		leafext_enqueue_admin();
-		$codestyle = ' class="language-coffeescript"';
-	}
 	$text = '';
 	if ( ! ( is_singular() || is_archive() ) ) {
 		$text = $text . '<p>' . __( 'Here you can define extra waypoint options.', 'extensions-leaflet-map' ) . '</p>';
 		// } else {
 	}
 
-	$text = $text . '<p>' . wp_sprintf(
-		/* translators: %s are shortcodes. */
+	$text = $text . '<p>' . sprintf(
 		__(
 			'You can of course use %1$s and define waypoints with additional %2$s and %3$s shortcodes.',
 			'extensions-leaflet-map'
 		),
-		'<code>&#091;elevation ... waypoints=0 ...]</code>',
+		'<code>[elevation ... waypoints=0 ...]</code>',
 		'<code>leaflet-marker</code>',
 		'<code>leaflet-extramarker</code>'
 	) . '</p>';
@@ -164,22 +153,20 @@ function leafext_waypoints_help_text() {
 </ul>';
 
 	$text = $text . '<h3>Shortcode</h3>
-<pre' . $codestyle . '><code' . $codestyle . '>&#091;leaflet-map ....]
-&#091;elevation gpx="url_gpx_file" waypoints=1 wptIcons=defined ...]
+<pre><code>[leaflet-map ....]
+[elevation gpx="url_gpx_file" waypoints=1 wptIcons=defined ...]
 //or
-&#091;elevation gpx="url_gpx_file" waypoints=markers wptIcons=defined ...]
+[elevation gpx="url_gpx_file" waypoints=markers wptIcons=defined ...]
 </code></pre>';
 
 	if ( is_singular() || is_archive() ) {
-		$text = $text . '<p>' . wp_sprintf(
-			/* translators: %s is a href. */
+		$text = $text . '<p>' . sprintf(
 			__( 'Or set this in the %1$selevation settings%2$s.', 'extensions-leaflet-map' ),
 			'<a href="' . get_site_url() . '/elevation/wpts/">',
 			'</a>'
 		);
 	} else {
-		$text = $text . '<p>' . wp_sprintf(
-			/* translators: %s is a href. */
+		$text = $text . '<p>' . sprintf(
 			__( 'Or set this in the %1$selevation settings%2$s.', 'extensions-leaflet-map' ),
 			'<a href="?page=' . LEAFEXT_PLUGIN_SETTINGS . '&tab=elevation#markers">',
 			'</a>'
@@ -187,20 +174,19 @@ function leafext_waypoints_help_text() {
 	}
 	$text = $text . '</p>';
 	$text = $text . '<h3>' . __( 'Waypoint specified in file', 'extensions-leaflet-map' ) . '</h3>';
-	$text = $text . 'GPX: <pre class="leafext-prismatic"><code class="leafext-prismatic-bg"> &lt;sym&gt;<span style="color: #4f94d4">' . __( 'Text of GPS symbol name', 'extensions-leaflet-map' ) . '</span>&lt;/sym&gt;</code ></pre>';
-	$text = $text . 'Geojson: <pre class="leafext-prismatic"><code class="leafext-prismatic-bg"> "properties": {
+	$text = $text . 'GPX: <pre>&lt;sym&gt;<span style="color: #4f94d4">' . __( 'Text of GPS symbol name', 'extensions-leaflet-map' ) . '</span>&lt;/sym&gt;</pre>';
+	$text = $text . 'Geojson: <pre>"properties": {
   "name": "...",
   "desc": "...",
   "sym": "<span style="color: #4f94d4">' . __( 'Text of GPS symbol name', 'extensions-leaflet-map' ) . '</span>"
-},</code ></pre>';
+},</pre>';
 
 	$text = $text . '<h3>' . __( 'The waypoint CSS class Selector', 'extensions-leaflet-map' ) . '</h3>';
 
 	$text = $text . '<ul>
 
 <li>'
-	. wp_sprintf(
-		/* translators: %s is code. */
+	. sprintf(
 		__( 'CSS to define as HTML block (between %1$s and %2$s) or in css file', 'extensions-leaflet-map' ),
 		'<code>&lt;style&gt;</code>',
 		'<code>&lt;/style&gt;</code>'
@@ -219,8 +205,7 @@ function leafext_waypoints_help_text() {
 	) . '</li>
 
 <li>'
-	. wp_sprintf(
-		/* translators: %s is styling. */
+	. sprintf(
 		__(
 			'Any blank character from %1$sText of GPS symbol name%2$s is converted to a minus sign, uppercase to lowercase, a comma will be escaped.',
 			'extensions-leaflet-map'
@@ -234,8 +219,7 @@ function leafext_waypoints_help_text() {
 	. ' "<span style="color: #4f94d4">Flag, Blue</span>" --&gt; "<span style="color: #d63638">flag\,-blue</span>"</li>
 
 <li>'
-	. wp_sprintf(
-		/* translators: %s are special characters. */
+	. sprintf(
 		__(
 			'If you need more special characters than %s for your waypoints, please ask in the forum.',
 			'extensions-leaflet-map'
@@ -246,33 +230,33 @@ function leafext_waypoints_help_text() {
 </ul>';
 
 	$text = $text . '<h4>' . __( 'Example', 'extensions-leaflet-map' ) . '</h4>';
-	$text = $text . '<pre class="leafext-prismatic"><code class="leafext-prismatic-bg"> .elevation-waypoint-icon.<span style="color: #d63638">waypoint-css</span>:before {
+	$text = $text . '<pre>.elevation-waypoint-icon.<span style="color: #d63638">waypoint-css</span>:before {
 	background: url(https://my-domain.tld/path/to/icon.png) no-repeat 50%/contain;
- }</code ></pre>';
+}</pre>';
 
 	// waypoint-css: -?[_a-zA-Z]+[_a-zA-Z0-9-]* anderes escapen
 	$text = $text . '<h3>' . __( 'Generated Javascript', 'extensions-leaflet-map' ) . '</h3>';
 	$text = $text .
 	__( 'More options see', 'extensions-leaflet-map' );
 	$text = $text . ' <a href="https://leafletjs.com/reference.html#divicon">Leaflet API reference</a>';
-	$text = $text . '<pre class="leafext-prismatic"><code class="leafext-prismatic-bg"> ';
+	$text = $text . '<pre>';
 	$text = $text . 'wptIcons: {
   "<span style="color: #d63638">waypoint-css</span>": L.divIcon({
-    className: "elevation-waypoint-marker",
-    html: &apos;&lt;i class="elevation-waypoint-icon <span style="color: #d63638">waypoint-css</span>"&gt;&lt;/i&gt;&apos;,
-    <span style="color: #00a32a">iconSize: [xx,xx],
-    iconAnchor: [xx,xx],
-    popupAnchor: [xx,xx],
-    ...</span>
-  }),
- },';
-	$text = $text . '</code ></pre>';
+  className: "elevation-waypoint-marker",
+  html: &apos;&lt;i class="elevation-waypoint-icon <span style="color: #d63638">waypoint-css</span>"&gt;&lt;/i&gt;&apos;,
+  <span style="color: #00a32a">iconSize: [xx,xx],
+  iconAnchor: [xx,xx],
+  popupAnchor: [xx,xx],
+  ...</span>
+ }),
+},';
+	$text = $text . '</pre>';
 	if ( ! ( is_singular() || is_archive() ) ) {
 		$text = $text . '<h3>' . __( 'Settings', 'extensions-leaflet-map' ) . '</h3>';
 	}
 	if ( is_singular() || is_archive() ) {
 		return $text;
 	} else {
-		echo wp_kses_post( $text );
+		echo $text;
 	}
 }

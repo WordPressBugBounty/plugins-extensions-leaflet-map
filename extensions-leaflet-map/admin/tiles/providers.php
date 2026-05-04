@@ -12,15 +12,8 @@ function leafext_providers_init() {
 	// Create Setting
 	$section_group = 'leafext_providers';
 	$section_name  = 'leafext_providers';
-	register_setting(
-		$section_group,
-		$section_name,
-		array(
-			'type'              => 'array',
-			'sanitize_callback' => 'leafext_validate_providers',
-			'default'           => array(),
-		)
-	);
+	$validate      = 'leafext_validate_providers';
+	register_setting( $section_group, $section_name, $validate );
 
 	// Create section of Page
 	$settings_section = 'leafext_providers_main';
@@ -51,23 +44,23 @@ function leafext_providers_form() {
 	$count                = count( $regtiles );
 	for ( $i = 0; $i < $count; $i++ ) {
 		$allnames = array_diff( $allnames, array( $regtiles[ $i ]['name'] ) );
-		echo '<h4>' . esc_html( $regtiles[ $i ]['name'] ) . '</h4>' . "\n";
-		echo '<input type="hidden" name="' . esc_attr( 'leafext_providers[' . $i . '][name]' ) . '" value="' . esc_attr( $regtiles[ $i ]['name'] ) . '">' . "\n";
+		echo '<h4>' . $regtiles[ $i ]['name'] . '</h4>' . "\n";
+		echo '<input type="hidden" name="leafext_providers[' . $i . '][name]" value="' . $regtiles[ $i ]['name'] . '">' . "\n";
 		$size = max( array_map( 'strlen', $regtiles[ $i ]['keys'] ) );
 		foreach ( $regtiles[ $i ]['keys'] as $key => $value ) {
-			echo '<p>' . esc_html( $key ) . ': ';
-			echo '<input type="text" size=' . esc_attr( (string) $size ) . ' name="' . esc_attr( 'leafext_providers[' . $i . '][keys][' . $key . ']' ) . '" value="' . esc_attr( $value ) . '"></p>' . "\n";
+			echo '<p>' . $key . ': ';
+			echo '<input type="text" size=' . $size . ' name="leafext_providers[' . $i . '][keys][' . $key . ']" value="' . $value . '"></p>' . "\n";
 		}
 	}
 	$i = $count;
 	foreach ( $allnames as $name ) {
 		$id = array_search( $name, array_column( $require_registration, 'name' ), true );
-		echo '<h4>' . esc_html( $require_registration[ $id ]['name'] ) . '</h4>' . "\n";
-		echo '<input type="hidden" name="' . esc_attr( 'leafext_providers[' . $i . '][name]' ) . '" value="' . esc_attr( $require_registration[ $id ]['name'] ) . '">' . "\n";
+		echo '<h4>' . $require_registration[ $id ]['name'] . '</h4>' . "\n";
+		echo '<input type="hidden" name="leafext_providers[' . $i . '][name]" value="' . $require_registration[ $id ]['name'] . '">' . "\n";
 		$size = max( array_map( 'strlen', $require_registration[ $id ]['keys'] ) );
 		foreach ( $require_registration[ $id ]['keys'] as $key => $value ) {
-			echo '<p>' . esc_html( $key ) . ': ';
-			echo '<input type="text" size=' . esc_attr( (string) $size ) . ' name="' . esc_attr( 'leafext_providers[' . $i . '][keys][' . $key . ']' ) . '" placeholder="' . esc_attr( $value ) . '" value=""></p>' . "\n";
+			echo '<p>' . $key . ': ';
+			echo '<input type="text" size=' . $size . ' name="leafext_providers[' . $i . '][keys][' . $key . ']" placeholder="' . $value . '" value=""></p>' . "\n";
 		}
 		++$i;
 	}
@@ -77,10 +70,9 @@ function leafext_providers_form() {
 function leafext_validate_providers( $options ) {
 	if ( ! empty( $_POST ) && check_admin_referer( 'leafext_tiles', 'leafext_tiles_nonce' ) ) {
 		if ( isset( $_POST['submit'] ) ) {
-			$providers = array();
 			foreach ( $options as $option ) {
 				foreach ( $option['keys'] as $key => $value ) {
-					if ( $value !== '' ) {
+					if ( $value != '' ) {
 						$providers[] = $option;
 					} break;
 				}
@@ -95,49 +87,19 @@ function leafext_validate_providers( $options ) {
 }
 
 // Erklaerung / Hilfe
-
 function leafext_providers_help() {
-	if ( is_singular() || is_archive() ) {
-		$codestyle = '';
-	} else {
-		leafext_enqueue_admin();
-		$codestyle = ' class="language-coffeescript"';
-	}
-	if ( ! ( is_singular() || is_archive() ) ) { // backend
-		$tilesproviders = '?page=' . LEAFEXT_PLUGIN_SETTINGS . '&tab=tilesproviders';
-		$tileswitch     = '?page=' . LEAFEXT_PLUGIN_SETTINGS . '&tab=tileswitch';
-	} else { // for my frontend leafext.de
-		$server = map_deep( wp_unslash( $_SERVER ), 'sanitize_text_field' );
-		if ( strpos( $server['REQUEST_URI'], '/en/' ) !== false ) {
-			$lang = '/en';
-		} else {
-			$lang = '';
-		}
-		$tilesproviders = $lang . '/doku/tilesproviders/';
-		$tileswitch     = $lang . '/doku/tileswitch/';
-	}
-	$text = '<pre' . $codestyle . '><code' . $codestyle . '>&#91;leaflet-map]' . "\n" .
-	'&#91;layerswitch mapids=hiking providers="WaymarkedTrails.hiking"]' . "\n" .
+	$text = '<pre><code>[leaflet-map]' . "\n" .
+	'[layerswitch mapids=hiking providers="WaymarkedTrails.hiking"]' . "\n" .
 	"\n" .
-	'&#91;leaflet-map mapid="OSM"]' . "\n" .
-	'&#91;layerswitch mapids="hiking,OPNV" providers="WaymarkedTrails.hiking,OPNVKarte"]</code></pre><p>' .
-	wp_sprintf(
-		/* translators: %s is an option. */
-		__( 'The option %s is optional.', 'extensions-leaflet-map' ),
-		'<code>mapids</code>'
-	) . ' ' .
-	wp_sprintf(
-		/* translators: %s is an option. */
-		__( 'You can use the parameter %s also.', 'extensions-leaflet-map' ),
-		'<a href="' . $tileswitch . '"><code>tiles</code></a>'
-	) .
+	'[leaflet-map mapid="OSM"]' . "\n" .
+	'[layerswitch mapids="hiking,OPNV" providers="WaymarkedTrails.hiking,OPNVKarte"]</code></pre><p>' .
+	__( 'The option <code>mapids</code> is optional.', 'extensions-leaflet-map' ) . ' ' .
+	__( 'You can use the parameter <code>tiles</code> also.', 'extensions-leaflet-map' ) .
 	'</p><p>' .
 	__( 'For a list of providers see', 'extensions-leaflet-map' ) .
 	' <a href="http://leaflet-extras.github.io/leaflet-providers/preview/">http://leaflet-extras.github.io/leaflet-providers/preview/</a>.'
-	. '</p>' . wp_sprintf(
-		/* translators: %s is styling (bold). */
-		__( '%1$sPlease note%2$s (Quote from Leaflet Providers page):', 'extensions-leaflet-map' ),
-		'<b>',
+	. '</p><b>' . sprintf(
+		__( 'Please note %s (Quote from Leaflet Providers page):', 'extensions-leaflet-map' ),
 		'</b>'
 	) . '<p> <i>' .
 	__(
@@ -158,7 +120,7 @@ function leafext_providers_help() {
 		if ( current_user_can( 'manage_options' ) ) {
 			$text = $text . '<h2>' . __( 'Settings', 'extensions-leaflet-map' ) . '</h2>';
 		}
-		echo wp_kses_post( $text );
+		echo $text;
 	}
 }
 

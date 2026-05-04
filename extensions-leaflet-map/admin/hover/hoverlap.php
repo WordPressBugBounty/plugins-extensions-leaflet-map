@@ -10,24 +10,17 @@ defined( 'ABSPATH' ) || die();
 
 function leafext_help_hoverlap() {
 	if ( is_singular() || is_archive() ) {
-		$codestyle = '';
-		$text      = '';
+		$text = '';
 	} else {
-		leafext_enqueue_admin();
-		$codestyle = ' class="language-coffeescript"';
-		$text      = '<h2 id="hover">' . __( 'Popups and highlighting overlapping elements', 'extensions-leaflet-map' ) . '</h2>';
+		$text = '<h2 id="hover">' . __( 'Popups and highlighting overlapping elements', 'extensions-leaflet-map' ) . '</h2>';
 	}
 
 	$text = $text . '<h2>Shortcode</h2>';
 	$text = $text . '<h4>' . __( 'Create Map', 'extensions-leaflet-map' ) . '</h4>';
-	$text = $text . '<pre' . $codestyle . '><code' . $codestyle . '>&#091;leaflet-map ...]</code></pre>';
-	$text = $text . '<h4>' . wp_sprintf(
-		/* translators: %s is a shortcode. */
-		__( 'Load any elements with any %s shortcode.', 'extensions-leaflet-map' ),
-		'leaflet-*'
-	) . '</h4>';
+	$text = $text . '<pre><code>&#091;leaflet-map ...]</code></pre>';
+	$text = $text . '<h4>' . sprintf( __( 'Load any elements with any %s shortcode.', 'extensions-leaflet-map' ), 'leaflet-*' ) . '</h4>';
 
-	$text = $text . '<pre' . $codestyle . '><code' . $codestyle . '>// some, but not ovarlapping with other markers
+	$text = $text . '<pre><code>// some, but not ovarlapping with other markers
 &#091;leaflet-marker ...]...&#091;/leaflet-marker]
 &#091;leaflet-extramarker ...]...&#091;/leaflet-extramarker]
 // any many
@@ -39,18 +32,16 @@ function leafext_help_hoverlap() {
 &#091;leaflet-line ...]Line ...&#091;/leaflet-line]</code></pre>';
 
 	$text = $text . '<h4>' . __( 'And hoverlap', 'extensions-leaflet-map' ) . '</h4>';
-	$text = $text . '<pre' . $codestyle . '><code' . $codestyle . '>&#091;hoverlap]</code></pre>';
+	$text = $text . '<pre><code>&#091;hoverlap]</code></pre>';
 	$text = $text . '<h3>' . __( 'Options', 'extensions-leaflet-map' ) . '</h3>';
 
-	$text = $text . '<p>' . wp_sprintf(
-		/* translators: %s are options / shortcode. */
+	$text = $text . '<p>' . sprintf(
 		__( 'The options %1$s and %2$s are the same as for the %3$s shortcode.', 'extensions-leaflet-map' ),
 		'<code>exclude</code>, <code>tolerance</code>',
 		'<code>class</code>',
 		'<code>hover</code>'
 	);
-	$text = $text . '<br>' . wp_sprintf(
-		/* translators: %1$s is a shortcode and %2$s is a link. */
+	$text = $text . '<br>' . sprintf(
 		__( 'For overlapping markers see %1$s or %2$s.', 'extensions-leaflet-map' ),
 		'<code>&#091;cluster]</code>',
 		'<a href="https://leafext.de/extra/spiderfier/">Overlapping Marker Spiderfier for Leaflet</a>'
@@ -73,7 +64,7 @@ function leafext_help_hoverlap() {
 	if ( is_singular() || is_archive() ) {
 		return $text;
 	} else {
-		echo wp_kses_post( $text );
+		echo $text;
 	}
 }
 // leafext_help_hoverlap();

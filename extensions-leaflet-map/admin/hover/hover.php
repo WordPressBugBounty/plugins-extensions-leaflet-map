@@ -9,29 +9,20 @@
 defined( 'ABSPATH' ) || die();
 
 function leafext_help_hover() {
-	if ( is_singular() || is_archive() ) {
-		$codestyle = '';
-	} else {
-		leafext_enqueue_admin();
-		$codestyle = ' class="language-coffeescript"';
-	}
 	$text = '<h2 id="hover">Hovering</h2><img src="' . LEAFEXT_PLUGIN_PICTS . 'hover.png" alt="hover"><p>' .
-	/* translators: %s is a shortcode. */
-	wp_sprintf( __( 'Use it to highlight a %s element and get a tooltip on mouse over.', 'extensions-leaflet-map' ), 'leaflet-*' );
+	sprintf( __( 'Use it to highlight a %s element and get a tooltip on mouse over.', 'extensions-leaflet-map' ), 'leaflet-*' );
 	$text = $text . '</p>';
 
 	$text = $text . '<h2>Shortcode</h2>';
 	$text = $text . '<h4>' . __( 'Create Map', 'extensions-leaflet-map' ) . '</h4>';
-	$text = $text . '<pre' . $codestyle . '><code' . $codestyle . '>&#091;leaflet-map ...]</code></pre>';
-	/* translators: %s is a shortcode. */
-	$text = $text . '<h4>' . wp_sprintf( __( 'Load any elements with any %s shortcode', 'extensions-leaflet-map' ), 'leaflet-*' ) . '</h4>';
+	$text = $text . '<pre><code>&#091;leaflet-map ...]</code></pre>';
+	$text = $text . '<h4>' . sprintf( __( 'Load any elements with any %s shortcode', 'extensions-leaflet-map' ), 'leaflet-*' ) . '</h4>';
 	$text = $text . '<ul>';
 	$text = $text . '<li>';
 	$text = $text . __( 'The tooltip content is the same as the popup content.', 'extensions-leaflet-map' );
 	$text = $text . '</li>';
 	$text = $text . '<li>';
-	$text = $text . wp_sprintf(
-		/* translators: %s is a href. */
+	$text = $text . sprintf(
 		__( 'To customize the popup content for geojsons, see %1$sgeojson options%2$s.', 'extensions-leaflet-map' ),
 		'<a href="https://github.com/bozdoz/wp-plugin-leaflet-map#leaflet-geojson-options">',
 		'</a>'
@@ -39,7 +30,7 @@ function leafext_help_hover() {
 	$text = $text . '</li>';
 	$text = $text . '</ul>';
 
-	$text = $text . '<pre' . $codestyle . '><code' . $codestyle . '>// any many
+	$text = $text . '<pre><code>// any many
 &#091;leaflet-marker ...]Marker ...&#091;/leaflet-marker]
 &#091;leaflet-marker title=... ...]Marker ...&#091;/leaflet-marker]
 &#091;leaflet-extramarker ...]Marker ...&#091;/leaflet-extramarker]
@@ -52,7 +43,7 @@ function leafext_help_hover() {
 &#091;leaflet-line ...]Line ...&#091;/leaflet-line]</code></pre>';
 
 	$text = $text . '<h4>' . __( 'And hover', 'extensions-leaflet-map' ) . '</h4>'
-	. '<pre' . $codestyle . '><code' . $codestyle . '>&#091;hover]</code></pre>' .
+	. '<pre><code>&#091;hover]</code></pre>' .
 	'<h3>' . __( 'Options', 'extensions-leaflet-map' ) . '</h3>';
 
 	$text = $text . '<p>' . __( "By default, all elements react to hover. If you don't want this, you have the following options.", 'extensions-leaflet-map' ) . '</p>';
@@ -67,7 +58,7 @@ function leafext_help_hover() {
 	);
 
 	foreach ( $options as $option ) {
-		if ( $option['param'] === 'tolerance' ) {
+		if ( $option['param'] == 'tolerance' ) {
 			$default = shortcode_atts( array( 'tolerance' => 0 ), get_option( 'leafext_canvas' ) )['tolerance'];
 		} elseif ( $option['default'] === true ) {
 				$default = 'true';
@@ -94,8 +85,7 @@ function leafext_help_hover() {
 
 	$do_only    = leafext_hover_params( 'only' );
 	$do_element = leafext_hover_params( 'element' );
-	$text       = $text . '<p>' . wp_sprintf(
-		/* translators: %s are options. */
+	$text       = $text . '<p>' . sprintf(
 		__(
 			'If you use one or multiple options from %1$s, then the options %2$s will be ignored. ',
 			'extensions-leaflet-map'
@@ -107,10 +97,10 @@ function leafext_help_hover() {
 
 	$text = $text . '<p>' . __( 'So can you write:', 'extensions-leaflet-map' ) .
 	'<ul>'
-	. '<li>' . __( 'hover only for geojsons, gpx, kml:', 'extensions-leaflet-map' ) . ' <code>&#091;hover geojsontooltip geojsonstyle]</code></li>'
-	. '<li>' . __( 'show tooltips on hover:', 'extensions-leaflet-map' ) . ' <code>&#091;hover markertooltip geojsontooltip markergrouptooltip]</code></li>'
-	. '<li>' . __( 'change style but do not show tooltips on hover (geojson, gpx, kml, circle, polygon, line):', 'extensions-leaflet-map' ) . ' <code>&#091;hover geojsonstyle markergroupstyle]</code></li>'
-	. '<li>' . __( 'show a short tooltip, if the popup is too big:', 'extensions-leaflet-map' ) . ' <code>&#091;hover geojsontooltip="{name}"]</code></li>'
+	. '<li>' . __( 'hover only for geojsons, gpx, kml:', 'extensions-leaflet-map' ) . ' <code>[hover geojsontooltip geojsonstyle]</code></li>'
+	. '<li>' . __( 'show tooltips on hover:', 'extensions-leaflet-map' ) . ' <code>[hover markertooltip geojsontooltip markergrouptooltip]</code></li>'
+	. '<li>' . __( 'change style but do not show tooltips on hover (geojson, gpx, kml, circle, polygon, line):', 'extensions-leaflet-map' ) . ' <code>[hover geojsonstyle markergroupstyle]</code></li>'
+	. '<li>' . __( 'show a short tooltip, if the popup is too big:', 'extensions-leaflet-map' ) . ' <code>[hover geojsontooltip="{name}"]</code></li>'
 	. '</ul></p>';
 
 	$text = $text . '<p>' . __( 'For boolean values applies', 'extensions-leaflet-map' ) . ':<br>';
@@ -119,12 +109,7 @@ function leafext_help_hover() {
 	$text = $text . '</p>';
 
 	$text = $text . '<h4>' . __( 'Tooltip className', 'extensions-leaflet-map' ) . '</h4>';
-	$text = $text . '<p>' . wp_sprintf(
-		/* translators: %s are options. */
-		__( 'The tooltip has a %1$s, its default is %2$s. You can style the tooltip with css, e.g.', 'extensions-leaflet-map' ),
-		'className',
-		'"leafext-tooltip"'
-	);
+	$text = $text . '<p>' . sprintf( __( 'The tooltip has a %1$s, its default is %2$s. You can style the tooltip with css, e.g.', 'extensions-leaflet-map' ), 'className', '"leafext-tooltip"' );
 	$text = $text . '<pre>
 .leafext-tooltip {
   background-color: #eee !important;
@@ -146,7 +131,7 @@ function leafext_help_hover() {
 	if ( is_singular() || is_archive() ) {
 		return $text;
 	} else {
-		echo wp_kses_post( $text );
+		echo $text;
 	}
 }
 // leafext_help_hover();

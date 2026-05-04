@@ -1,14 +1,12 @@
 # Extensions for Leaflet Map
 
 Contributors: hupe13    
-Tags: leaflet, gpx, geojson, hover, marker   
-Tested up to: 6.8  
-Stable tag: 4.6    
-Requires at least: 6.0     
+Tags: leaflet, elevation, markercluster, Leaflet Plugins   
+Tested up to: 6.5  
+Stable tag: 4.2     
+Requires at least: 5.5.3     
 Requires PHP: 7.4     
 License: GPLv2 or later
-
-Extends the WordPress Plugin <a href="https://wordpress.org/plugins/leaflet-map/">Leaflet Map</a> with Leaflet Plugins and other functions.
 
 ## Description
 
@@ -26,7 +24,7 @@ Extends the WordPress Plugin <a href="https://wordpress.org/plugins/leaflet-map/
 
 * You can group the elements on the map by criteria and show/hide them.
 
-* Create an overview map with geo-locations provided in the pages and posts.
+* Create an overview map with geo-locations provided in the pages and posts (idea from @codade).
 
 * Get a tooltip when hovering over an element.
 
@@ -60,9 +58,7 @@ Extends the WordPress Plugin <a href="https://wordpress.org/plugins/leaflet-map/
 * [Leaflet.markercluster](https://github.com/Leaflet/Leaflet.markercluster): Provides Beautiful Animated Marker Clustering functionality.
 * [Leaflet.MarkerCluster.PlacementStrategies](https://github.com/adammertel/Leaflet.MarkerCluster.PlacementStrategies): Styling Markerclusters.
 * [Leaflet.ExtraMarkers](https://github.com/coryasilva/Leaflet.ExtraMarkers): Shameless copy of Awesome-Markers with more shapes and colors.
-* [Leaflet List Markers](https://github.com/hupe13/leaflet-list-markers): A Leaflet Control for listing visible markers in the map.
 * [Leaflet.FeatureGroup.SubGroup](https://github.com/ghybs/Leaflet.FeatureGroup.SubGroup): Grouping of Leaflet elements by options and features.
-* [Leaflet.Control.Layers.Tree](https://github.com/jjimenezshaw/Leaflet.Control.Layers.Tree): A Tree Layers Control for Leaflet.
 * [Leaflet Control Search](https://github.com/stefanocudini/leaflet-search): Search Markers/Features location by option or custom property.
 * [leaflet-choropleth](https://github.com/timwis/leaflet-choropleth): Choropleth plugin for Leaflet (color scale based on value).
 * [leaflet.zoomhome](https://github.com/torfsen/leaflet.zoomhome): Provides a zoom control with a "Home" button to reset the view.
@@ -76,20 +72,17 @@ Extends the WordPress Plugin <a href="https://wordpress.org/plugins/leaflet-map/
 
 ## Screenshots
 
-1. Track with elevation and speed profiles <br>![Track with elevation profile](.wordpress-org/screenshot-1.png)
-2. ExtraMarkers <br>![ExtraMarkers](.wordpress-org/screenshot-2.png)
-3. Grouping and Tree View <br>![Grouping and Tree View](.wordpress-org/screenshot-3.png)
-4. Markercluster PlacementStrategies <br>![Markercluster PlacementStrategies](.wordpress-org/screenshot-4.png)
-5. Tooltip on Hover <br>![Tooltip on Hover](.wordpress-org/screenshot-5.png)
-6. Manage Leaflet Map files <br>![Manage Leaflet Map files](.wordpress-org/screenshot-6.png)
+1. Track with elevation and other profiles and Switching tile layers<br>![Track with elevation profile](.wordpress-org/screenshot-1.png)
+2. Hover a Geojson area <br>![Hover a Geojson area](.wordpress-org/screenshot-2.png)
+3. Markercluster and Groups <br>![Markercluster](.wordpress-org/screenshot-3.png)
+4. Markercluster PlacementStrategies <br>![PlacementStrategies](.wordpress-org/screenshot-4.png)
+5. ExtraMarkers <br>![ExtraMarkers](.wordpress-org/screenshot-5.png)
+6. Choropleth Map (data from Choropleth plugin example) <br>![Choropleth Map (data from Choropleth example)](.wordpress-org/screenshot-6.png)
+7. Files for Leaflet Map <br>![Files for Leaflet Map](.wordpress-org/screenshot-7.png)
 
 ## Documentation
 
 Detailed documentation and examples in <a href="https://leafext.de/">German</a> and <a href="https://leafext.de/en/">English</a>.
-
-## Thank you
-
-Many thanks to everyone who found errors and provided ideas for new functions.
 
 ## Frequently Asked Questions
 
@@ -109,17 +102,15 @@ RewriteRule .*\\.gpx$ - [L,T=application/gpx+xml]</code></pre>
 **It doesn't work!**
 
 * Are you using any caching plugin? Try to exclude at least these js files from caching:
-
  - /wp-content/plugins/extensions-leaflet-map/leaflet-plugins/leaflet-elevation-*
  - /wp-content/plugins/extensions-leaflet-map/leaflet-plugins/leaflet-gesture-handling-*
-
 * Are you using any plugin to comply with the GDPR/DSGVO? There might be a problem with that.
 * If you use a caching plugin and a GDPR/DSGVO plugin you need to distinguish whether the user has accepted the cookie or not.
 * Please ask in the [forum](https://wordpress.org/support/plugin/extensions-leaflet-map/)!
 
 **Apropos GDPR/DSGVO**
 
-* If you need a plugin for this try [DSGVO snippet for Leaflet Map and its Extensions](https://wordpress.org/plugins/dsgvo-leaflet-map/).
+* If you need a plugin for this try [DSGVO/GDPR Snippet for Extensions for Leaflet Map](https://github.com/hupe13/extensions-leaflet-map-dsgvo).
 * If you use [Complianz | GDPR/CCPA Cookie Consent](https://wordpress.org/plugins/complianz-gdpr/) see [here](https://complianz.io/leaflet-maps/).
 
 ## Installation
@@ -130,12 +121,11 @@ RewriteRule .*\\.gpx$ - [L,T=application/gpx+xml]</code></pre>
 
 ## Changelog
 
-### 4.6 / 250816
+### 4.2 /240322
 
-* zoomhomemap has some options now
-* fixed: leafext_plugin_active did not work with network activated plugins
-* new Jshrink
-* new leaflet.fullscreen
+* new version leaflet-rotate, d3
+* grouping: html tags in menu
+* some changes for WPCS
 
 ### Previous
 

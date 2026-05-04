@@ -141,15 +141,15 @@ function leafext_extramarker_params() {
 		// 'default' => '1,-32',
 		// 'filter' => 'latlon',
 		// ),
-		// array(
-		// 'param'   => 'title',
-		// 'desc'    => __(
-		// 'Add a hover-over message to your marker (different than popup)',
-		// 'extensions-leaflet-map'
-		// ),
-		// 'default' => '',
-		// 'filter'  => '',
-		// ),
+		array(
+			'param'   => 'title',
+			'desc'    => __(
+				'Add a hover-over message to your marker (different than popup)',
+				'extensions-leaflet-map'
+			),
+			'default' => '',
+			'filter'  => '',
+		),
 	);
 	return $params;
 }
@@ -175,25 +175,24 @@ function leafext_extramarker_filter() {
 // Shortcode: [leaflet-extramarker]
 function leafext_extramarker_function( $atts, $content, $shortcode ) {
 	$text = leafext_should_interpret_shortcode( $shortcode, $atts );
-	if ( $text !== '' ) {
+	if ( $text != '' ) {
 		return $text;
 	} else {
 		leafext_enqueue_extramarker();
 		$marker_shortcode = '[leaflet-marker ';
 		if ( is_array( $atts ) ) {
 			foreach ( $atts as $key => $item ) {
-				// var_dump( $key, $item );
 				if ( is_int( $key ) ) {
 					$marker_shortcode = $marker_shortcode . "$item ";
 				} else {
-					$marker_shortcode = $marker_shortcode . $key . '="' . $item . '" ';
+					$marker_shortcode = $marker_shortcode . "$key=$item ";
 				}
 			}
 		}
 		$marker_shortcode = $marker_shortcode . ']' . $content . '[/leaflet-marker]';
 
 		$text = do_shortcode( $marker_shortcode );
-		// var_dump( $marker_shortcode );
+		// $text             =  $marker_shortcode ;
 
 		$text    = \JShrink\Minifier::minify( $text );
 		$atts1   = leafext_case( array_keys( leafext_extramarker_defaults() ), leafext_clear_params( $atts ) );
@@ -202,6 +201,7 @@ function leafext_extramarker_function( $atts, $content, $shortcode ) {
 		// var_dump($options);//wp_die();
 		$icon = 'var extramarker = L.ExtraMarkers.icon({' . leafext_extramarkers_params( $options ) . 'tooltipAnchor:[12,-24]});';
 		// var_dump($icon);
+		// $text = str_replace(",marker_options","",$text);
 		$text = str_replace( 'marker.addTo(group);', 'marker.addTo(group);' . $icon . 'marker.setIcon(extramarker);', $text );
 		$text = \JShrink\Minifier::minify( $text );
 		// var_dump($text);
@@ -229,13 +229,13 @@ function leafext_extramarkers_params( $params ) {
 	$text = '';
 
 	foreach ( $params as $k => $v ) {
-		if ( $k === 'lat' || $k === 'lng' ) {
+		if ( $k == 'lat' || $k == 'lng' ) {
 			continue;
 		}
-		if ( $v === '' ) {
+		if ( $v == '' ) {
 			continue;
 		}
-		$text .= "$k: ";
+		$text = $text . "$k: ";
 		switch ( $filters[ $k ] ) {
 			case 'FILTER_VALIDATE_BOOLEAN':
 				$value = filter_var( $v, FILTER_VALIDATE_BOOLEAN ) ? 'true' : 'false';
@@ -249,8 +249,8 @@ function leafext_extramarkers_params( $params ) {
 			default:
 				$value = '"' . $v . '"';
 		}
-		$text .= $value;
-		$text .= ",\n";
+		$text = $text . $value;
+		$text = $text . ",\n";
 	}
 	// var_dump($text); wp_die();
 	return $text;

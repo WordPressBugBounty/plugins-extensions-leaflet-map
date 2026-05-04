@@ -55,12 +55,21 @@ function leafext_providers_registration() {
 				'apikey' => '<insert api_key here>',
 			),
 		),
+		// Esri/ArcGIS - register
 		array(
 			'name' => 'TomTom',
 			'keys' => array(
 				'apikey' => '<insert your API key here>',
 			),
 		),
+		array(
+			'name' => 'GeoportailFrance',
+			'keys' => array(
+				'variant' => '<insert resource ID here>',
+				'apikey'  => '<insert api key here>',
+			),
+		),
+		// Stadia Maps - register
 	);
 	return $tiles;
 }
@@ -73,6 +82,7 @@ function leafext_providers_regnames() {
 // [leaflet-map mapid=" "]
 // Shortcodes:
 // [layerswitch mapids= providers= tiles= opacity=]
+
 function leafext_layerswitch_begin_script() {
 	$text = '<script><!--';
 	ob_start();
@@ -85,8 +95,6 @@ function leafext_layerswitch_begin_script() {
 		//console.log(String(attributions));
 		var defaultAttr = String(attributions);
 		map.attributionControl._attributions = {};
-		map.options._orig_maxZoom = map.options.maxZoom;
-		map.options._orig_minZoom = map.options.minZoom;
 		var baselayers = {};
 		var overlays = {};
 		var opacity = {};
@@ -110,24 +118,15 @@ function leafext_layerswitch_begin_script() {
 			if (!map.hasLayer(layer)) {
 				return;
 			}
+			if (layer.options.minZoom > 1 && map.getZoom() > layer.options.minZoom) {
+				map.setZoom(layer.options.minZoom);
+			}
 			// console.log("map min zoom "+map.options.minZoom);
 			// console.log("map max zoom "+map.options.maxZoom);
 			// console.log("layer min zoom "+layer.options.minZoom);
 			// console.log("layer max zoom "+layer.options.maxZoom);
-			map.options.minZoom = map.options._orig_minZoom;
-			if ( map.options.minZoom < layer.options.minZoom ) {
-				map.options.minZoom = layer.options.minZoom;
-			}
-			if ( map.getZoom() < layer.options.minZoom ) {
-				map.setZoom(layer.options.minZoom);
-			}
-			map.options.maxZoom = map.options._orig_maxZoom;
-			if ( map.options.maxZoom > layer.options.maxZoom ) {
-				map.options.maxZoom = layer.options.maxZoom;
-			}
-			if ( map.getZoom() > layer.options.maxZoom ) {
-				map.setZoom(layer.options.maxZoom);
-			}
+			map.options.minZoom=layer.options.minZoom;
+			map.options.maxZoom=layer.options.maxZoom;
 		});
 	<?php
 	$javascript = ob_get_clean();
@@ -150,9 +149,6 @@ function leafext_layerswitch_tiles_script( $tiles ) {
 			if (tilelayer.opacity == 1) {
 				opacity[tilelayer.mapid] = overlays[tilelayer.mapid];
 			}
-			if ( tilelayer.visible == 1 ) {
-				layer.addTo(map);
-			}
 		} else {
 			baselayers[tilelayer.mapid] = layer;
 			if (tilelayer.opacity == 1) {
@@ -167,7 +163,7 @@ function leafext_layerswitch_tiles_script( $tiles ) {
 }
 
 function leafext_providers_fkt_script() {
-	// https://github.com/leaflet-extras/leaflet-providers/blob/65df099ba50665242c954cf2be411d6babd96a75/preview/preview.js#L56C2-L74C4
+	// https://github.com/leaflet-extras/leaflet-providers/blob/b7be4769ccb5cd66cf7c5bd2f6e1042ba7a10b5c/preview/preview.js#L60-L70
 	$text = '<!--';
 	ob_start();
 	?>
@@ -179,8 +175,7 @@ function leafext_providers_fkt_script() {
 		var overlayPatterns = [
 			'^(OpenWeatherMap|OpenSeaMap|OpenSnowMap)',
 			'OpenMapSurfer.(Hybrid|AdminBounds|ContourLines|Hillshade|ElementsAtRisk)',
-			'Stadia.StamenToner(Lines|Labels)',
-			'Stadia.StamenTerrain(Lines|Labels)',
+			'Stamen.Toner(Hybrid|Lines|Labels)',
 			'^JusticeMap',
 			'OpenAIP',
 			'OpenRailwayMap',
@@ -197,10 +192,10 @@ function leafext_providers_fkt_script() {
 }
 
 // providers
-function leafext_providers_script( $mapids, $providers, $visible ) {
+function leafext_providers_script( $mapids, $providers ) {
 	$regtiles = get_option( 'leafext_providers', array() );
 	$text     = '';
-	if ( count( $providers ) === count( $mapids ) ) {
+	if ( count( $providers ) == count( $mapids ) ) {
 		$names = array_combine( $providers, $mapids );
 	} else {
 		$names = array_combine( $providers, $providers );
@@ -208,26 +203,19 @@ function leafext_providers_script( $mapids, $providers, $visible ) {
 	foreach ( $providers as $provider ) {
 		$id = array_search( explode( '.', $provider )[0], array_column( $regtiles, 'name' ), true );
 		if ( $id !== false ) {
-			$text .= 'var layer = L.tileLayer.provider("' . $provider . '", {';
+			$text = $text . 'var layer = L.tileLayer.provider("' . $provider . '", {';
 			foreach ( $regtiles[ $id ]['keys'] as $key => $value ) {
-				$text .= $key . ': "';
-				$text .= $value . '",';
+				$text = $text . $key . ': "';
+				$text = $text . $value . '",';
 			}
-				$text .= '
+				$text = $text . '
 			} );';
 		} else {
-			$text .= 'var layer = L.tileLayer.provider("' . $provider . '");';
+			$text = $text . 'var layer = L.tileLayer.provider("' . $provider . '");';
 		}
-		$text .= '
+		$text = $text . '
 		if (isOverlay("' . $provider . '", layer)) {
 			overlays["' . $names[ $provider ] . '"] = layer;
-			';
-		if ( in_array( $names[ $provider ], $visible, true ) ) {
-			$text .= '
-			layer.addTo(map);
-			';
-		}
-			$text .= '
 		} else {
 			baselayers["' . $names[ $provider ] . '"] = layer;
 		}';
@@ -265,13 +253,13 @@ function leafext_layerswitch_end_script( $settings ) {
 	//console.log(overlays);
 
 	L.control.layers(baselayers,overlays,{
-		collapsed:<?php echo esc_js( $settings['collapsed'] ); ?>,
-		position:"<?php echo esc_js( $settings['position'] ); ?>",
+		collapsed:<?php echo $settings['collapsed']; ?>,
+		position:"<?php echo $settings['position']; ?>",
 	}).addTo(map);
 	if ( Object.entries(opacity).length !==  0) {
 		L.control.opacity(opacity,{
-			collapsed:<?php echo esc_js( $settings['collapsed'] ); ?>,
-			position:"<?php echo esc_js( $settings['position'] ); ?>",
+			collapsed:<?php echo $settings['collapsed']; ?>,
+			position:"<?php echo $settings['position']; ?>",
 		}).addTo(map);
 	}
 });
@@ -284,25 +272,21 @@ function leafext_layerswitch_end_script( $settings ) {
 function leafext_layerswitch_function( $atts, $content, $shortcode ) {
 	// var_dump($atts,$content,$shortcode);
 	$text = leafext_should_interpret_shortcode( $shortcode, $atts );
-	if ( $text !== '' ) {
+	if ( $text != '' ) {
 		return $text;
 	} else {
-		$tiles               = array();
-		$mapids              = array();
-		$providers           = array();
-		$opacities           = array();
-		$visible             = array();
-		$defined_tileservers = get_option( 'leafext_maps', array() );
+		$tiles                       = array();
+		$mapids                      = array();
+		$providers                   = array();
+		$opacities                   = array();
+				$defined_tileservers = get_option( 'leafext_maps', array() );
 		if ( is_array( $atts ) ) {
-			if ( array_key_exists( 'visible', $atts ) ) {
-				$visible = explode( ',', $atts['visible'] );
-			}
 			if ( array_key_exists( 'tiles', $atts ) && count( $defined_tileservers ) > 0 ) {
 				$only      = array();
 				$atts_maps = explode( ',', $atts['tiles'] );
 				foreach ( $atts_maps as $atts_map ) {
 					foreach ( $defined_tileservers as $defined_tileserver ) {
-						if ( $defined_tileserver['mapid'] === $atts_map ) {
+						if ( $defined_tileserver['mapid'] == $atts_map ) {
 							$only[] = $defined_tileserver;
 						}
 					}
@@ -310,12 +294,15 @@ function leafext_layerswitch_function( $atts, $content, $shortcode ) {
 				$defined_tileservers = $only;
 			}
 			if ( array_key_exists( 'providers', $atts ) ) {
+				if ( ! array_key_exists( 'tiles', $atts ) ) {
+					$defined_tileservers = array();
+				}
 				leafext_enqueue_providers();
 				$providers = explode( ',', $atts['providers'] );
 				if ( array_key_exists( 'mapids', $atts ) ) {
 					$mapids = explode( ',', $atts['mapids'] );
 				}
-				if ( count( $providers ) !== count( $mapids ) ) {
+				if ( count( $providers ) != count( $mapids ) ) {
 					$mapids = $providers;
 				}
 
@@ -335,8 +322,8 @@ function leafext_layerswitch_function( $atts, $content, $shortcode ) {
 		}
 
 		foreach ( $defined_tileservers as $defined_tileserver ) {
-			$overlay = $defined_tileserver['overlay'] === '1' ? '1' : '';
-			$opacity = $defined_tileserver['opacity'] === '1' ? '1' : '';
+			$overlay = $defined_tileserver['overlay'] == '1' ? '1' : '';
+			$opacity = $defined_tileserver['opacity'] == '1' ? '1' : '';
 
 			$tileoptions                = array();
 			$tileoptions['attribution'] = $defined_tileserver['attr'];
@@ -353,7 +340,7 @@ function leafext_layerswitch_function( $atts, $content, $shortcode ) {
 					$tok     = strtok( ':' );
 				}
 				if ( count( $parts ) > 1 ) {
-					if ( $key !== '' ) {
+					if ( $key != '' ) {
 						$tileoptions[ $key ] = trim( $value, ',' );
 					}
 					$key   = $parts[0];
@@ -363,18 +350,12 @@ function leafext_layerswitch_function( $atts, $content, $shortcode ) {
 						$value = $value . ':' . $parts[ $i ];
 						$value = trim( $value, ':' );
 					}
-				} elseif ( count( $parts ) === 1 ) {
+				} elseif ( count( $parts ) == 1 ) {
 						$value = $value . ',' . $parts[0];
 				}
 			}
-			if ( $key !== '' ) {
+			if ( $key != '' ) {
 				$tileoptions[ $key ] = trim( $value, ',' );
-			}
-
-			if ( in_array( $defined_tileserver['mapid'], $visible, true ) ) {
-				$is_visible = '1';
-			} else {
-				$is_visible = '0';
 			}
 
 			$tiles[] = array(
@@ -382,23 +363,22 @@ function leafext_layerswitch_function( $atts, $content, $shortcode ) {
 				'tile'    => $defined_tileserver['tile'],
 				'overlay' => $overlay,
 				'opacity' => $opacity,
-				'visible' => $is_visible,
 				'options' => $tileoptions,
 			);
 		}
 
-		if ( count( $tiles ) === 0 && count( $providers ) === 0 ) {
+		if ( count( $tiles ) == 0 && count( $providers ) == 0 ) {
 			return;
 		}
 		leafext_enqueue_opacity();
 
 		$text = leafext_layerswitch_begin_script();
 		if ( count( $tiles ) > 0 ) {
-			$text .= leafext_layerswitch_tiles_script( $tiles );
+			$text = $text . leafext_layerswitch_tiles_script( $tiles );
 		}
 		if ( count( $providers ) > 0 ) {
-			$text .= leafext_providers_fkt_script();
-			$text .= leafext_providers_script( $mapids, $providers, $visible );
+			$text = $text . leafext_providers_fkt_script();
+			$text = $text . leafext_providers_script( $mapids, $providers );
 		}
 		if ( is_array( $atts ) ) {
 			if ( array_key_exists( 'opacity', $atts ) ) {
@@ -415,7 +395,7 @@ function leafext_layerswitch_function( $atts, $content, $shortcode ) {
 		if ( ! leafext_check_position_control( $options['position'] ) ) {
 			$options['position'] = 'topright';
 		}
-		$text .= leafext_layerswitch_end_script( $options );
+		$text = $text . leafext_layerswitch_end_script( $options );
 		$text = \JShrink\Minifier::minify( $text );
 		return "\n" . $text . "\n";
 	}

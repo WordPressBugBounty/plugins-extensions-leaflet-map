@@ -88,13 +88,5 @@ function leafext_markercluster_js(clmarkers) {
 			}
 		}
 	}
-	if ( ! clmarkers.options.showCoverageOnHover && ! clmarkers.options.zoomToBoundsOnClick && ! clmarkers.options.spiderfyOnMaxZoom ) {
-		clmarkers.on(
-			'clusterclick',
-			function (a) {
-				a.layer.spiderfy();
-			}
-		);
-	}
 	clmarkers.addTo( map );
 }

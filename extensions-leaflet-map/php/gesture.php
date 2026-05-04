@@ -12,11 +12,10 @@ function leafext_gesture_params() {
 	$params = array(
 		array(
 			'param'     => 'leafext_gesture_on',
-			'shortdesc' => __( 'valid for whole site or only for one map', 'extensions-leaflet-map' ),
+			'shortdesc' => esc_html__( 'valid for whole site or only for one map', 'extensions-leaflet-map' ),
 			'desc'      => '<p>' .
-			wp_sprintf(
-				/* translators: %s are options. */
-				__( 'If it is true, it is valid for any map (depending on %1$s respectively %2$s) and you can\'t change it. If it is false, you can enable it for a map:', 'extensions-leaflet-map' ),
+			sprintf(
+				esc_html__( 'If it is true, it is valid for any map (depending on %1$s respectively %2$s) and you can\'t change it. If it is false, you can enable it for a map:', 'extensions-leaflet-map' ),
 				'<code>scrollwheel</code>',
 				'<code>dragging</code>'
 			) .
@@ -26,8 +25,9 @@ function leafext_gesture_params() {
 		),
 		array(
 			'param'     => 'lang',
-			'shortdesc' => __( 'Site Language or Browser Language', 'extensions-leaflet-map' ),
-			'desc'      => '',
+			'shortdesc' => esc_html__( 'Site Language or Browser Language', 'extensions-leaflet-map' ),
+			'desc'      => '<p>
+			</p>',
 			'default'   => 'Browser',
 			'values'    => array( 'Site', 'Browser' ),
 		),
@@ -47,7 +47,7 @@ function leafext_gesture_settings() {
 }
 
 function leafext_gestures_lang( $options ) {
-	if ( $options['lang'] === 'Site' ) {
+	if ( $options['lang'] == 'Site' ) {
 		$lang = get_bloginfo( 'language' );
 	} elseif ( isset( $_SERVER['HTTP_ACCEPT_LANGUAGE'] ) ) {
 		$server = map_deep( wp_unslash( $_SERVER ), 'sanitize_text_field' );
@@ -85,11 +85,9 @@ function leafext_gestures_script( $lang ) {
 				console.log("dragging, scroll, mobile ",map.dragging.enabled(),map.scrollWheelZoom.enabled(),L.Browser.mobile);
 				if ( map.scrollWheelZoom.enabled() || ( map.dragging.enabled() && L.Browser.mobile ) ) {
 					console.log(i,"enabled");
-					<?php
-					if ( $lang !== '' ) {
-						?>
+					<?php if ( $lang != '' ) { ?>
 						map.options.gestureHandlingOptions = {
-							locale: "<?php echo esc_js( $lang ); ?>", // set language of the warning message.
+							locale: "<?php echo $lang; ?>", // set language of the warning message.
 						}
 						<?php
 					}
@@ -117,11 +115,9 @@ function leafext_gesture_script( $lang ) {
 		console.log("dragging, scroll, mobile ",map.dragging.enabled(),map.scrollWheelZoom.enabled(),L.Browser.mobile);
 		if ( map.scrollWheelZoom.enabled() || ( map.dragging.enabled() && L.Browser.mobile ) ) {
 			//console.log("enabled");
-			<?php
-			if ( $lang !== '' ) {
-				?>
+			<?php if ( $lang != '' ) { ?>
 				map.options.gestureHandlingOptions = {
-					locale: "<?php echo esc_js( $lang ); ?>", // set language of the warning message.
+					locale: "<?php echo $lang; ?>", // set language of the warning message.
 				}
 				<?php
 			}
@@ -154,7 +150,7 @@ add_filter(
 		if ( ! isset( $leafext_gesture_loaded ) ) {
 			$leafext_gesture_loaded = true;
 		}
-		if ( 'leaflet-map' === $shortcode && $leafext_gesture_loaded ) {
+		if ( 'leaflet-map' == $shortcode && $leafext_gesture_loaded ) {
 			leafext_gestures_function();
 			$leafext_gesture_loaded = false;
 		}
@@ -166,7 +162,7 @@ add_filter(
 
 function leafext_gestures_shortcode() {
 	$text = leafext_should_interpret_shortcode( 'gestures', 0 );
-	if ( $text !== '' ) {
+	if ( $text != '' ) {
 		return $text;
 	} else {
 		$options = leafext_gesture_settings();

@@ -5,7 +5,8 @@
 	min-width: 120px;
 	/* max-width: 200px; */
 }
-.leafext-overview-popup {
+.leafext-overview-popup
+{
 	max-width: 200px;
 	display: grid;
 	gap: 0.5em;
@@ -21,7 +22,8 @@
 	padding-bottom: 10px;
 	overflow-wrap: break-word;
 }
-.leafext-overview-popup .leafext-overview-popup-img {
+.leafext-overview-popup .leafext-overview-popup-img
+{
 	grid-column: 1/2;
 	grid-row: 2/3;
 	width: 75px;

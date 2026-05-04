@@ -8,13 +8,12 @@
 // Direktzugriff auf diese Datei verhindern.
 defined( 'ABSPATH' ) || die();
 
-require __DIR__ . '/markercluster.php';
-require __DIR__ . '/placementstrategies.php';
-require __DIR__ . '/extramarker.php';
-require __DIR__ . '/geojsonmarker.php';
-require __DIR__ . '/targetmarker.php';
-require __DIR__ . '/hidemarkers.php';
-require __DIR__ . '/listmarker.php';
+require LEAFEXT_PLUGIN_DIR . '/admin/marker/markercluster.php';
+require LEAFEXT_PLUGIN_DIR . '/admin/marker/placementstrategies.php';
+require LEAFEXT_PLUGIN_DIR . '/admin/marker/extramarker.php';
+require LEAFEXT_PLUGIN_DIR . '/admin/marker/geojsonmarker.php';
+require LEAFEXT_PLUGIN_DIR . '/admin/marker/targetmarker.php';
+require LEAFEXT_PLUGIN_DIR . '/admin/marker/hidemarkers.php';
 
 function leafext_marker_tab() {
 	$tabs = array(
@@ -47,23 +46,19 @@ function leafext_marker_tab() {
 			'title' => __( 'Target Marker', 'extensions-leaflet-map' ),
 		),
 		array(
-			'tab'   => 'listmarker',
-			'title' => __( 'Listing markers in the map', 'extensions-leaflet-map' ),
-		),
-		array(
 			'tab'   => 'hidemarkers',
 			'title' => __( 'Hide Markers', 'extensions-leaflet-map' ),
 		),
 	);
 
-	//phpcs:ignore WordPress.Security.NonceVerification.Recommended -- no form
+	//phpcs:disable WordPress.Security.NonceVerification.Recommended -- no form
 	$get        = map_deep( wp_unslash( $_GET ), 'sanitize_text_field' );
 	$active_tab = isset( $get['tab'] ) ? $get['tab'] : '';
 	$textheader = '<div class="nav-tab-wrapper">';
 
 	foreach ( $tabs as $tab ) {
 		$textheader = $textheader . '<a href="?page=' . LEAFEXT_PLUGIN_SETTINGS . '&tab=' . $tab['tab'] . '" class="nav-tab';
-		$active     = ( $active_tab === $tab['tab'] ) ? ' nav-tab-active' : '';
+		$active     = ( $active_tab == $tab['tab'] ) ? ' nav-tab-active' : '';
 		$textheader = $textheader . $active;
 		$textheader = $textheader . '">' . $tab['title'] . '</a>' . "\n";
 	}
@@ -73,36 +68,26 @@ function leafext_marker_tab() {
 }
 
 function leafext_admin_marker( $active_tab ) {
-	if ( $active_tab === 'markercluster' ) {
+	if ( $active_tab == 'markercluster' ) {
 		leafext_admin_markercluster();
-	} elseif ( $active_tab === 'markerclustergroup' ) {
-		echo '<h2>' . wp_kses_post( leafext_marker_tab() ) . '</h2>';
-		include __DIR__ . '/clustergroup.php';
-	} elseif ( $active_tab === 'extramarker' ) {
-		echo '<h2>' . wp_kses_post( leafext_marker_tab() ) . '</h2>';
-		leafext_help_awesome();
-		echo '<form method="post" action="options.php">';
-		settings_fields( 'leafext_settings_awesome' );
-		do_settings_sections( 'leafext_settings_awesome' );
-		if ( current_user_can( 'manage_options' ) ) {
-			wp_nonce_field( 'leafext_awesome', 'leafext_awesome_nonce' );
-			submit_button();
-		}
-		echo '</form>';
+	} elseif ( $active_tab == 'markerclustergroup' ) {
+		echo '<h2>' . leafext_marker_tab() . '</h2>';
+		include LEAFEXT_PLUGIN_DIR . '/admin/marker/clustergroup.php';
+	} elseif ( $active_tab == 'extramarker' ) {
+		echo '<h2>' . leafext_marker_tab() . '</h2>';
 		leafext_extramarker_help();
-	} elseif ( $active_tab === 'markerclusterplacementstrategies' ) {
+	} elseif ( $active_tab == 'markerclusterplacementstrategies' ) {
 		leafext_admin_placementstrategies();
-	} elseif ( $active_tab === 'geojsonmarker' ) {
-		echo '<h2>' . wp_kses_post( leafext_marker_tab() ) . '</h2>';
+	} elseif ( $active_tab == 'extramarker' ) {
+		echo leafext_marker_tab();
+		leafext_extramarker_help();
+	} elseif ( $active_tab == 'geojsonmarker' ) {
+		echo '<h2>' . leafext_marker_tab() . '</h2>';
 		leafext_help_geojsonmarker();
-	} elseif ( $active_tab === 'targetmarker' ) {
-		echo '<h2>' . wp_kses_post( leafext_marker_tab() ) . '</h2>';
+	} elseif ( $active_tab == 'targetmarker' ) {
 		leafext_targetmarker_help();
-	} elseif ( $active_tab === 'listmarker' ) {
-		echo '<h2>' . wp_kses_post( leafext_marker_tab() ) . '</h2>';
-		leafext_help_listmarker();
-	} elseif ( $active_tab === 'hidemarkers' ) {
-		echo '<h2>' . wp_kses_post( leafext_marker_tab() ) . '</h2>';
+	} elseif ( $active_tab == 'hidemarkers' ) {
+		echo '<h2>' . leafext_marker_tab() . '</h2>';
 		leafext_help_hidemarkers();
 	}
 }

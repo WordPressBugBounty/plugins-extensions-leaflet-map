@@ -86,7 +86,7 @@ function leafext_elevation_params( $typ = array() ) {
 			'desc'      => '',
 			'default'   => '0',
 			// form input type,  pattern, help
-			'values'    => ' type="text" pattern="^[0-9]+$" title="' . __( 'number', 'extensions-leaflet-map' ) . '"',
+			'values'    => 'type="text" pattern="^[0-9]+$" title="' . __( 'number', 'extensions-leaflet-map' ) . '"',
 			'typ'       => array( 'changeable', 'look', 'multielevation' ),
 		),
 
@@ -97,7 +97,7 @@ function leafext_elevation_params( $typ = array() ) {
 			'desc'      => '',
 			'default'   => '0',
 			// form input type,  pattern, help
-			'values'    => ' type="text" pattern="^[0-9]+$" title="' . __( 'number', 'extensions-leaflet-map' ) . '"',
+			'values'    => 'type="text" pattern="^[0-9]+$" title="' . __( 'number', 'extensions-leaflet-map' ) . '"',
 			'typ'       => array( 'changeable', 'look', 'multielevation' ),
 		),
 
@@ -108,14 +108,12 @@ function leafext_elevation_params( $typ = array() ) {
 			'shortdesc' => __( 'Toggle chart legend filter.', 'extensions-leaflet-map' ),
 			'desc'      => '<img src="' . LEAFEXT_PLUGIN_PICTS . 'on.png" alt="on"/>
 			<p>' .
-			wp_sprintf(
-				/* translators: %s is an option. */
+			sprintf(
 				__( 'You can always toggle the charts individually by clicking on %s.', 'extensions-leaflet-map' ),
 				'<img src="' . LEAFEXT_PLUGIN_PICTS . 'switcher.png" alt="switch"/>'
 			)
 			. ' ' .
-			wp_sprintf(
-				/* translators: %s is an option. */
+			sprintf(
 				__( 'If %s is disabled, you can\'t see all charts at the same time (except at the beginning).', 'extensions-leaflet-map' ),
 				'<code>legend</code>'
 			) . '</p>',
@@ -144,7 +142,7 @@ function leafext_elevation_params( $typ = array() ) {
 			'desc'      => '',
 			'default'   => '200',
 			// form input type,  pattern, help
-			'values'    => ' type="text" pattern="^[1-4][0-9]{2}$" title="' . __( 'three digit number (px), minimum 100, maximum 499', 'extensions-leaflet-map' ) . '"',
+			'values'    => 'type="text" pattern="^[1-4][0-9]{2}$" title="' . __( 'three digit number (px), minimum 100, maximum 499', 'extensions-leaflet-map' ) . '"',
 			'typ'       => array( 'changeable', 'look', 'multielevation' ),
 		),
 
@@ -155,7 +153,7 @@ function leafext_elevation_params( $typ = array() ) {
 			'shortdesc' => __( 'If (!detached) width of the chart', 'extensions-leaflet-map' ),
 			'desc'      => '',
 			'default'   => '(screen.width * 0.6) || 600',
-			'values'    => ' type="text" placeholder="(screen.width * 0.6) || 600" pattern="^[0-9]{2,4}$|^\(screen.width \* 0.[1-9]\) \|\| [0-9]{2,4}$"
+			'values'    => 'type="text" placeholder="(screen.width * 0.6) || 600" pattern="^[0-9]{2,4}$|^\(screen.width \* 0.[1-9]\) \|\| [0-9]{2,4}$"
 				title="' . __( 'a number (px) or an expression like the default value', 'extensions-leaflet-map' ) . '"',
 			'typ'       => array( 'changeable', 'look', 'multielevation' ),
 		),
@@ -165,8 +163,7 @@ function leafext_elevation_params( $typ = array() ) {
 		array(
 			'param'     => 'chart',
 			'shortdesc' => __( 'Toggle chart', 'extensions-leaflet-map' ),
-			'desc'      => wp_sprintf(
-				/* translators: %s are pictures. */
+			'desc'      => sprintf(
 				__( 'show always the chart / show the chart and toggle %1$s to hide / hide the chart and toggle %2$s to show', 'extensions-leaflet-map' ),
 				'&#10006;',
 				'<img src="' . LEAFEXT_PLUGIN_PICTS . '/elevation-lime.svg" alt="lime" />'
@@ -181,8 +178,7 @@ function leafext_elevation_params( $typ = array() ) {
 		array(
 			'param'     => 'detached',
 			'shortdesc' => __( 'Chart container outside/inside map container', 'extensions-leaflet-map' ),
-			/* translators: %s are options. */
-			'desc'      => wp_sprintf( __( '%1$s outside, %2$s inside', 'extensions-leaflet-map' ), 'true - ', 'false - ' ),
+			'desc'      => sprintf( __( '%1$s outside, %2$s inside', 'extensions-leaflet-map' ), 'true - ', 'false - ' ),
 			'default'   => true,
 			'values'    => 1,
 			// 'typ' => array('fixed'),
@@ -328,11 +324,10 @@ function leafext_elevation_params( $typ = array() ) {
 			'shortdesc' => __( 'Toggle custom waypoint icons', 'extensions-leaflet-map' ),
 			'desc'      => '<p>true / "defined" / false</p>
 			<p>' . __( 'Only meaningful, if waypoints are shown in the map.', 'extensions-leaflet-map' ) . '</p>
-			<p>' . wp_sprintf(
-				/* translators: %1$s is an option, %2$s is a link. */
+			<p>' . sprintf(
 				__( 'If %1$s is selected, you must define some %2$ssettings for the icons', 'extensions-leaflet-map' ),
 				'"defined"',
-				( ( is_singular() || is_archive() ) ? '<a href="/doku/elevationwaypoints/">' : '<a href="?page=' . LEAFEXT_PLUGIN_SETTINGS . '&tab=elevationwaypoints">' )
+				'<a href="?page=' . LEAFEXT_PLUGIN_SETTINGS . '&tab=elevationwaypoints">'
 			) . '</a>.'
 			. '</p>',
 			'default'   => true,
@@ -346,13 +341,7 @@ function leafext_elevation_params( $typ = array() ) {
 			'param'     => 'wptLabels',
 			'shortdesc' => __( 'Toggle waypoint labels', 'extensions-leaflet-map' ),
 			'desc'      => '<p>' . __( 'Show waypoint labels in map and in chart / only in map / only in chart / none', 'extensions-leaflet-map' ) . '</p>
-			<p>' . wp_sprintf(
-				/* translators: %s are codes. */
-				__( 'Only meaningful, if %1$swaypoints%2$s is not %3$s.', 'extensions-leaflet-map' ),
-				'<code>',
-				'</code>',
-				'<code>0</code>'
-			) . '</p>',
+			<p>' . sprintf( __( 'Only meaningful, if %1$swaypoints%2$s is not %3$s.', 'extensions-leaflet-map' ), '<code>', '</code>', '<code>0</code>' ) . '</p>',
 			'default'   => true,
 			'values'    => array( true, 'markers', 'dots', false ),
 			'typ'       => array( 'changeable', 'points' ),
@@ -488,17 +477,6 @@ function leafext_elevation_params( $typ = array() ) {
 			'typ'       => array( 'changeable', 'chart', 'multielevation' ),
 		),
 
-		// heart
-		// "minbpm" "maxbpm" "avgbpm"
-		array(
-			'param'     => 'heart',
-			'shortdesc' => __( 'Heart rate profile', 'extensions-leaflet-map' ),
-			'desc'      => 'css: .minbpm, .maxbpm, .avgbpm,',
-			'default'   => false,
-			'values'    => array( true, 'summary', 'disabled', false ),
-			'typ'       => array( 'changeable', 'chart', 'multielevation' ),
-		),
-
 		// Verhalten u.a.
 
 		// Autoupdate map center on chart mouseover.
@@ -529,6 +507,17 @@ function leafext_elevation_params( $typ = array() ) {
 			'shortdesc' => __( 'Autoupdate map bounds on chart update.', 'extensions-leaflet-map' ),
 			'desc'      => '',
 			'default'   => true,
+			'values'    => 1,
+			'typ'       => array( 'changeable', 'other', 'multielevation' ),
+		),
+
+		// Chart distance/elevation units.
+		// imperial: false,
+		array(
+			'param'     => 'imperial',
+			'shortdesc' => __( 'Chart distance/elevation units imperial or metric.', 'extensions-leaflet-map' ),
+			'desc'      => __( 'miles or kilometers', 'extensions-leaflet-map' ),
+			'default'   => false,
 			'values'    => 1,
 			'typ'       => array( 'changeable', 'other', 'multielevation' ),
 		),
@@ -587,100 +576,17 @@ function leafext_elevation_params( $typ = array() ) {
 		// 'typ' => array('fixed'),
 		// ),
 
-		// Chart distance/elevation units.
-		// imperial: false,
-		array(
-			'param'     => 'imperial',
-			'shortdesc' => __( 'Chart distance/elevation units imperial or metric.', 'extensions-leaflet-map' ),
-			'desc'      => __( 'miles or kilometers', 'extensions-leaflet-map' ),
-			'default'   => false,
-			'values'    => 1,
-			'typ'       => array( 'changeable', 'units', 'multielevation' ),
-		),
-
-		// Factor:
-		// opts.accelerationFactor = opts.accelerationFactor || 1;  // (Beschleunigung)
-		// opts.paceFactor               = opts.paceFactor || 60; // 1 min = 60 sec
-		// opts.timeFactor         = opts.timeFactor || 3600;
-
-		// Labels:
-		// acceleration.label  = opts.accelerationLabel  || L._(opts.imperial ? 'ft/s²' : 'm/s²');
-		// pace.label            = opts.paceLabel  || L._(opts.imperial ? 'min/mi' : 'min/km');
-		// slope.label         = opts.slopeLabel || '%';
-		// time.label            = opts.timeLabel  || 't';
-
-		// xLabel: "km",
-		// distance.label      = opts.imperial ? "mi" : opts.xLabel;
-		array(
-			'param'     => 'xLabel',
-			'shortdesc' => 'xLabel',
-			/* translators: Label for distance in chart, will be ignored if imperial is true. */
-			'desc'      => wp_sprintf( __( 'Label for distance, will be ignored if %1$s is %2$s.', 'extensions-leaflet-map' ), '<code>imperial</code>', 'true' ) . '<br>' .
-				__( 'Default', 'extensions-leaflet-map' ) . ': "km"',
-			'default'   => '',
-			'values'    => '',
-			'typ'       => array( 'changeable', 'units', 'multielevation' ),
-		),
-
-		// opts.distanceFactor       = opts.imperial ? this.__mileFactor : (opts.distanceFactor || 1); // 1 km = (1000 m)
-		// __mileFactor:     0.621371, // 1 km = (0.621371 mi)
-		array(
-			'param'     => 'distanceFactor',
-			'shortdesc' => 'distanceFactor',
-			/* translators: ... will be ignored if imperial is true */
-			'desc'      => wp_sprintf( __( 'Conversion factor to kilometers, will be ignored if %1$s is %2$s.', 'extensions-leaflet-map' ), '<code>imperial</code>', 'true' ) . '<br>' .
-				__( 'Default', 'extensions-leaflet-map' ) . ': 1',
-			'default'   => '',
-			'values'    => '',
-			'typ'       => array( 'changeable', 'units', 'multielevation' ),
-		),
-
-		// yLabel: "m",
-		// altitude.label      = opts.imperial ? "ft" : opts.yLabel;
-		array(
-			'param'     => 'yLabel',
-			'shortdesc' => 'yLabel',
-			'desc'      => __( 'Label for altitude', 'extensions-leaflet-map' ) . '<br>' .
-			/* translators: Default: "ft" if imperial is true, "m" otherwise. */
-				wp_sprintf( __( 'Default: %1$s if %2$s is %3$s, %4$s otherwise.', 'extensions-leaflet-map' ), '"ft"', '<code>imperial</code>', 'true', '"m"' ),
-			'default'   => '',
-			'values'    => '',
-			'typ'       => array( 'changeable', 'units', 'multielevation' ),
-		),
-
-		// opts.altitudeFactor       = opts.imperial ? this.__footFactor : (opts.altitudeFactor || 1); // 1 m = (1 m)
-		array(
-			'param'     => 'altitudeFactor',
-			'shortdesc' => 'altitudeFactor',
-			/* translators: ... will be ignored if imperial is true */
-			'desc'      => wp_sprintf( __( 'Conversion factor to meters, will be ignored if %1$s is %2$s', 'extensions-leaflet-map' ), '<code>imperial</code>', 'true' ) . '<br>' .
-				__( 'Default', 'extensions-leaflet-map' ) . ': 1',
-			'default'   => '',
-			'values'    => '',
-			'typ'       => array( 'changeable', 'units', 'multielevation' ),
-		),
-
-		// speed.label           = opts.speedLabel || L._(opts.imperial ? 'mph' : 'km/h');
-		array(
-			'param'     => 'speedLabel',
-			'shortdesc' => 'speedLabel',
-			'desc'      => __( 'Label for speed', 'extensions-leaflet-map' ) . '<br>' .
-			/* translators: Default: "mph" if imperial is true, "km/h" otherwise. */
-				wp_sprintf( __( 'Default: %1$s if %2$s is %3$s, %4$s otherwise.', 'extensions-leaflet-map' ), '"mph"', '<code>imperial</code>', 'true', '"km/h"' ),
-			'default'   => '',
-			'values'    => '',
-			'typ'       => array( 'changeable', 'units', 'multielevation' ),
-		),
-
-		// opts.speedFactor        = opts.speedFactor || 1;
+		// heart
+		// "minbpm" "maxbpm" "avgbpm"
 		// array(
-		// 'param'     => 'speedFactor',
-		// 'shortdesc' => 'speedFactor',
-		// 'desc'      => __( 'Conversion factor to km/h, if you want to show m/min', 'extensions-leaflet-map' ) . ': <code>0.016666</code>',
-		// 'default'   => '',
-		// 'values'    => '',
-		// 'typ'       => array( 'changeable', 'units', 'multielevation' ),
+		// 'param' => 'heart',
+		// 'shortdesc' => __('heart - ??',"extensions-leaflet-map"),
+		// 'desc' => "",
+		// 'default' => false,
+		// 'values' => 1,
+		// 'typ' => array('fixed'),
 		// ),
+
 	);
 
 	if ( count( $typ ) > 0 ) {
@@ -778,12 +684,6 @@ function leafext_elevation_colors() {
 				'default'   => isset( $themes[ $theme ]['pace'] ) ? $themes[ $theme ]['pace'] : '#03ffff',
 			),
 			array(
-				'param'     => 'heart',
-				'shortdesc' => __( 'Line color of the heart rate', 'extensions-leaflet-map' ),
-				'desc'      => '',
-				'default'   => isset( $themes[ $theme ]['heart'] ) ? $themes[ $theme ]['heart'] : '#ff0000',
-			),
-			array(
 				'param'     => 'polyline',
 				'shortdesc' => __( 'Track color', 'extensions-leaflet-map' ),
 				'desc'      => '',
@@ -829,14 +729,14 @@ function leafext_ele_java_params( $settings ) {
 				break;
 			case 'wptIcons':
 				if ( strpos( $v, '{' ) !== false ) {
-					$text .= "$k: " . $v . ',';
+					$text = $text . "$k: " . $v . ',';
 					unset( $settings[ $k ] );
 				}
 				break;
 			case 'distanceMarkers':
 				// distanceMarkers: { lazy: true, distance: true, direction: true },
-				if ( $settings[ $k ] === true ) {
-					$text .= 'distanceMarkers: {'; // }
+				if ( $settings[ $k ] == true ) {
+					$text = $text . 'distanceMarkers: {'; // }
 					// if ( $settings['imperial'] == true) {
 					// $text = $text.
 					// 'offset: 1000/0.621371,
@@ -844,28 +744,28 @@ function leafext_ele_java_params( $settings ) {
 					// return Math.round(distance*0.621371/1000);
 					// },';
 					// }
-					if ( $settings['direction'] === true ) {
-						$text .= 'lazy: true, distance: true, direction: true,';
+					if ( $settings['direction'] == true ) {
+						$text = $text . 'lazy: true, distance: true, direction: true,';
 					} else {
-						$text .= 'lazy: true, distance: true, direction: false,';
+						$text = $text . 'lazy: true, distance: true, direction: false,';
 					}
-					$text .= '},';
-				} elseif ( $settings['direction'] === true ) {
-						$text .= 'distanceMarkers: { lazy: true, distance: false, direction: true },';
+					$text = $text . '},';
+				} elseif ( $settings['direction'] == true ) {
+						$text = $text . 'distanceMarkers: { lazy: true, distance: false, direction: true },';
 				} else {
-					$text .= 'distanceMarkers: false,';
+					$text = $text . 'distanceMarkers: false,';
 				}
 				unset( $settings[ $k ] );
 				unset( $settings['direction'] );
 				break;
 			case 'handlers':
 			case 'margins':
-				$text .= "$k: " . $v . ',';
+				$text = $text . "$k: " . $v . ',';
 				unset( $settings[ $k ] );
 				break;
 			case 'linearGradient':
-				if ( $settings['linearGradient'] === true ) {
-					$text .= "$k: {
+				if ( $settings['linearGradient'] == true ) {
+					$text = $text . "$k: {
 					attr: 'z',
 					path: 'altitude',
 					range: { 0.0: '#008800', 0.5: '#ffff00', 1.0: '#ff0000' },
@@ -876,22 +776,12 @@ function leafext_ele_java_params( $settings ) {
 				unset( $settings[ $k ] );
 				break;
 			case 'yAxisMin':
-				if ( $settings['yAxisMin'] === '0' ) {
+				if ( $settings['yAxisMin'] == '0' ) {
 					unset( $settings[ $k ] );
 				}
 				break;
 			case 'yAxisMin':
-				if ( $settings['yAxisMax'] === '0' ) {
-					unset( $settings[ $k ] );
-				}
-				break;
-			case 'distanceFactor':
-			case 'altitudeFactor':
-			case 'speedLabel':
-			case 'xLabel':
-			case 'yLabel':
-			case 'speedFactor':
-				if ( $settings[ $k ] === '' ) {
+				if ( $settings['yAxisMax'] == '0' ) {
 					unset( $settings[ $k ] );
 				}
 				break;
@@ -911,12 +801,8 @@ function leafext_elevation_script( $gpx, $settings ) {
 	window.WPLeafletMapPlugin.push(function () {
 		var map = window.WPLeafletMapPlugin.getCurrentMap();
 		var elevation_options = {
-			<?php
-			// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- destroys javascript
-			echo $elevation_settings;
-			// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- destroys javascript
-			echo leafext_java_params( $settings );
-			?>
+			<?php echo $elevation_settings; ?>
+			<?php echo leafext_java_params( $settings ); ?>
 		};
 
 		leafext_elevation_locale_js();
@@ -931,11 +817,9 @@ function leafext_elevation_script( $gpx, $settings ) {
 		if ( $settings['track'] ) {
 			echo 'var switchtrack = L.control.layers(null, null, {';
 			if ( $settings['trackcollapsed'] ) {
-				// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- destroys javascript
 				echo 'collapsed:' . $settings['trackcollapsed'] . ',';
 			}
 			if ( $settings['trackposition'] ) {
-				// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- destroys javascript
 				echo 'position:"' . $settings['trackposition'] . '"';
 			}
 			echo '});';
@@ -943,9 +827,10 @@ function leafext_elevation_script( $gpx, $settings ) {
 		?>
 
 		// Instantiate elevation control.
-		L.Control.Elevation.prototype.__btnIcon = "<?php echo esc_url( LEAFEXT_ELEVATION_URL ); ?>/images/elevation.svg";
+		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- string not changeable (phpcs ignoriert die Anweisung!)
+		L.Control.Elevation.prototype.__btnIcon = "<?php echo LEAFEXT_ELEVATION_URL; ?>/images/elevation.svg";
 		var controlElevation = L.control.elevation(elevation_options);
-		var track_options= { url: "<?php echo esc_url( $gpx ); ?>" };
+		var track_options= { url: "<?php echo $gpx; ?>" };
 		controlElevation.addTo(map);
 		<?php
 		if ( $settings['track'] ) {
@@ -965,26 +850,31 @@ function leafext_elevation_script( $gpx, $settings ) {
 		controlElevation.load(track_options.url);
 
 		<?php
+		if ( $settings['chart'] === 'off' ) {
+			echo 'map.on("eledata_added", function(e) {
+				//console.log(controlElevation);
+				controlElevation._toggle();
+			});';
+		}
+
 		if ( $settings['track'] ) {
-			if ( $settings['track'] === 'filename' ) {
+			if ( $settings['track'] == 'filename' ) {
 				$path_parts = pathinfo( $gpx );
 				$switchname = '"' . $path_parts['filename'] . '"';
 			} else {
 				$switchname = 'e.name';
 			}
-			// phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped -- destroys javascript
 			echo '
 			controlElevation.on("eledata_loaded", function(e) {
 				switchtrack.addOverlay(e.layer, ' . $switchname . ');
 			});
 			';
-			// phpcs:enable WordPress.Security.EscapeOutput.OutputNotEscaped -- destroys javascript
 		}
 		?>
 	});
 	<?php
 	$javascript = ob_get_clean();
-	$text       .= $javascript . '//-->' . "\n" . '</script>';
+	$text       = $text . $javascript . '//-->' . "\n" . '</script>';
 	$text       = \JShrink\Minifier::minify( $text );
 	return "\n" . $text . "\n";
 }
@@ -1005,7 +895,7 @@ function leafext_elevation_settings( $typ ) {
 function leafext_elevation_theme() {
 	$ownoptions = get_option( 'leafext_values' );
 	if ( is_array( $ownoptions ) ) {
-		if ( $ownoptions['theme'] === 'other' ) {
+		if ( $ownoptions['theme'] == 'other' ) {
 			$theme = $ownoptions['othertheme'];
 		} else {
 			$theme = $ownoptions['theme'] . '-theme';
@@ -1030,31 +920,25 @@ function leafext_elevation_color( $options ) {
 						break;
 					case 'polyline':
 						if ( isset( $options['polyline'] ) ) {
-							$text .= '<style>' .
+							$text = $text . '<style>' .
 							'.' . $options['theme'] . '.elevation-polyline {stroke: ' . $typ . ';stroke-width: ' . $options['polyline'] . ';}' .
 							'</style>';
 						}
 						break;
 					case 'altitude':
-						$text .= '<style>' .
+						$text = $text . '<style>' .
 						'.' . $options['theme'] . '.elevation-control .area path.' . $key . ',
 					.' . $options['theme'] . ' .legend-' . $key . ' rect.area {fill: ' . $typ . '; }' .
 						'.' . $options['theme'] . '.height-focus.circle-lower {fill: ' . $typ . '; }' .
 						'</style>';
 						break;
 					case 'background':
-						$text .= '<style>' .
+						$text = $text . '<style>' .
 						'.elevation-control .background {background-color: ' . $typ . ' !important;}' .
 						'</style>';
 						break;
-					case 'heart':
-						$text .= '<style>' .
-						'.heart {stroke: ' . $typ . ' !important;}' .
-						'.legend-' . $key . ' rect {fill: ' . $typ . ' !important; fill-opacity: 0.7; }' .
-						'</style>';
-						break;
 					default:
-						$text .= '<style>' .
+						$text = $text . '<style>' .
 						'.' . $options['theme'] . '.elevation-control .area path.' . $key . ',' .
 						'.' . $options['theme'] . ' .legend-' . $key . ' rect {fill: ' . $typ . ';}' .
 						'</style>';
@@ -1069,36 +953,23 @@ function leafext_elevation_color( $options ) {
 
 function leafext_elevation_function( $atts, $content, $shortcode ) {
 	$text = leafext_should_interpret_shortcode( $shortcode, $atts );
-	if ( $text !== '' ) {
+	if ( $text != '' ) {
 		return $text;
 	} else {
-		if ( ! isset( $atts['gpx'] ) ) {
+		if ( ! $atts['gpx'] ) {
 			$text = '[elevation ';
 			foreach ( $atts as $key => $item ) {
-				$text .= esc_html( "$key=$item " );
+				$text = $text . "$key=$item ";
 			}
-			$text .= ']';
-			return esc_attr( $text );
+			$text = $text . ']';
+			return $text;
 		}
 
-		if ( isset( $atts['summary'] ) && $atts['summary'] === '1' ) {
-			$atts['slope']        = 0;
-			$atts['speed']        = 0;
-			$atts['acceleration'] = 0;
-			$atts['time']         = 0;
-			$atts['downloadLink'] = 0;
-			$atts['polyline']     = '{ weight: 3, }';
-			$atts['legend']       = 0;
-			$atts['summary']      = 'inline';
-			$atts['legend']       = false;
-		}
+		leafext_enqueue_elevation();
+		leafext_enqueue_leafext_elevation();
 
 		$atts1   = leafext_case( array_keys( leafext_elevation_settings( array( 'changeable', 'fixed' ) ) ), leafext_clear_params( $atts ) );
 		$options = shortcode_atts( leafext_elevation_settings( array( 'changeable', 'fixed' ) ), $atts1 );
-
-		leafext_enqueue_elevation();
-		leafext_enqueue_tmcw_togeojson();
-		leafext_enqueue_leafext_elevation();
 
 		$track = $atts['gpx'];
 
@@ -1107,16 +978,13 @@ function leafext_elevation_function( $atts, $content, $shortcode ) {
 		} else {
 			$options['closeBtn'] = false;
 		}
-		if ( $options['chart'] === 'off' ) {
-			$options['collapsed'] = true;
-		}
 
 		if ( isset( $options['wptIcons'] ) ) {
 			$wpt_icons = $options['wptIcons'];
-			if ( ! is_bool( $wpt_icons ) && $wpt_icons === 'defined' ) {
+			if ( ! is_bool( $wpt_icons ) && $wpt_icons == 'defined' ) {
 				unset( $options['wptIcons'] );
 				$waypoints = get_option( 'leafext_waypoints', '' );
-				if ( $waypoints !== '' && ( $options['waypoints'] === 'markers' || $options['waypoints'] === '1' ) ) {
+				if ( $waypoints != '' && ( $options['waypoints'] == 'markers' || $options['waypoints'] == '1' ) ) {
 					$wptvalue = "{'': L.divIcon({
 						className: 'elevation-waypoint-marker',
 						html: '<i class=\"elevation-waypoint-icon default\"></i>',
@@ -1143,7 +1011,7 @@ function leafext_elevation_function( $atts, $content, $shortcode ) {
 		// altitude.js
 		// // cadence.js
 		// distance.js
-		// heart.js
+		// // heart.js
 		// labels.js
 		// lineargradient.js
 		// pace.js
@@ -1171,13 +1039,7 @@ function leafext_elevation_function( $atts, $content, $shortcode ) {
 				$handlers[] = '"Slope"';
 			}
 		}
-		if ( (bool) $options['heart'] ) {
-			$handlers[] = '"Heart"';
-			if ( ! (bool) $options['time'] ) {
-				$options['time'] = 'summary';
-			}
-		}
-		if ( (bool) $options['labelsRotation'] || $options['labelsAlign'] !== 'start' ) {
+		if ( (bool) $options['labelsRotation'] || $options['labelsAlign'] != 'start' ) {
 			$handlers[] = '"Labels"';
 		}
 		if ( (bool) $options['linearGradient'] ) {
@@ -1195,6 +1057,14 @@ function leafext_elevation_function( $atts, $content, $shortcode ) {
 		// if (count($handlers) > 0) $options['handlers'] = '['.implode(',',$handlers).',...L.Control.Elevation.prototype.options.handlers]';
 		// if (count($handlers) > 0) $options['handlers'] = '[ "Distance", "Time", "Altitude", "Slope", "Speed", "Acceleration", "Labels"]';
 
+		if ( isset( $options['summary'] ) && $options['summary'] == '1' ) {
+			$params = leafext_elevation_params();
+			foreach ( $params as $param ) {
+				$options['param'] = $param['default'];
+			}
+			$options['summary'] = 'inline';
+			$options['legend']  = false;
+		}
 		if ( ! array_key_exists( 'theme', $atts ) ) {
 			$options['theme'] = leafext_elevation_theme();
 		}
@@ -1210,13 +1080,13 @@ function leafext_elevation_function( $atts, $content, $shortcode ) {
 			$options['preferCanvas'] = 'false';
 		}
 
-		if ( $options['hotline'] === 'elevation' ) {
+		if ( $options['hotline'] == 'elevation' ) {
 			unset( $options['polyline'] );
 		}
-		if ( $options['direction'] === true ) {
+		if ( $options['direction'] == true ) {
 			leafext_enqueue_rotate();
 		}
-		if ( $options['distanceMarkers'] === true ) {
+		if ( $options['distanceMarkers'] == true ) {
 			leafext_enqueue_rotate();
 		}
 

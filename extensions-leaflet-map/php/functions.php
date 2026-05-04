@@ -30,7 +30,7 @@ function leafext_clear_params( $atts ) {
 // Parameter: array mit keys wie es sein soll, array mit keys in klein von shortcode_atts
 function leafext_case( $params, $atts_array ) {
 	foreach ( $params as $param ) {
-		if ( strtolower( $param ) !== $param ) {
+		if ( strtolower( $param ) != $param ) {
 			if ( isset( $atts_array[ strtolower( $param ) ] ) ) {
 				$atts_array[ $param ] = $atts_array[ strtolower( $param ) ];
 				unset( $atts_array[ strtolower( $param ) ] );
@@ -43,7 +43,7 @@ function leafext_case( $params, $atts_array ) {
 // Suche bestimmten Wert in array im admin interface
 function leafext_array_find( $needle, $haystack ) {
 	foreach ( $haystack as $item ) {
-		if ( $item[0] === $needle ) {
+		if ( $item[0] == $needle ) {
 			return $item;
 		}
 	}
@@ -52,7 +52,7 @@ function leafext_array_find( $needle, $haystack ) {
 // Suche bestimmten Wert in array im admin interface
 function leafext_array_find2( $needle, $haystack ) {
 	foreach ( $haystack as $item ) {
-		if ( $item['param'] === $needle ) {
+		if ( $item['param'] == $needle ) {
 			return $item;
 		}
 	}
@@ -64,7 +64,7 @@ function leafext_java_params( $params ) {
 	$text = '';
 	foreach ( $params as $k => $v ) {
 		// var_dump($v,gettype($v),strpos($v,"["));
-		$text .= "$k: ";
+		$text = $text . "$k: ";
 		switch ( gettype( $v ) ) {
 			case 'string':
 				switch ( $v ) {
@@ -96,12 +96,12 @@ function leafext_java_params( $params ) {
 				$value = $v;
 				break;
 			default:
-			  // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_var_dump
+			  // phpcs:ignore
 				var_dump( $k, $v, gettype( $v ) );
 				wp_die( 'Type' );
 		}
-		$text .= $value;
-		$text .= ",\n";
+		$text = $text . $value;
+		$text = $text . ",\n";
 	}
 	// var_dump($text); wp_die();
 	return $text;
@@ -116,12 +116,10 @@ function leafext_java_params( $params ) {
  * from https://www.php.net/manual/de/function.array-replace.php
  */
 function leafext_array_replace_keys( $atts_array, $keys ) {
-	if ( is_array( $keys ) ) {
-		foreach ( $keys as $search => $replace ) {
-			if ( isset( $atts_array[ $search ] ) ) {
-				$atts_array[ $replace ] = $atts_array[ $search ];
-				unset( $atts_array[ $search ] );
-			}
+	foreach ( $keys as $search => $replace ) {
+		if ( isset( $atts_array[ $search ] ) ) {
+			$atts_array[ $replace ] = $atts_array[ $search ];
+			unset( $atts_array[ $search ] );
 		}
 	}
 	return $atts_array;
@@ -135,7 +133,7 @@ function leafext_check_position_control( $value ) {
 
 // Backend Plugin extension-leaflet-map
 function leafext_backend() {
-	//phpcs:ignore WordPress.Security.NonceVerification.Recommended -- no form
+	//phpcs:disable WordPress.Security.NonceVerification.Recommended -- no form
 	$get          = map_deep( wp_unslash( $_GET ), 'sanitize_text_field' );
 	$backend_page = isset( $get['page'] ) ? sanitize_text_field( wp_unslash( $get['page'] ) ) : '';
 	$server       = map_deep( wp_unslash( $_SERVER ), 'sanitize_text_field' );
@@ -148,16 +146,16 @@ function leafext_backend() {
 }
 
 function leafext_should_interpret_shortcode( $shortcode, $atts ) {
-	global $leafext_button;
-	// var_dump($leafext_button);
+	global $button;
+	// var_dump($button);
 	$server     = map_deep( wp_unslash( $_SERVER ), 'sanitize_text_field' );
 	$scriptname = $server['SCRIPT_NAME'];
 	if ( is_singular() || is_archive() || is_home() || is_front_page() || leafext_backend() ) {
 		if ( strpos( $scriptname, '/wp-admin/post.php' ) === false ) {
 			// return 'should interpret '.$shortcode;
 			return '';
-		} elseif ( ! isset( $leafext_button ) ) {
-				$leafext_button = true;
+		} elseif ( ! isset( $button ) ) {
+				$button = true;
 				echo '<input type="button" value="' . esc_html__( 'Click to interpret shortcodes.', 'extensions-leaflet-map' ) . '" onclick="window.location.reload()">';
 		}
 	}
@@ -165,13 +163,13 @@ function leafext_should_interpret_shortcode( $shortcode, $atts ) {
 	if ( is_array( $atts ) ) {
 		foreach ( $atts as $key => $item ) {
 			if ( is_int( $key ) ) {
-				$text .= esc_html( "$item " );
+				$text = $text . "$item ";
 			} else {
-				$text .= esc_html( "$key=$item " );
+				$text = $text . "$key=$item ";
 			}
 		}
 	}
-	$text .= ']';
+	$text = $text . ']';
 	return $text;
 }
 
@@ -184,19 +182,24 @@ function leafext_should_interpret_shortcode( $shortcode, $atts ) {
 	// ! is_front_page()
 
 // Display array as table
-if ( ! function_exists( 'leafext_html_table' ) ) {
-	function leafext_html_table( $data = array() ) {
-		$rows      = array();
-		$cellstyle = ( is_singular() || is_archive() ) ? "style='border:1px solid #195b7a;'" : '';
-		foreach ( $data as $row ) {
-			$cells = array();
-			foreach ( $row as $cell ) {
-				$cells[] = '<td ' . $cellstyle . ">{$cell}</td>";
-			}
-			$rows[] = '<tr>' . implode( '', $cells ) . '</tr>' . "\n";
+
+function leafext_html_table( $data = array() ) {
+	$rows      = array();
+	$cellstyle = ( is_singular() || is_archive() ) ? "style='border:1px solid #195b7a;'" : '';
+	foreach ( $data as $row ) {
+		$cells = array();
+		foreach ( $row as $cell ) {
+			$cells[] = '<td ' . $cellstyle . ">{$cell}</td>";
 		}
-		$head = '<div style="width:' . ( ( is_singular() || is_archive() ) ? '100' : '80' ) . '%;">';
-		$head = $head . '<figure class="wp-block-table aligncenter is-style-stripes"><table border=1>';
-		return $head . implode( '', $rows ) . '</table></figure></div>';
+		$rows[] = '<tr>' . implode( '', $cells ) . '</tr>';
 	}
+	$head = '<div style="width:' . ( ( is_singular() || is_archive() ) ? '100' : '80' ) . '%;">';
+	$head = $head . '<figure class="wp-block-table aligncenter is-style-stripes"><table border=1>';
+	return $head . implode( '', $rows ) . '</table></figure></div>';
+}
+
+function leafext_escape_output( $output ) {
+	// https://wp-mix.com/allowed-html-tags-wp_kses/
+	$allowed_tags = wp_kses_allowed_html( 'post' );
+	echo wp_kses( $output, $allowed_tags );
 }

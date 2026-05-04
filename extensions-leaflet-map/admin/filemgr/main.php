@@ -8,23 +8,23 @@
 // Direktzugriff auf diese Datei verhindern.
 defined( 'ABSPATH' ) || die();
 
-require __DIR__ . '/uploader.php';
-require __DIR__ . '/filemgr-settings.php';
-require __DIR__ . '/filemgr.php';
-require __DIR__ . '/managefiles-functions.php';
+require LEAFEXT_PLUGIN_DIR . '/admin/filemgr/uploader.php';
+require LEAFEXT_PLUGIN_DIR . '/admin/filemgr/filemgr-settings.php';
+require LEAFEXT_PLUGIN_DIR . '/admin/filemgr/filemgr.php';
+require LEAFEXT_PLUGIN_DIR . '/admin/filemgr/managefiles-functions.php';
 
 function leafext_filemgr_tab() {
-	//phpcs:ignore WordPress.Security.NonceVerification.Recommended -- no form
+	//phpcs:disable WordPress.Security.NonceVerification.Recommended -- no form
 	$get       = map_deep( wp_unslash( $_GET ), 'sanitize_text_field' );
 	$tb_iframe = isset( $get['TB_iframe'] ) ? $get['TB_iframe'] : '';
-	if ( $tb_iframe === true ) {
+	if ( $tb_iframe == true ) {
 		return '';
 	}
 	$tabs = array();
 	if ( current_user_can( 'manage_options' ) ) {
 		$tabs[] = array(
 			'tab'   => 'filemgr',
-			'title' => __( 'Manage Leaflet Map files', 'extensions-leaflet-map' ),
+			'title' => __( 'Files for Leaflet Map', 'extensions-leaflet-map' ),
 		);
 	}
 	$tabs[] = array(
@@ -42,7 +42,7 @@ function leafext_filemgr_tab() {
 
 	foreach ( $tabs as $tab ) {
 		$textheader = $textheader . '<a href="?page=' . $page . '&tab=' . $tab['tab'] . '" class="nav-tab';
-		$active     = ( $active_tab === $tab['tab'] ) ? ' nav-tab-active' : '';
+		$active     = ( $active_tab == $tab['tab'] ) ? ' nav-tab-active' : '';
 		$textheader = $textheader . $active;
 		$textheader = $textheader . '">' . $tab['title'] . '</a>' . "\n";
 	}
@@ -52,8 +52,8 @@ function leafext_filemgr_tab() {
 }
 
 function leafext_admin_filemgr( $active_tab ) {
-	echo '<h2>' . wp_kses_post( leafext_filemgr_tab() ) . '</h2>';
-	if ( $active_tab === 'filemgr' ) {
+	echo '<h2>' . leafext_filemgr_tab() . '</h2>';
+	if ( $active_tab == 'filemgr' ) {
 		echo '<form method="post" action="options.php">';
 		settings_fields( 'leafext_settings_filemgr' );
 		do_settings_sections( 'leafext_settings_filemgr' );
@@ -61,10 +61,10 @@ function leafext_admin_filemgr( $active_tab ) {
 		submit_button();
 		submit_button( __( 'Reset', 'extensions-leaflet-map' ), 'delete', 'delete', false );
 		echo '</form>';
-	} elseif ( $active_tab === 'filemgr-list' ) {
+	} elseif ( $active_tab == 'filemgr-list' ) {
 		leafext_managefiles();
-	} elseif ( $active_tab === 'filemgr-dir' ) {
+	} elseif ( $active_tab == 'filemgr-dir' ) {
 		include 'leaflet-directory.php';
-		echo wp_kses_post( leafext_directory_help_text() );
+		echo leafext_directory_help_text();
 	}
 }

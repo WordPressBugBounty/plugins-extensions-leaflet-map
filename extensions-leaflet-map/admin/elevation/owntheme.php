@@ -14,15 +14,7 @@ function leafext_elevation_init() {
 	add_settings_section( 'theme_settings', '', 'leafext_elevation_help_text', 'leafext_settings_theme' );
 	add_settings_field( 'leafext_values_1', 'Theme', 'leafext_form_owntheme', 'leafext_settings_theme', 'theme_settings' );
 	add_settings_field( 'leafext_values_2', __( 'Other Theme', 'extensions-leaflet-map' ), 'leafext_form_other_theme', 'leafext_settings_theme', 'theme_settings' );
-	register_setting(
-		'leafext_settings_theme',
-		'leafext_values',
-		array(
-			'type'              => 'string',
-			'sanitize_callback' => 'leafext_validate_elevationtheme',
-			'default'           => 'lime-theme',
-		)
-	);
+	register_setting( 'leafext_settings_theme', 'leafext_values', 'leafext_validate_elevationtheme' );
 }
 add_action( 'admin_init', 'leafext_elevation_init' );
 
@@ -49,9 +41,9 @@ function leafext_form_owntheme() {
 	$colors[]   = $newoptions['theme'];
 	$ownoptions = get_option( 'leafext_values' );
 	if ( is_array( $ownoptions ) ) {
-		if ( $ownoptions['theme'] !== $newoptions['theme'] ) {
+		if ( $ownoptions['theme'] != $newoptions['theme'] ) {
 			$options = $ownoptions;
-			if ( $ownoptions['theme'] !== 'other' ) {
+			if ( $ownoptions['theme'] != 'other' ) {
 				$colors[] = $ownoptions['theme'];
 			}
 		}
@@ -61,15 +53,15 @@ function leafext_form_owntheme() {
 	} else {
 		$select_disabled = '';
 	}
-	echo '<select ' . esc_attr( $select_disabled ) . ' id="leafext_elecolor" name="leafext_values[theme]" onchange = "leafext_EnableDisableOtherTheme(this)">';
+	echo '<select ' . $select_disabled . ' id="leafext_elecolor" name="leafext_values[theme]" onchange = "leafext_EnableDisableOtherTheme(this)">';
 	$colors[] = 'other';
 	foreach ( $colors as $color ) {
-		if ( $color === $options['theme'] ) {
+		if ( $color == $options['theme'] ) {
 			echo '<option selected ';
 		} else {
 			echo '<option ';
 		}
-		echo 'value="' . esc_attr( $color ) . '">' . esc_attr( $color ) . '</option>';
+		echo 'value="' . $color . '">' . $color . '</option>';
 	}
 	echo '</select>';
 }
@@ -79,15 +71,14 @@ function leafext_form_other_theme() {
 	$othertheme = '';
 	$ownoptions = get_option( 'leafext_values' );
 	if ( is_array( $ownoptions ) ) {
-		if ( $ownoptions['theme'] === 'other' ) {
+		if ( $ownoptions['theme'] == 'other' ) {
 			$othertheme = $ownoptions['othertheme'];
 		}
 	}
-
 	echo '<input id="leafext_eleother" type="text" name="leafext_values[othertheme]" placeholder="my-theme"
 		pattern=".*-theme" title="' . esc_html__( 'must end with', 'extensions-leaflet-map' ) . ' \'-theme\'"
-		value="' . esc_attr( $othertheme ) . '" ';
-	echo ( $othertheme !== '' ) ? '' : ' readonly ';
+		value="' . $othertheme . '" ';
+	echo ( $othertheme != '' ) ? '' : ' readonly ';
 	echo '/>';
 }
 
@@ -95,7 +86,7 @@ function leafext_form_other_theme() {
 function leafext_validate_elevationtheme( $input ) {
 	if ( ! empty( $_POST ) && check_admin_referer( 'leafext_elevation', 'leafext_elevation_nonce' ) ) {
 		if ( isset( $_POST['submit'] ) ) {
-			if ( $input['theme'] === 'other' ) {
+			if ( $input['theme'] == 'other' ) {
 				$input['othertheme'] = sanitize_text_field( $input['othertheme'] );
 				if ( strpos( $input['othertheme'], '-theme' ) === false ) {
 					return false;
@@ -117,15 +108,13 @@ function leafext_validate_elevationtheme( $input ) {
 function leafext_elevation_help_text() {
 	wp_enqueue_style(
 		'prism-css',
-		plugins_url( 'pkg/prism/prism.css', LEAFEXT_PLUGIN_FILE ),
-		array(),
-		LEAFEXT_VERSION
+		plugins_url( 'pkg/prism/prism.css', LEAFEXT_PLUGIN_FILE )
 	);
 	wp_enqueue_script(
 		'prism-js',
 		plugins_url( 'pkg/prism/prism.js', LEAFEXT_PLUGIN_FILE ),
 		array(),
-		LEAFEXT_VERSION,
+		null,
 		true
 	);
 	$text = '
@@ -160,12 +149,7 @@ add_filter("pre_do_shortcode_tag", function ( &#36;output, &#36;shortcode ) {
 	__( 'In your elevation.css put the styles like the theme styles in', 'extensions-leaflet-map' )
 	. ' <a href="https://unpkg.com/@raruto/leaflet-elevation@' . LEAFEXT_ELEVATION_VERSION . '/dist/leaflet-elevation.css"
 >https://unpkg.com/@raruto/leaflet-elevation@' . LEAFEXT_ELEVATION_VERSION . '/dist/leaflet-elevation.css</a> ' .
-	wp_sprintf(
-	/* translators: %s is a href. */
-		__( 'or check out Raruto\'s %1$sexamples%2$s', 'extensions-leaflet-map' ),
-		'<a href="https://github.com/Raruto/leaflet-elevation">',
-		'</a>'
-	)
+	sprintf( __( 'or check out Raruto\'s %1$sexamples%2$s', 'extensions-leaflet-map' ), '<a href="https://github.com/Raruto/leaflet-elevation">', '</a>' )
 	. '.</p>' .
 	'</details><!--/.primer--><p>';
 
@@ -177,5 +161,5 @@ add_filter("pre_do_shortcode_tag", function ( &#36;output, &#36;shortcode ) {
 		$text = $text . __( 'Please reset these settings, if you are not using an own theme!', 'extensions-leaflet-map' );
 		$text = $text . '</span>';
 	}
-	echo wp_kses_post( $text );
+	echo $text;
 }

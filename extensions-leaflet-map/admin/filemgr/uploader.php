@@ -43,7 +43,7 @@ function leafext_correct_filetypes( $data, $file, $filename, $mimes ) {
 
 	return $data;
 }
-add_filter( 'wp_check_filetype_and_ext', 'leafext_correct_filetypes', 10, 4 );
+add_filter( 'wp_check_filetype_and_ext', 'leafext_correct_filetypes', 10, 5 );
 
 // Erlaube Upload gpx usw.
 function leafext_add_mimes( $mime_types ) {
@@ -78,22 +78,20 @@ add_filter( 'wp_handle_upload_prefilter', 'leafext_pre_upload' );
 
 function leafext_custom_upload_dir( $path ) {
 	$options = leafext_filemgr_settings();
-	if ( $options['gpxupload'] === true ) {
-		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- media uploader does this check
-		if ( ! empty( $_POST ) ) {
-			//phpcs:ignore WordPress.Security.NonceVerification.Missing
-			$post      = map_deep( wp_unslash( $_POST ), 'sanitize_text_field' );
-			$extension = substr( strrchr( $post['name'], '.' ), 1 );
-			if ( ! empty( $path['error'] ) || $extension !== 'gpx' ) {
-				return $path;
-			} //error or other filetype; do nothing.
-			$customdir      = '/' . $extension;
-			$path['path']   = str_replace( $path['subdir'], '', $path['path'] ); // remove default subdir (year/month)
-			$path['url']    = str_replace( $path['subdir'], '', $path['url'] );
-			$path['subdir'] = $customdir;
-			$path['path']  .= $customdir;
-			$path['url']   .= $customdir;
+	if ( $options['gpxupload'] == true ) {
+		if ( ! empty( $_POST ) && check_admin_referer( 'leafext_file', 'leafext_file_nonce' ) ) {
+			$post = map_deep( wp_unslash( $_POST ), 'sanitize_text_field' );
 		}
+		$extension = substr( strrchr( $post['name'], '.' ), 1 );
+		if ( ! empty( $path['error'] ) || $extension != 'gpx' ) {
+			return $path;
+		} //error or other filetype; do nothing.
+		$customdir      = '/' . $extension;
+		$path['path']   = str_replace( $path['subdir'], '', $path['path'] ); // remove default subdir (year/month)
+		$path['url']    = str_replace( $path['subdir'], '', $path['url'] );
+		$path['subdir'] = $customdir;
+		$path['path']  .= $customdir;
+		$path['url']   .= $customdir;
 	}
 	return $path;
 }
