@@ -3,7 +3,7 @@
 Contributors: hupe13
 Tags: leaflet, gpx, geojson, hover, marker
 Tested up to: 7.0
-Stable tag: 5.2
+Stable tag: 5.3
 Requires at least: 6.2
 Requires PHP: 8.2
 License: GPLv2 or later
@@ -134,11 +134,9 @@ RewriteRule .*\.gpx$ - [L,T=application/gpx+xml]
 
 == Changelog ==
 
-### 5.2 / 260609
+### 5.3 / 260619
 
-* new shortcode: leaflet-geojson-extramarker - a mix of leaflet-geojson and leaflet-extramarker
-* fixed XSS in targetmarker
-* improvements on thickbox
+* revised shortcode hover and the hover option opacity
 
 ### Previous
 
