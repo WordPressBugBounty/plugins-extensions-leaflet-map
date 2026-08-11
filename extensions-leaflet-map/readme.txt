@@ -2,8 +2,8 @@
 
 Contributors: hupe13
 Tags: leaflet, gpx, geojson, hover, marker
-Tested up to: 7.0
-Stable tag: 5.3
+Tested up to: 7.1
+Stable tag: 5.4
 Requires at least: 6.2
 Requires PHP: 8.2
 License: GPLv2 or later
@@ -134,9 +134,12 @@ RewriteRule .*\.gpx$ - [L,T=application/gpx+xml]
 
 == Changelog ==
 
-### 5.3 / 260619
+### 5.4 / 260811
 
-* revised shortcode hover and the hover option opacity
+* leaflet-elevation-2.6.0 with changes in linear-gradient.js
+* latest leaflet-providers.js
+* latest Leaflet Control FullScreen
+* latest JShrink
 
 ### Previous
 
