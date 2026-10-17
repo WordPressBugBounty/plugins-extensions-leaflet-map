@@ -55,6 +55,7 @@ function leafext_do_page() {
 	echo '</div>' . "\n";
 
 	if ( leafext_plugin_active( 'leaflet-map' ) ) {
+		echo '<div class="maxwidth1000">';
 		leafext_admin_tabs();
 		if ( strpos( $active_tab, 'elevation' ) !== false ) {
 			leafext_admin_elevation( $active_tab );
@@ -116,7 +117,6 @@ function leafext_do_page() {
 			echo wp_kses_post( leafext_help_fullscreen() );
 		} elseif ( $active_tab === 'choropleth' ) {
 			include __DIR__ . '/admin/choropleth.php';
-			echo wp_kses_post( leafext_choropleth_help() );
 		} elseif ( strpos( $active_tab, 'group' ) !== false ) {
 			leafext_admin_grouping( $active_tab );
 		} elseif ( $active_tab === 'leafletsearch' ) {
@@ -134,6 +134,7 @@ function leafext_do_page() {
 		} elseif ( $active_tab === 'featuredmap' ) {
 			leafext_featuredmap_admin();
 		}
+		echo '</div>';
 	}
 }
 

@@ -3,7 +3,7 @@
  * Plugin Name:       Extensions for Leaflet Map
  * Description:       Extends the WordPress Plugin <a href="https://wordpress.org/plugins/leaflet-map/">Leaflet Map</a> with Leaflet Plugins and other functions.
  * Plugin URI:        https://leafext.de/en/
- * Version:           5.4
+ * Version:           6.0
  * Requires PHP:      8.2
  * Requires Plugins:  leaflet-map
  * Author:            hupe13
@@ -78,8 +78,6 @@ require_once __DIR__ . '/php/geojsonmarker.php';
 require_once __DIR__ . '/php/extramarker-geojson.php';
 
 require_once __DIR__ . '/php/hidemarkers.php';
-
-require_once __DIR__ . '/php/choropleth.php';
 
 require_once __DIR__ . '/php/zoomhome.php';
 
