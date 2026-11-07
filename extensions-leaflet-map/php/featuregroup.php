@@ -23,7 +23,7 @@ add_filter(
 
 // both Shortcodes
 function leafext_featuregroup_script( $options, $params ) {
-	$text = '<script><!--';
+	$text = '<script>';
 	ob_start();
 	?>/*<script>*/
 	window.WPLeafletMapPlugin = window.WPLeafletMapPlugin || [];
@@ -35,15 +35,25 @@ function leafext_featuregroup_script( $options, $params ) {
 		let visible = <?php echo wp_json_encode( $options['visible'] ); ?>;
 		let substr = <?php echo wp_json_encode( $options['substr'] ); ?>;
 		let	alle = new L.markerClusterGroup({
-			<?php echo leafext_java_params( $params ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+			<?php
+			foreach ( $params as $k => $v ) {
+				echo wp_json_encode( $k ) . ': ';
+				if ( is_bool( $v ) ) {
+					echo $v ? esc_attr( 'true' ) : esc_attr( 'false' );
+				} elseif ( is_numeric( $v ) ) {
+					echo esc_attr( $v );
+				}
+				echo ',';
+			}
+			?>
 		});
 		let position = <?php echo wp_json_encode( $options['position'] ); ?>;
-		let collapsed = <?php echo $options['collapsed']; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>;
+		let collapsed = <?php echo wp_json_encode( filter_var( $options['collapsed'], FILTER_VALIDATE_BOOL ) ); ?>;
 		leafext_featuregroup_js(att_property,att_option,groups,grouptext,visible,substr,alle,position,collapsed);
 	});
 	<?php
 	$javascript = ob_get_clean();
-	$text       = $text . $javascript . '//-->' . "\n" . '</script>';
+	$text       = $text . $javascript . "\n" . '</script>';
 
 	$text = \JShrink\Minifier::minify( $text );
 	return "\n" . $text . "\n";

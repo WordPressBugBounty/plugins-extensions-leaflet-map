@@ -9,6 +9,23 @@
 defined( 'ABSPATH' ) || die();
 
 // Interpretiere !parameter und parameter als false und true
+function leafext_clear_params_true_false( $atts ) {
+	if ( is_array( $atts ) ) {
+		foreach ( $atts as $attr => $value ) {
+			if ( is_int( $attr ) ) {
+				if ( strpos( $atts[ $attr ], '!' ) === false ) {
+					$atts[ $atts[ $attr ] ] = true;
+				} else {
+					$atts[ substr( $atts[ $attr ], 1 ) ] = false;
+				}
+				unset( $atts[ $attr ] );
+			}
+		}
+	}
+	return( $atts );
+}
+
+// Interpretiere !parameter und parameter als false und true and validate
 function leafext_clear_params( $atts ) {
 	if ( is_array( $atts ) ) {
 		foreach ( $atts as $attr => $value ) {
@@ -19,67 +36,17 @@ function leafext_clear_params( $atts ) {
 					$atts[ substr( $atts[ $attr ], 1 ) ] = false;
 				}
 				unset( $atts[ $attr ] );
+			} elseif ( preg_match( '%^[a-zA-Z0-9:\-/\._\ ,]+$%', $value ) ) {
+				$atts[ $attr ] = $value;
+			} elseif ( $attr === 'width' ) {
+				$atts[ $attr ] = $value; // checked in php/elevation.php 892ff
 			} else {
-				$validicon = array(
-					// leaflet-search default icon
-					// https://github.com/stefanocudini/leaflet-search/blob/d29c5392b33cc31b338c3d17b5f8532fef5eae48/src/leaflet-search.js#L88-L97
-					'icon:',
-					'animate:',
-					'circle:',
-					'radius:',
-					'weight:',
-					'color:',
-					'stroke:',
-					'fill:',
-					//
-					// from L.Icon: https://leafletjs.com/reference.html#icon
-					'iconUrl:',
-					'iconSize:',
-					'iconAnchor:',
-					'popupAnchor:',
-					'tooltipAnchor:',
-					'shadowUrl:',
-					'shadowSize:',
-					'shadowAnchor:',
-				);
-				if ( $attr === 'marker' ) {
-					if ( strpos( str_replace( $validicon, '', $value ), ':' ) === false ) {
-						$atts[ $attr ] = leafext_esc_js( $value );
-					} else {
-						unset( $atts[ $attr ] );
-					}
-				} else {
-					$atts[ $attr ] = wp_kses_post( $value );
-				}
-				//echo '<pre>';
-				//var_dump( $attr, $value, $atts[ $attr ] );
-				//echo '</pre>';
+				echo '<script>console.log(' . wp_json_encode( esc_js( 'elevation ERROR ' . $attr . '=' . $value ) ) . ')</script>';
+				unset( $atts[ $attr ] );
 			}
 		}
 	}
 	return( $atts );
-}
-
-function leafext_esc_js( $text ) {
-	$safe_text = $text;
-	$safe_text = wp_check_invalid_utf8( $safe_text );
-	$safe_text = _wp_specialchars( $safe_text, ENT_COMPAT );
-	$safe_text = preg_replace( '/&#(x)?0*(?(1)27|39);?/i', "'", stripslashes( $safe_text ) );
-	$safe_text = str_replace( "\r", '', $safe_text );
-	//$safe_text = str_replace( "\n", '\\n', addslashes( $safe_text ) );
-	$safe_text = str_replace( "\n", '\\n', $safe_text );
-	/**
-	 * Filters a string cleaned and escaped for output in JavaScript.
-	 *
-	 * Text passed to esc_js() is stripped of invalid or special characters,
-	 * and properly slashed for output.
-	 *
-	 * @since 2.0.6
-	 *
-	 * @param string $safe_text The text after it has been escaped.
-	 * @param string $text      The text prior to being escaped.
-	 */
-	return $safe_text;
 }
 
 // shortcode_atts gibt nur Kleinbuchstaben zurueck, Javascript braucht aber gross und klein
@@ -112,55 +79,6 @@ function leafext_array_find2( $needle, $haystack ) {
 			return $item;
 		}
 	}
-}
-
-// Trage php array keys und values in javascript script ein.
-function leafext_java_params( $params ) {
-	// var_dump($params); wp_die();
-	$text = '';
-	foreach ( $params as $k => $v ) {
-		// var_dump($v,gettype($v),strpos($v,"["));
-		$text .= "$k: ";
-		switch ( gettype( $v ) ) {
-			case 'string':
-				switch ( $v ) {
-					case 'false':
-					case '0':
-						$value = 'false';
-						break;
-					case 'true':
-					case '1':
-						$value = 'true';
-						break;
-					case strpos( $v, '{' ) !== false:
-					case strpos( $v, '}' ) !== false:
-					case strpos( $v, '[' ) !== false:
-					case strpos( $v, ']' ) !== false:
-					case strpos( $v, 'screen.width' ) !== false:
-					case is_numeric( $v ):
-						$value = $v;
-						break;
-					default:
-						$value = '"' . $v . '"';
-				}
-				break;
-			case 'boolean':
-				$value = $v ? 'true' : 'false';
-				break;
-			case 'integer':
-			case 'double':
-				$value = $v;
-				break;
-			default:
-				// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_var_dump
-				var_dump( $k, $v, gettype( $v ) );
-				wp_die( 'Type' );
-		}
-		$text .= $value;
-		$text .= ",\n";
-	}
-	// var_dump($text); wp_die();
-	return $text;
 }
 
 /**

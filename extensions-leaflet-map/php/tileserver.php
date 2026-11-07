@@ -74,7 +74,7 @@ function leafext_providers_regnames() {
 // Shortcodes:
 // [layerswitch mapids= providers= tiles= opacity=]
 function leafext_layerswitch_begin_script() {
-	$text = '<script><!--';
+	$text = '<script>';
 	ob_start();
 	?>/*<script>*/
 	window.WPLeafletMapPlugin = window.WPLeafletMapPlugin || [];
@@ -131,13 +131,12 @@ function leafext_layerswitch_begin_script() {
 		});
 	<?php
 	$javascript = ob_get_clean();
-	$text       = $text . $javascript . '//-->' . "\n";
+	$text       = $text . $javascript . "\n";
 	return $text;
 }
 
 // defined tile server in tab=tileswitch
 function leafext_layerswitch_tiles_script( $tiles ) {
-	$text = '<!--';
 	ob_start();
 	?>
 	/*<script>*/
@@ -162,13 +161,12 @@ function leafext_layerswitch_tiles_script( $tiles ) {
 	});
 	<?php
 	$javascript = ob_get_clean();
-	$text       = $text . $javascript . '//-->' . "\n";
+	$text       = $javascript . "\n";
 	return $text;
 }
 
 function leafext_providers_fkt_script() {
 	// https://github.com/leaflet-extras/leaflet-providers/blob/65df099ba50665242c954cf2be411d6babd96a75/preview/preview.js#L56C2-L74C4
-	$text = '<!--';
 	ob_start();
 	?>
 	/*<script>*/
@@ -192,7 +190,7 @@ function leafext_providers_fkt_script() {
 	};
 	<?php
 	$javascript = ob_get_clean();
-	$text       = $text . $javascript . '//-->' . "\n";
+	$text       = $javascript . "\n";
 	return $text;
 }
 
@@ -236,7 +234,6 @@ function leafext_providers_script( $mapids, $providers, $visible ) {
 }
 
 function leafext_opacity_script( $opacities ) {
-	$text = '<!--';
 	ob_start();
 	?>
 	/*<script>*/
@@ -252,12 +249,11 @@ function leafext_opacity_script( $opacities ) {
 	});
 	<?php
 	$javascript = ob_get_clean();
-	$text       = $text . $javascript . '//-->' . "\n";
+	$text       = $javascript . "\n";
 	return $text;
 }
 
 function leafext_layerswitch_end_script( $settings ) {
-	$text = '<!--';
 	ob_start();
 	?>
 	/*<script>*/
@@ -265,19 +261,19 @@ function leafext_layerswitch_end_script( $settings ) {
 	//console.log(overlays);
 
 	L.control.layers(baselayers,overlays,{
-		collapsed:<?php echo esc_js( $settings['collapsed'] ); ?>,
+		collapsed:<?php echo wp_json_encode( filter_var( $settings['collapsed'], FILTER_VALIDATE_BOOL ) ); ?>,
 		position:"<?php echo esc_js( $settings['position'] ); ?>",
 	}).addTo(map);
 	if ( Object.entries(opacity).length !==  0) {
 		L.control.opacity(opacity,{
-			collapsed:<?php echo esc_js( $settings['collapsed'] ); ?>,
+			collapsed:<?php echo wp_json_encode( filter_var( $settings['collapsed'], FILTER_VALIDATE_BOOL ) ); ?>,
 			position:"<?php echo esc_js( $settings['position'] ); ?>",
 		}).addTo(map);
 	}
 });
 	<?php
 	$javascript = ob_get_clean();
-	$text       = $text . $javascript . '//-->' . "\n" . '</script>';
+	$text       = $javascript . "\n" . '</script>';
 	return "\n" . $text . "\n";
 }
 

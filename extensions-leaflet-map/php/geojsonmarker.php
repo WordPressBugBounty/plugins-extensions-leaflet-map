@@ -10,7 +10,7 @@ defined( 'ABSPATH' ) || die();
 
 // Shortcode: [geojsonmarker]
 function leafext_geojsonmarker_script( $propertyoptions, $extramarkericon, $clusteroptions, $featuregroupoptions, $options ) {
-	$text = '<script><!--';
+	$text = '<script>';
 	ob_start();
 	?>/*<script>*/
 	function leafext_geojsonmarker_extramarker_js(markerColor) {
@@ -40,19 +40,26 @@ function leafext_geojsonmarker_script( $propertyoptions, $extramarkericon, $clus
 		//
 		let clmarkers = L.markerClusterGroup({
 			<?php
-			// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-			echo leafext_java_params( $clusteroptions );
+			foreach ( $clusteroptions as $k => $v ) {
+				echo wp_json_encode( $k ) . ': ';
+				if ( is_bool( $v ) ) {
+					echo $v ? esc_attr( 'true' ) : esc_attr( 'false' );
+				} elseif ( is_numeric( $v ) ) {
+					echo esc_attr( $v );
+				}
+				echo ',';
+			}
 			?>
 		});
 		let extramarkericon = <?php echo wp_json_encode( $extramarkericon ); ?>;
 		//
 		let position = <?php echo wp_json_encode( $options['position'] ); ?>;
-		let collapsed = <?php echo wp_json_encode( $options['collapsed'] ); ?>;
+		let collapsed = <?php echo wp_json_encode( filter_var( $options['collapsed'], FILTER_VALIDATE_BOOL ) ); ?>;
 		leafext_geojsonmarker_js(property,iconprops,icondefault,auto,groups,visible,clmarkers,extramarkericon,position,collapsed);
 	});
 	<?php
 	$javascript = ob_get_clean();
-	$text       = $text . $javascript . '//-->' . "\n" . '</script>';
+	$text       = $text . $javascript . "\n" . '</script>';
 	$text       = \JShrink\Minifier::minify( $text );
 	return "\n" . $text . "\n";
 }

@@ -81,7 +81,7 @@ function leafext_cluster_params() {
 
 // Shortcode: [cluster]
 function leafext_cluster_script( $params ) {
-	$text = '<script><!--';
+	$text = '<script>';
 	ob_start();
 	?>/*<script>*/
 	window.WPLeafletMapPlugin = window.WPLeafletMapPlugin || [];
@@ -89,8 +89,15 @@ function leafext_cluster_script( $params ) {
 		var clmarkers               = L.markerClusterGroup(
 			{
 				<?php
-				// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- destroys javascript
-				echo leafext_java_params( $params );
+				foreach ( $params as $k => $v ) {
+					echo wp_json_encode( $k ) . ': ';
+					if ( is_bool( $v ) ) {
+						echo $v ? esc_attr( 'true' ) : esc_attr( 'false' );
+					} elseif ( is_numeric( $v ) ) {
+						echo esc_attr( $v );
+					}
+					echo ',';
+				}
 				?>
 			}
 		);
@@ -98,7 +105,7 @@ function leafext_cluster_script( $params ) {
 	});
 	<?php
 	$javascript = ob_get_clean();
-	$text       = $text . $javascript . '//-->' . "\n" . '</script>';
+	$text       = $text . $javascript . "\n" . '</script>';
 	$text       = \JShrink\Minifier::minify( $text );
 	return "\n" . $text . "\n";
 }
@@ -111,10 +118,11 @@ function leafext_cluster_atts( $atts ) {
 	}
 	$settings = shortcode_atts( $defaults, get_option( 'leafext_cluster' ) );
 	// bereinige die nur Kleinbuchstaben vom Shortcode zu gross und klein wie der Java-Parameter ist
-	$atts1 = leafext_case( array_keys( $defaults ), leafext_clear_params( $atts ) );
+	$atts1 = leafext_case( array_keys( $defaults ), leafext_clear_params_true_false( $atts ) );
 	// gleiche mit eigenen settings und Plugin defaults ab
 	$options = shortcode_atts( $settings, $atts1 );
 
+	// Shortcode cluster options are bool, integer or numeric strings only
 	foreach ( $options as $option => $value ) {
 		if ( is_bool( $defaults[ $option ] ) ) {
 			$options[ $option ] = (bool) $value;
@@ -122,7 +130,6 @@ function leafext_cluster_atts( $atts ) {
 			unset( $options[ $option ] );
 		}
 	}
-	// var_dump( $options );
 	return( $options );
 }
 
@@ -133,7 +140,6 @@ function leafext_cluster_function( $atts, $content, $shortcode ) {
 	} else {
 		leafext_enqueue_markercluster();
 		leafext_enqueue_leafext( 'markercluster' );
-		// erzeuge Javascript
 		return leafext_cluster_script( leafext_cluster_atts( $atts ) );
 	}
 }

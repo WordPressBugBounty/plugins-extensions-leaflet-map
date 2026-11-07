@@ -3,7 +3,7 @@
 Contributors: hupe13
 Tags: leaflet, gpx, geojson, hover, marker
 Tested up to: 7.1
-Stable tag: 6.0
+Stable tag: 6.1
 Requires at least: 6.8
 Requires PHP: 8.2
 License: GPLv2 or later
@@ -40,21 +40,18 @@ Extends the WordPress Plugin <a href="https://wordpress.org/plugins/leaflet-map/
 
 * Manage your files for Leaflet Map.
 
-* Help to migrate from [WP GPX Maps](https://wordpress.org/plugins/wp-gpx-maps/).
-
 * and more functions.
 
 ### Included Leaflet Plugins
 
 #### Leaflet Plugins
 
-* [leaflet-elevation](https://github.com/Raruto/leaflet-elevation): A Leaflet plugin that allows to add elevation profiles using d3js.
+* [leaflet-elevation](https://github.com/Raruto/leaflet-elevation): A Leaflet plugin that allows to add elevation profiles using native SVG and Canvas elements.
 * [Leaflet.GeometryUtil](https://github.com/makinacorpus/Leaflet.GeometryUtil)
 * [Leaflet.i18n](https://github.com/yohanboniface/Leaflet.i18n): Internationalisation module for Leaflet plugins.
 * [leaflet-rotate](https://github.com/Raruto/leaflet-rotate): A Leaflet plugin that allows to add rotation functionality to map tiles
 * [Leaflet.AlmostOver](https://github.com/makinacorpus/Leaflet.AlmostOver): This plugin allows to detect mouse click and overing events on lines, with a tolerance distance.
 * [@tmcw/togeojson](https://www.npmjs.com/package/@tmcw/togeojson): Convert KML, GPX, and TCX to GeoJSON.
-* [D3](https://github.com/d3/d3): Data-Driven Documents
 * [Leaflet-providers](https://github.com/leaflet-extras/leaflet-providers): An extension that contains configurations for various tile providers.
 * [Leaflet.Control.Opacity](https://github.com/dayjournal/Leaflet.Control.Opacity): Makes multiple tile layers transparent.
 * [Leaflet.markercluster](https://github.com/Leaflet/Leaflet.markercluster): Provides Beautiful Animated Marker Clustering functionality.
@@ -89,7 +86,7 @@ Many thanks to everyone who found errors and provided ideas for new functions.
 
 = Is there a widget or other support for the editor? =
 
-* Unfortunately both plugins - Leaflet Map and Extensions for Leaflet Map - only work with shortcodes.
+* Yes there is! Take a look to [CartoBlocks for Leaflet](https://wordpress.org/plugins/cartoblocks-for-leaflet/)! This handles shortcodes for Leaflet Map, but then you can use the shortcodes from Extensions!
 * If you have any questions please ask in the [forum](https://wordpress.org/support/plugin/extensions-leaflet-map/).
 
 = My gpx file is not displayed! =
@@ -118,6 +115,10 @@ RewriteRule .*\.gpx$ - [L,T=application/gpx+xml]
 * If you need a plugin for this try [DSGVO snippet for Leaflet Map and its Extensions](https://wordpress.org/plugins/dsgvo-leaflet-map/).
 * If you use [Complianz | GDPR/CCPA Cookie Consent](https://wordpress.org/plugins/complianz-gdpr/) see [here](https://complianz.io/leaflet-maps/).
 
+= Where do I report security bugs found in this plugin? =
+
+Please report security bugs found in the source code of the Extension for Leaflet Map plugin through the [Patchstack Vulnerability Disclosure Program](https://patchstack.com/database/vdp/741dd87b-4d06-4699-81ce-73deb8e3d9ca). The Patchstack team will assist you with verification, CVE assignment, and notify the developers of this plugin.
+
 == Screenshots ==
 
 1. Track with elevation and speed profiles
@@ -135,13 +136,20 @@ RewriteRule .*\.gpx$ - [L,T=application/gpx+xml]
 
 == Changelog ==
 
-### 6.0 / 261017
+### 6.1 / 261107
 
-* fixed XSS ( leafext_clear_params )
-* leaflet-elevation-2.6.1 with changes in linear-gradient.js
-* latest leaflet-providers.js
-* removed shortcode choropleth because of XSS, it is an extra plugin now (XSS is fixed)
-
-### Previous
+* XSS fixes CVE-2026-114703
+* Please let me know if something isn't working!!
+* leaflet-elevation-2.9.2 - fixes problems: detached, canvas and Safari, and more. Thank you to Raruto.
+* elevation option legend: black track and chart off fixed
+* leaflet-extramarker: removed option innerHTML due to the risk of a potential XSS attack
+* targetmarker/targetlink: debugging changed. New shortcode targetdebug, see documentation
+* leaflet-search: CHANGED! Please see documentation how to specify the new options.
+* sgpx: Updated the code for the new version of wp-gpx-maps, see documentation.
+* removed '&lt;!--' and '//--&gt;' for &lt;script>
 
 [Changelog](https://github.com/hupe13/extensions-leaflet-map-github/blob/main/CHANGELOG.md)
+
+== Upgrade Notice ==
+
+* leaflet-search: CHANGED! Please see documentation how to specify the new options.

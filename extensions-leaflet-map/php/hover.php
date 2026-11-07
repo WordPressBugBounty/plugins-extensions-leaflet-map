@@ -209,7 +209,7 @@ function leafext_hover_settings() {
 }
 
 function leafext_canvas_script( $tolerance ) {
-	$text = '<script><!--';
+	$text = '<script>';
 	ob_start();
 	?>/*<script>*/
 	window.WPLeafletMapPlugin = window.WPLeafletMapPlugin || [];
@@ -217,7 +217,7 @@ function leafext_canvas_script( $tolerance ) {
 		var map = window.WPLeafletMapPlugin.getCurrentMap();
 		map.options.renderer=L.canvas({ tolerance:
 		<?php
-		echo esc_attr( $tolerance );
+		echo (int) $tolerance;
 		?>
 		});
 		console.log("tolerance "+<?php echo esc_js( $tolerance ); ?>);
@@ -225,7 +225,7 @@ function leafext_canvas_script( $tolerance ) {
 	});
 	<?php
 	$javascript = ob_get_clean();
-	$text       = $text . $javascript . '//-->' . "\n" . '</script>';
+	$text       = $text . $javascript . "\n" . '</script>';
 	$text       = \JShrink\Minifier::minify( $text );
 	return "\n" . $text . "\n";
 }
@@ -286,7 +286,7 @@ function leafext_hover_function( $atts, $content, $shortcode ) {
 			$options['exclude'] = '';
 		}
 
-		$text .= '<script><!--';
+		$text .= '<script>';
 		ob_start();
 		?>
 		/*<script>*/
@@ -353,7 +353,7 @@ function leafext_hover_function( $atts, $content, $shortcode ) {
 		});
 		<?php
 		$javascript = ob_get_clean();
-		$text       = $text . $javascript . '//-->' . "\n" . '</script>';
+		$text       = $text . $javascript . "\n" . '</script>';
 		return $text;
 	}
 }

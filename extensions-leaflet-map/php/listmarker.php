@@ -74,14 +74,14 @@ function leafext_listmarker_params() {
 }
 
 function leafext_listmarker_script( $options ) {
-	$text = '<script><!--';
+	$text = '<script>';
 	ob_start();
 	?>/*<script>*/
 	window.WPLeafletMapPlugin = window.WPLeafletMapPlugin || [];
 	window.WPLeafletMapPlugin.push(function () {
 		let propertyName = <?php echo wp_json_encode( $options['propertyName'] ); ?>;
 		let overiconurl = <?php echo wp_json_encode( $options['overiconurl'] ); ?>;
-		let collapse = <?php echo wp_json_encode( $options['collapse'] ); ?>;
+		let collapse = <?php echo wp_json_encode( filter_var( $options['collapse'], FILTER_VALIDATE_BOOL ) ); ?>;
 		let update = <?php echo wp_json_encode( $options['update'] ); ?>;
 		let hover = <?php echo wp_json_encode( $options['hover'] ); ?>;
 		let highlight = <?php echo wp_json_encode( $options['highlight'] ); ?>;
@@ -91,7 +91,7 @@ function leafext_listmarker_script( $options ) {
 	});
 	<?php
 	$javascript = ob_get_clean();
-	$text       = $text . $javascript . '//-->' . "\n" . '</script>';
+	$text       = $text . $javascript . "\n" . '</script>';
 	$text       = \JShrink\Minifier::minify( $text );
 	return "\n" . $text . "\n";
 }
@@ -111,9 +111,9 @@ function leafext_listmarker_function( $atts, $content, $shortcode ) {
 		}
 		$atts1               = leafext_case( array_keys( $defaults ), leafext_clear_params( $atts ) );
 		$options             = shortcode_atts( $defaults, $atts1 );
-		$options['collapse'] = filter_var( $options['collapse'], FILTER_VALIDATE_BOOLEAN );
-		$options['update']   = filter_var( $options['update'], FILTER_VALIDATE_BOOLEAN );
-		$options['hover']    = filter_var( $options['hover'], FILTER_VALIDATE_BOOLEAN );
+		$options['collapse'] = filter_var( $options['collapse'], FILTER_VALIDATE_BOOL );
+		$options['update']   = filter_var( $options['update'], FILTER_VALIDATE_BOOL );
+		$options['hover']    = filter_var( $options['hover'], FILTER_VALIDATE_BOOL );
 		if ( $options['background'] !== $defaults['background'] ) {
 			$text .= '<style>ul.list-markers-ul {background-color: ' . $options['background'] . '}</style>';
 		}

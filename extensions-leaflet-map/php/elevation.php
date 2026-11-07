@@ -560,7 +560,7 @@ function leafext_elevation_params( $typ = array() ) {
 		array(
 			'param'     => 'preferCanvas',
 			'shortdesc' => __( 'Render chart profiles as Canvas or SVG Paths.', 'extensions-leaflet-map' ),
-			'desc'      => __( 'Due to a problem in MacOS and iOS, it is automatically set to false in Safari.', 'extensions-leaflet-map' ),
+			'desc'      => '',
 			'default'   => true,
 			'values'    => 1,
 			'typ'       => array( 'changeable', 'other' ), // 'multielevation'
@@ -746,63 +746,63 @@ function leafext_elevation_colors() {
 		);
 	}
 
-		$params = array(
-			array(
-				'param'     => 'altitude',
-				'shortdesc' => __( 'Altitude chart profile', 'extensions-leaflet-map' ),
-				'desc'      => '',
-				'default'   => isset( $themes[ $theme ]['altitude'] ) ? $themes[ $theme ]['altitude'] : '',
-			),
-			array(
-				'param'     => 'speed',
-				'shortdesc' => __( 'Speed chart profile', 'extensions-leaflet-map' ),
-				'desc'      => '',
-				'default'   => isset( $themes[ $theme ]['speed'] ) ? $themes[ $theme ]['speed'] : '#03ffff',
-			),
-			array(
-				'param'     => 'acceleration',
-				'shortdesc' => __( 'Acceleration chart profile', 'extensions-leaflet-map' ),
-				'desc'      => '',
-				'default'   => isset( $themes[ $theme ]['acceleration'] ) ? $themes[ $theme ]['acceleration'] : '#050402',
-			),
-			array(
-				'param'     => 'slope',
-				'shortdesc' => __( 'Slope chart profile', 'extensions-leaflet-map' ),
-				'desc'      => '',
-				'default'   => isset( $themes[ $theme ]['slope'] ) ? $themes[ $theme ]['slope'] : '#FF0000',
-			),
-			array(
-				'param'     => 'pace',
-				'shortdesc' => __( 'Pace profile - time per distance', 'extensions-leaflet-map' ),
-				'desc'      => '',
-				'default'   => isset( $themes[ $theme ]['pace'] ) ? $themes[ $theme ]['pace'] : '#03ffff',
-			),
-			array(
-				'param'     => 'heart',
-				'shortdesc' => __( 'Line color of the heart rate', 'extensions-leaflet-map' ),
-				'desc'      => '',
-				'default'   => isset( $themes[ $theme ]['heart'] ) ? $themes[ $theme ]['heart'] : '#ff0000',
-			),
-			array(
-				'param'     => 'polyline',
-				'shortdesc' => __( 'Track color', 'extensions-leaflet-map' ),
-				'desc'      => '',
-				'default'   => isset( $themes[ $theme ]['polyline'] ) ? $themes[ $theme ]['polyline'] : '#000',
-			),
-			array(
-				'param'     => 'polylineSegments',
-				'shortdesc' => __( 'Track color over the ruler filter', 'extensions-leaflet-map' ),
-				'desc'      => '',
-				'default'   => '#F00',
-			),
-			array(
-				'param'     => 'background',
-				'shortdesc' => __( 'Chart background color', 'extensions-leaflet-map' ),
-				'desc'      => '',
-				'default'   => isset( $themes[ $theme ]['background'] ) ? $themes[ $theme ]['background'] : '',
-			),
-		);
-		return $params;
+	$params = array(
+		array(
+			'param'     => 'altitude',
+			'shortdesc' => __( 'Altitude chart profile', 'extensions-leaflet-map' ),
+			'desc'      => '',
+			'default'   => isset( $themes[ $theme ]['altitude'] ) ? $themes[ $theme ]['altitude'] : '',
+		),
+		array(
+			'param'     => 'speed',
+			'shortdesc' => __( 'Speed chart profile', 'extensions-leaflet-map' ),
+			'desc'      => '',
+			'default'   => isset( $themes[ $theme ]['speed'] ) ? $themes[ $theme ]['speed'] : '#03ffff',
+		),
+		array(
+			'param'     => 'acceleration',
+			'shortdesc' => __( 'Acceleration chart profile', 'extensions-leaflet-map' ),
+			'desc'      => '',
+			'default'   => isset( $themes[ $theme ]['acceleration'] ) ? $themes[ $theme ]['acceleration'] : '#050402',
+		),
+		array(
+			'param'     => 'slope',
+			'shortdesc' => __( 'Slope chart profile', 'extensions-leaflet-map' ),
+			'desc'      => '',
+			'default'   => isset( $themes[ $theme ]['slope'] ) ? $themes[ $theme ]['slope'] : '#FF0000',
+		),
+		array(
+			'param'     => 'pace',
+			'shortdesc' => __( 'Pace profile - time per distance', 'extensions-leaflet-map' ),
+			'desc'      => '',
+			'default'   => isset( $themes[ $theme ]['pace'] ) ? $themes[ $theme ]['pace'] : '#03ffff',
+		),
+		array(
+			'param'     => 'heart',
+			'shortdesc' => __( 'Line color of the heart rate', 'extensions-leaflet-map' ),
+			'desc'      => '',
+			'default'   => isset( $themes[ $theme ]['heart'] ) ? $themes[ $theme ]['heart'] : '#ff0000',
+		),
+		array(
+			'param'     => 'polyline',
+			'shortdesc' => __( 'Track color', 'extensions-leaflet-map' ),
+			'desc'      => '',
+			'default'   => isset( $themes[ $theme ]['polyline'] ) ? $themes[ $theme ]['polyline'] : '#000',
+		),
+		array(
+			'param'     => 'polylineSegments',
+			'shortdesc' => __( 'Track color over the ruler filter', 'extensions-leaflet-map' ),
+			'desc'      => '',
+			'default'   => '#F00',
+		),
+		array(
+			'param'     => 'background',
+			'shortdesc' => __( 'Chart background color', 'extensions-leaflet-map' ),
+			'desc'      => '',
+			'default'   => isset( $themes[ $theme ]['background'] ) ? $themes[ $theme ]['background'] : '',
+		),
+	);
+	return $params;
 }
 
 function leafext_ele_java_params( $settings ) {
@@ -812,11 +812,11 @@ function leafext_ele_java_params( $settings ) {
 			case 'polyline':
 				$v     = filter_var( $v, FILTER_SANITIZE_NUMBER_INT );
 				$value = '{className: "elevation-polyline",
-				color: "#000",
-				opacity: 0.75,
-				lineCap: "round",
-				weight: ' . $v . '
-			}';
+					color: "#000",
+					opacity: 0.75,
+					lineCap: "round",
+					weight: ' . $v . '
+				}';
 				$text  = $text . "$k: " . $value . ',' . "\n";
 				unset( $settings[ $k ] );
 				break;
@@ -824,12 +824,6 @@ function leafext_ele_java_params( $settings ) {
 			case 'trkStart':
 			case 'trkEnd':
 				if ( $v ) {
-					unset( $settings[ $k ] );
-				}
-				break;
-			case 'wptIcons':
-				if ( strpos( $v, '{' ) !== false ) {
-					$text .= "$k: " . $v . ',';
 					unset( $settings[ $k ] );
 				}
 				break;
@@ -895,16 +889,82 @@ function leafext_ele_java_params( $settings ) {
 					unset( $settings[ $k ] );
 				}
 				break;
+			case 'width':
+				// "^[0-9]{2,4}$|^\(screen.width \* 0.[1-9]\) \|\| [0-9]{2,4}$"
+				$pattern = array(
+					'%\(screen.width \* 0.[1-9]\) \|\| [0-9]{2,4}%',
+					'%\(screen.width \* 0.[1-9]\)%',
+					'%[0-9]{2,4}%',
+				);
+				if ( preg_replace( $pattern, '', $v ) !== '' ) {
+					unset( $settings[ $k ] );
+				}
+				break;
 			default:
 		}
 	}
 	return array( $text, $settings );
 }
 
+function leafext_java_params_elevation( $params ) {
+	// var_dump($params); wp_die();
+	$text = '';
+	foreach ( $params as $k => $v ) {
+		if ( $k === 'polylineSegments' ) {
+			$text .= $k . ': ' . $v; // is a fixed (not changeable) option
+		} elseif ( $k === 'width' ) {
+			// $text .= $k . ': ' . wp_json_encode( $v ); // does not work!
+			$text .= $k . ': ' . $v;
+		} else {
+			switch ( gettype( $v ) ) {
+				case 'string':
+					switch ( $v ) {
+						case 'false':
+						case '0':
+							$value = 'false';
+							break;
+						case 'true':
+						case '1':
+							$value = 'true';
+							break;
+						case is_numeric( $v ):
+							$value = $v;
+							break;
+						default:
+							$pattern = array(
+								'%[0-9a-zA-Z\-#]+%',
+							);
+							if ( preg_replace( $pattern, '', $v ) === '' ) {
+								$value = wp_json_encode( $v );
+							} else {
+								// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_var_dump
+								var_dump( 'invalidChars', $k, $v );
+								wp_die( 'value has invalid characters' );
+							}
+					}
+					break;
+				case 'boolean':
+					$value = $v ? 'true' : 'false';
+					break;
+				case 'integer':
+					$value = $v;
+					break;
+				default:
+					// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_var_dump
+					var_dump( 'Type', $k, $v );
+					wp_die( 'Type' );
+			}
+			$text .= $k . ': ' . $value;
+		}
+		$text .= ",\n";
+	}
+	return $text;
+}
+
 // Shortcode: [elevation gpx="...url..."]
 function leafext_elevation_script( $gpx, $settings ) {
 	list($elevation_settings, $settings) = leafext_ele_java_params( $settings );
-	$text                                = '<script><!--';
+	$text                                = '<script>';
 	ob_start();
 	?>/*<script>*/
 	window.WPLeafletMapPlugin = window.WPLeafletMapPlugin || [];
@@ -915,7 +975,7 @@ function leafext_elevation_script( $gpx, $settings ) {
 			// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- destroys javascript
 			echo $elevation_settings;
 			// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- destroys javascript
-			echo leafext_java_params( $settings );
+			echo leafext_java_params_elevation( $settings );
 			?>
 		};
 
@@ -930,13 +990,9 @@ function leafext_elevation_script( $gpx, $settings ) {
 		<?php
 		if ( $settings['track'] ) {
 			echo 'var switchtrack = L.control.layers(null, null, {';
-			if ( $settings['trackcollapsed'] ) {
-				// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- destroys javascript
-				echo 'collapsed:' . $settings['trackcollapsed'] . ',';
-			}
+			echo 'collapsed:' . wp_json_encode( filter_var( $settings['trackcollapsed'], FILTER_VALIDATE_BOOL ) ) . ',';
 			if ( $settings['trackposition'] ) {
-				// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- destroys javascript
-				echo 'position:"' . $settings['trackposition'] . '"';
+				echo 'position:' . wp_json_encode( $settings['trackposition'] );
 			}
 			echo '});';
 		}
@@ -953,13 +1009,15 @@ function leafext_elevation_script( $gpx, $settings ) {
 		}
 		?>
 
-		// https://github.com/Raruto/leaflet-elevation/issues/232#issuecomment-1443554554
-		var is_chrome = navigator.userAgent.indexOf("Chrome") > -1;
-		var is_safari = navigator.userAgent.indexOf("Safari") > -1;
-		if ( !is_chrome && is_safari && controlElevation.options.preferCanvas != false ) {
-			console.log("is_safari - setting preferCanvas to false");
-			controlElevation.options.preferCanvas = false;
-		}
+		// https://github.com/Raruto/leaflet-elevation/issues/272#issuecomment-6335701997
+		controlElevation.on('elechart_init', function() {  // ← this listener might be superfluous (it depends on how/when you initialize your code)
+			controlElevation._chart.on('elepath_toggle', function() {
+				controlElevation._layers.eachLayer(layer => {
+					layer?.getElement?.().classList.toggle('elevation-polyline', true);
+					layer?.getElement?.().classList.toggle(controlElevation.options.theme, true);
+				});
+			});
+		});
 
 		// Load track from url (allowed data types: "*.geojson", "*.gpx")
 		controlElevation.load(track_options.url);
@@ -968,7 +1026,7 @@ function leafext_elevation_script( $gpx, $settings ) {
 		if ( $settings['track'] ) {
 			if ( $settings['track'] === 'filename' ) {
 				$path_parts = pathinfo( $gpx );
-				$switchname = '"' . $path_parts['filename'] . '"';
+				$switchname = wp_json_encode( $path_parts['filename'] );
 			} else {
 				$switchname = 'e.name';
 			}
@@ -984,7 +1042,7 @@ function leafext_elevation_script( $gpx, $settings ) {
 	});
 	<?php
 	$javascript = ob_get_clean();
-	$text      .= $javascript . '//-->' . "\n" . '</script>';
+	$text      .= $javascript . "\n" . '</script>';
 	$text       = \JShrink\Minifier::minify( $text );
 	return "\n" . $text . "\n";
 }
@@ -1072,7 +1130,10 @@ function leafext_elevation_function( $atts, $content, $shortcode ) {
 	if ( $text !== '' ) {
 		return $text;
 	} else {
-		if ( ! isset( $atts['gpx'] ) ) {
+		if ( ! isset( $atts['gpx'] ) ||
+		( wp_http_validate_url( $atts['gpx'] ) === false
+		&& wp_http_validate_url( get_site_url() . $atts['gpx'] ) === false )
+		) {
 			$text = '[elevation ';
 			foreach ( $atts as $key => $item ) {
 				$text .= esc_html( "$key=$item " );
@@ -1091,6 +1152,12 @@ function leafext_elevation_function( $atts, $content, $shortcode ) {
 			$atts['legend']       = 0;
 			$atts['summary']      = 'inline';
 			$atts['legend']       = false;
+		}
+
+		foreach ( array_keys( leafext_elevation_settings( array( 'fixed' ) ) ) as $param ) {
+			if ( array_key_exists( strtolower( $param ), $atts ) ) {
+				unset( $atts[ strtolower( $param ) ] );
+			}
 		}
 
 		$atts1   = leafext_case( array_keys( leafext_elevation_settings( array( 'changeable', 'fixed' ) ) ), leafext_clear_params( $atts ) );
@@ -1157,32 +1224,32 @@ function leafext_elevation_function( $atts, $content, $shortcode ) {
 		$handlers = array();
 
 		if ( (bool) $options['pace'] ) {
-			$handlers[] = '"Pace"';
+			$handlers[] = wp_json_encode( 'Pace' );
 			if ( ! (bool) $options['time'] ) {
 				$options['time'] = 'summary';
 			}
 			if ( (bool) $options['speed'] ) {
-				$handlers[] = '"Speed"';
+				$handlers[] = wp_json_encode( 'Speed' );
 			}
 			if ( (bool) $options['acceleration'] ) {
-				$handlers[] = '"Acceleration"';
+				$handlers[] = wp_json_encode( 'Acceleration' );
 			}
 			if ( (bool) $options['slope'] ) {
-				$handlers[] = '"Slope"';
+				$handlers[] = wp_json_encode( 'Slope' );
 			}
 		}
 		if ( (bool) $options['heart'] ) {
-			$handlers[] = '"Heart"';
+			$handlers[] = wp_json_encode( 'Heart' );
 			if ( ! (bool) $options['time'] ) {
 				$options['time'] = 'summary';
 			}
 		}
 		if ( (bool) $options['labelsRotation'] || $options['labelsAlign'] !== 'start' ) {
-			$handlers[] = '"Labels"';
+			$handlers[] = wp_json_encode( 'Labels' );
 		}
 		if ( (bool) $options['linearGradient'] ) {
-			$handlers[] = '"Slope"';
-			$handlers[] = '"LinearGradient"';
+			$handlers[] = wp_json_encode( 'Slope' );
+			$handlers[] = wp_json_encode( 'LinearGradient' );
 		}
 
 		$handlers = array_unique( $handlers );
@@ -1203,10 +1270,11 @@ function leafext_elevation_function( $atts, $content, $shortcode ) {
 		if ( is_array( $owncolors ) ) {
 			if ( isset( $owncolors['polylineSegments'] ) ) {
 				$options['polylineSegments'] = '{className: "elevation-polyline-segments",
-					color: "' . $owncolors['polylineSegments'] . '",
+					color: ' . wp_json_encode( $owncolors['polylineSegments'] ) . ',
 					interactive: false,
 				}';
 			}
+			// does not work with true!
 			$options['preferCanvas'] = 'false';
 		}
 
