@@ -3,7 +3,7 @@
 Contributors: hupe13
 Tags: leaflet, gpx, geojson, hover, marker
 Tested up to: 7.1
-Stable tag: 6.1
+Stable tag: 6.1.1
 Requires at least: 6.8
 Requires PHP: 8.2
 License: GPLv2 or later
@@ -115,9 +115,9 @@ RewriteRule .*\.gpx$ - [L,T=application/gpx+xml]
 * If you need a plugin for this try [DSGVO snippet for Leaflet Map and its Extensions](https://wordpress.org/plugins/dsgvo-leaflet-map/).
 * If you use [Complianz | GDPR/CCPA Cookie Consent](https://wordpress.org/plugins/complianz-gdpr/) see [here](https://complianz.io/leaflet-maps/).
 
-= Where do I report security bugs found in this plugin? =
+= How can I report security bugs?
 
-Please report security bugs found in the source code of the Extension for Leaflet Map plugin through the [Patchstack Vulnerability Disclosure Program](https://patchstack.com/database/vdp/741dd87b-4d06-4699-81ce-73deb8e3d9ca). The Patchstack team will assist you with verification, CVE assignment, and notify the developers of this plugin.
+You can report security bugs through the Patchstack Vulnerability Disclosure Program. The Patchstack team help validate, triage and handle any security vulnerabilities. [Report a security vulnerability.]( https://patchstack.com/database/vdp/741dd87b-4d06-4699-81ce-73deb8e3d9ca)
 
 == Screenshots ==
 
@@ -135,6 +135,10 @@ Please report security bugs found in the source code of the Extension for Leafle
 * Go to Settings - Leaflet Map - Extensions for Leaflet Map and get documentation and settings options.
 
 == Changelog ==
+
+### 6.1.1 / 261109
+
+* fixed: distanceMarkers in multielevation
 
 ### 6.1 / 261107
 
