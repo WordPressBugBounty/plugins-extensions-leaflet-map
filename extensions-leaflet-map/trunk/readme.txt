@@ -1,0 +1,153 @@
+=== Extensions for Leaflet Map ===
+
+Contributors: hupe13
+Tags: leaflet, gpx, geojson, hover, marker
+Tested up to: 7.1
+Stable tag: 6.1.3
+Requires at least: 6.8
+Requires PHP: 8.2
+License: GPLv2 or later
+
+Extends the WordPress Plugin <a href="https://wordpress.org/plugins/leaflet-map/">Leaflet Map</a> with Leaflet Plugins and other functions.
+
+== Description ==
+
+Extends the WordPress Plugin <a href="https://wordpress.org/plugins/leaflet-map/">Leaflet Map</a> with Leaflet Plugins and other functions.
+
+### Functions
+
+* Create an elevation chart profile of a track. There are also acceleration, slope, speed and tempo chart profiles. You can also place multiple tracks on one map.
+
+* By default Leaflet Map uses tiles from openstreetmap.org or from the tile servers you configured. You can use more and switch between them.
+
+* Many markers on a map become confusing. You can cluster and shape them.
+
+* You can use Awesome markers.
+
+* You can group the elements on the map by criteria and show/hide them.
+
+* Create a "featured map".
+
+* Create an overview map with geo-locations provided in the pages and posts.
+
+* Get a tooltip when hovering over an element.
+
+* You can display the map in fullscreen mode.
+
+* Reset the map.
+
+* Gesture handling
+
+* Manage your files for Leaflet Map.
+
+* and more functions.
+
+### Included Leaflet Plugins
+
+#### Leaflet Plugins
+
+* [leaflet-elevation](https://github.com/Raruto/leaflet-elevation): A Leaflet plugin that allows to add elevation profiles using native SVG and Canvas elements.
+* [Leaflet.GeometryUtil](https://github.com/makinacorpus/Leaflet.GeometryUtil)
+* [Leaflet.i18n](https://github.com/yohanboniface/Leaflet.i18n): Internationalisation module for Leaflet plugins.
+* [leaflet-rotate](https://github.com/Raruto/leaflet-rotate): A Leaflet plugin that allows to add rotation functionality to map tiles
+* [Leaflet.AlmostOver](https://github.com/makinacorpus/Leaflet.AlmostOver): This plugin allows to detect mouse click and overing events on lines, with a tolerance distance.
+* [@tmcw/togeojson](https://www.npmjs.com/package/@tmcw/togeojson): Convert KML, GPX, and TCX to GeoJSON.
+* [Leaflet-providers](https://github.com/leaflet-extras/leaflet-providers): An extension that contains configurations for various tile providers.
+* [Leaflet.Control.Opacity](https://github.com/dayjournal/Leaflet.Control.Opacity): Makes multiple tile layers transparent.
+* [Leaflet.markercluster](https://github.com/Leaflet/Leaflet.markercluster): Provides Beautiful Animated Marker Clustering functionality.
+* [Leaflet.MarkerCluster.PlacementStrategies](https://github.com/adammertel/Leaflet.MarkerCluster.PlacementStrategies): Styling Markerclusters.
+* [Leaflet.ExtraMarkers](https://github.com/coryasilva/Leaflet.ExtraMarkers): Shameless copy of Awesome-Markers with more shapes and colors.
+* [Leaflet List Markers](https://github.com/hupe13/leaflet-list-markers): A Leaflet Control for listing visible markers in the map.
+* [Leaflet.FeatureGroup.SubGroup](https://github.com/ghybs/Leaflet.FeatureGroup.SubGroup): Grouping of Leaflet elements by options and features.
+* [Leaflet.Control.Layers.Tree](https://github.com/jjimenezshaw/Leaflet.Control.Layers.Tree): A Tree Layers Control for Leaflet.
+* [Leaflet Control Search](https://github.com/stefanocudini/leaflet-search): Search Markers/Features location by option or custom property.
+* [leaflet.zoomhome](https://github.com/torfsen/leaflet.zoomhome): Provides a zoom control with a "Home" button to reset the view.
+* [leaflet.fullscreen](https://github.com/brunob/leaflet.fullscreen): Simple plugin for Leaflet that adds fullscreen button to your maps.
+* [Leaflet.GestureHandling](https://github.com/Raruto/leaflet-gesture-handling): A Leaflet plugin that allows to prevent default map scroll/touch behaviours.
+* [turf](https://github.com/Turfjs/turf): Advanced geospatial analysis for browsers and Node.js
+
+#### Removed
+
+* [leaflet-choropleth](https://github.com/timwis/leaflet-choropleth): Choropleth plugin for Leaflet (color scale based on value) - see [Choropleth for Leaflet Map](https://github.com/hupe13/choropleth-leaflet-map)
+
+#### Included Font
+
+* [Font Awesome 6](https://fontawesome.com/download)
+
+= Documentation =
+
+Detailed documentation and examples in <a href="https://leafext.de/">German</a> and <a href="https://leafext.de/en/">English</a>.
+
+= Thank you =
+
+Many thanks to everyone who found errors and provided ideas for new functions.
+
+== Frequently Asked Questions ==
+
+= Is there a widget or other support for the editor? =
+
+* Yes there is! Take a look to [CartoBlocks for Leaflet](https://wordpress.org/plugins/cartoblocks-for-leaflet/)! This handles shortcodes for Leaflet Map, but then you can use the shortcodes from Extensions!
+* If you have any questions please ask in the [forum](https://wordpress.org/support/plugin/extensions-leaflet-map/).
+
+= My gpx file is not displayed! =
+
+* Is the URL correct?
+* Does the webserver return the correct mime type (application/gpx+xml)?
+Put in your `.htaccess`:
+```
+AddType application/gpx+xml gpx
+RewriteRule .*\.gpx$ - [L,T=application/gpx+xml]
+```
+
+= It doesn't work! =
+
+* Are you using any caching plugin? Try to exclude at least these js files from caching:
+
+ - /wp-content/plugins/extensions-leaflet-map/leaflet-plugins/leaflet-elevation-*
+ - /wp-content/plugins/extensions-leaflet-map/leaflet-plugins/leaflet-gesture-handling-*
+
+* Are you using any plugin to comply with the GDPR/DSGVO? There might be a problem with that.
+* If you use a caching plugin and a GDPR/DSGVO plugin you need to distinguish whether the user has accepted the cookie or not.
+* Please ask in the [forum](https://wordpress.org/support/plugin/extensions-leaflet-map/)!
+
+= Apropos GDPR/DSGVO =
+
+* If you need a plugin for this try [DSGVO snippet for Leaflet Map and its Extensions](https://wordpress.org/plugins/dsgvo-leaflet-map/).
+* If you use [Complianz | GDPR/CCPA Cookie Consent](https://wordpress.org/plugins/complianz-gdpr/) see [here](https://complianz.io/leaflet-maps/).
+
+= How can I report security bugs?
+
+You can report security bugs through the Patchstack Vulnerability Disclosure Program. The Patchstack team help validate, triage and handle any security vulnerabilities. [Report a security vulnerability.]( https://patchstack.com/database/vdp/741dd87b-4d06-4699-81ce-73deb8e3d9ca)
+
+== Screenshots ==
+
+1. Track with elevation and speed profiles
+2. ExtraMarkers
+3. Grouping and Tree View
+4. Markercluster PlacementStrategies
+5. Tooltip on Hover
+6. Manage Leaflet Map files
+
+== Installation ==
+
+* First you need to install and configure the plugin <a href="https://wordpress.org/plugins/leaflet-map/">Leaflet Map</a>.
+* Then install this plugin.
+* Go to Settings - Leaflet Map - Extensions for Leaflet Map and get documentation and settings options.
+
+== Changelog ==
+
+### 6.1.3 / 261116
+
+* escaping layerswitch
+
+### 6.1.2 / 261111
+
+* fixed some options escaping (for example geojsonmarker)
+* fixed layerswitch
+
+
+[Changelog](https://github.com/hupe13/extensions-leaflet-map-github/blob/main/CHANGELOG.md)
+
+== Upgrade Notice ==
+
+* leaflet-search: CHANGED! Please see documentation how to specify the new options.

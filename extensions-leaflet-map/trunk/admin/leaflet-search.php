@@ -1,0 +1,118 @@
+<?php
+/**
+ * Help for leaflet-search shortcode
+ *
+ * @package Extensions for Leaflet Map
+ */
+
+// Direktzugriff auf diese Datei verhindern.
+defined( 'ABSPATH' ) || die();
+
+function leafext_leafletsearch_help() {
+	if ( is_singular() || is_archive() ) {
+		$codestyle = '';
+		$text      = '';
+	} else {
+		leafext_enqueue_admin();
+		$codestyle = ' class="language-coffeescript"';
+		$text      = '<h2>Leaflet Control Search</h2>';
+	}
+
+	$text = $text . '<p>' . esc_html__( 'A control for search Markers/Features location by custom property.', 'extensions-leaflet-map' ) . '</p>';
+
+	$text = $text . '<h3>Shortcode</h3><p>
+  <pre' . $codestyle . '><code' . $codestyle . '>&#091;leaflet-map fitbounds]
+//any many
+&#091;leaflet-marker      ...] ... [/leaflet-marker]
+&#091;leaflet-extramarker ...] ... [/leaflet-extramarker]
+&#091;leaflet-polygon     ...] ... [/leaflet-polygon]
+&#091;leaflet-circle      ...] ... [/leaflet-circle]
+&#091;leaflet-line        ...] ... [/leaflet-line]
+&#091;leaflet-geojson     ...] ... [/leaflet-geojson]
+&#091;leaflet-gpx         ...] ... [/leaflet-gpx]
+&#091;leaflet-kml         ...] ... [/leaflet-kml]
+//one or more
+&#091;leaflet-search propertyName="..." ...]</code></pre>';
+
+	$text = $text . '</p><h3>' . esc_html__( 'Note', 'extensions-leaflet-map' ) . '</h3>';
+	$text = $text . '<p>' . wp_sprintf(
+		/* translators: %s are options. */
+		esc_html__( '%1$s must be before %2$s.', 'extensions-leaflet-map' ),
+		'<code>leaflet-search</code>',
+		'<code>leaflet-optiongroup, cluster</code>'
+	) . '</p>';
+
+	$text = $text . '<h2>' . esc_html__( 'Options', 'extensions-leaflet-map' ) . '</h2>';
+
+	$parts = array(
+		'general' => array(
+			'title' => __( 'General Options', 'extensions-leaflet-map' ),
+			'hint'  => '',
+		),
+		'icon'    => array(
+			'title' => __( 'Marker Icon', 'extensions-leaflet-map' ),
+			'hint'  => 'icon=true (default: false)',
+		),
+		'circle'  => array(
+			'title' => __( 'Circle Marker', 'extensions-leaflet-map' ),
+			'hint'  => 'circle=true (default: true)',
+		),
+	);
+
+	foreach ( $parts as $part => $value ) {
+		$text .= '<h4>' . $value['title'] . '</h4>';
+		if ( $value['hint'] !== '' ) {
+			$text .= $value['hint'];
+		}
+		$types   = array();
+		$types[] = array(
+			'param'   => '<strong>' . esc_html__( 'Option', 'extensions-leaflet-map' ) . '</strong>',
+			'desc'    => '<strong>' . esc_html__( 'Description', 'extensions-leaflet-map' ) . '</strong>',
+			'default' => '<strong>' . esc_html__( 'Default', 'extensions-leaflet-map' ) . '</strong>',
+			'values'  => '<strong>' . esc_html__( 'Values', 'extensions-leaflet-map' ) . '</strong>',
+		);
+		$options = leafext_search_params( $part );
+		foreach ( $options as $option ) {
+			if ( $option['default'] === '' && $option['param'] === 'marker' ) {
+				$option['default'] = '(' . esc_html__( 'red circle', 'extensions-leaflet-map' ) . ')';
+			}
+			$types[] = array(
+				'param'   => $option['param'],
+				'desc'    => $option['desc'],
+				'default' => ( gettype( $option['default'] ) === 'boolean' ) ? ( $option['default'] ? 'true' : 'false' ) : $option['default'],
+				'values'  => $option['values'],
+			);
+		}
+		$text = $text . leafext_html_table( $types );
+	}
+
+	$text = $text . '<h3>' . esc_html__( 'Option', 'extensions-leaflet-map' ) . ' container</h3>';
+	/* translators: %s is a div element. */
+	$text = $text . '<p>' . wp_sprintf( esc_html__( 'If you want the search field to be outside the map, define a div element with a custom html block on the post / page and give it an id. This id you then specify in option %s.', 'extensions-leaflet-map' ), 'container' ) . '</p>';
+	$text = $text . '<pre' . $codestyle . '><code' . $codestyle . '>&lt;div id="myId" style="height:3em; border:2px solid gray; width:200px;">&lt;/div></code></pre>';
+	$text = $text . '<p>' . esc_html__( 'Define some css:', 'extensions-leaflet-map' ) . '</p>';
+	$text = $text . '<pre' . $codestyle . '><code' . $codestyle . '>&lt;style>
+.leaflet-control-search.search-exp { border: none !important;}
+.search-input {width: 80%;}
+&lt;/style></code></pre>';
+	$text = $text . '<style>.leaflet-control-search.search-exp { border: none !important;}.search-input {width: 80%;}</style>';
+	$text = $text . '<p>' . esc_html__( 'Define a leaflet-search command with the option container:', 'extensions-leaflet-map' ) . '</p>';
+	$text = $text . '<p><pre' . $codestyle . '><code' . $codestyle . '>&#091;leaflet-search propertyname=... ... container=myId ...]</code></pre></p>';
+	$text = $text . '<div id="myId" style="height:3em; border:2px solid gray; width:200px;"></div>';
+	$text = $text . '<p>' . do_shortcode( '[leaflet-map !boxZoom !doubleClickZoom !dragging !keyboard !scrollwheel !attribution !touchZoom !show_scale height=200 width=200 fitbounds min_zoom=12 max_zoom=16]' ) . '</p>';
+	$text = $text . do_shortcode( '[leaflet-marker lat=0.0 lng=0.0]Marker[/leaflet-marker]' );
+	$text = $text . do_shortcode( '[leaflet-search container=myId propertyName=popupContent textPlaceholder="M ..."]' );
+	$text = $text . '<p>' .
+	wp_sprintf(
+		/* translators: %s is an href. */
+		esc_html__( 'The specific style and css depends on your %1$stheme and taste%2$s', 'extensions-leaflet-map' ),
+		'<a href="https://leafext.de/leafletsearch/searchcontainer/">',
+		'</a>.</p>'
+	);
+	if ( is_singular() || is_archive() ) {
+		return $text;
+	} else {
+		//phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- all escaped, see above
+		echo $text;
+	}
+}

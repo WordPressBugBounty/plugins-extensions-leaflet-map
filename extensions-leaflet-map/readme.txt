@@ -3,7 +3,7 @@
 Contributors: hupe13
 Tags: leaflet, gpx, geojson, hover, marker
 Tested up to: 7.1
-Stable tag: 6.1.2
+Stable tag: 6.1.3
 Requires at least: 6.8
 Requires PHP: 8.2
 License: GPLv2 or later
@@ -136,14 +136,15 @@ You can report security bugs through the Patchstack Vulnerability Disclosure Pro
 
 == Changelog ==
 
+### 6.1.3 / 261116
+
+* escaping layerswitch
+
 ### 6.1.2 / 261111
 
 * fixed some options escaping (for example geojsonmarker)
 * fixed layerswitch
 
-### 6.1.1 / 261109
-
-* fixed: distanceMarkers in multielevation
 
 [Changelog](https://github.com/hupe13/extensions-leaflet-map-github/blob/main/CHANGELOG.md)
 
